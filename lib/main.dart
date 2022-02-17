@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:morelia_client_flutter/modules/chat_list.dart' show ChatList;
+import 'package:morelia_client_flutter/modules/chat_list.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+        create: (context) => ChatListState(),
+        child: const MyApp()
+      )
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,7 +22,7 @@ class MyApp extends StatelessWidget {
           title: const Text("MoreliaTalk"),
           leading: IconButton(
             icon: const Icon(Icons.menu),
-            onPressed: () => print("hello")
+            onPressed: () {}
           )
         ),
         body: const ChatList()

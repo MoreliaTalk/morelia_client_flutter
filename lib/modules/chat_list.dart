@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,15 +17,12 @@ class ChatList extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ChatListState(),
-      child: Consumer<ChatListState>(
-        builder: (context, chat, child) {
-          return ListView(
-              children: chat.chatWidgetsList
-          );
-        }
-      ),
+    return Consumer<ChatListState>(
+      builder: (context, chat, child) {
+        return Column(
+          children: chat.chatWidgetsList,
+        );
+      }
     );
   }
 }
