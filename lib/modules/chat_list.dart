@@ -18,9 +18,14 @@ class ChatList extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatListState>(
-      builder: (context, chat, child) {
-        return Column(
-          children: chat.chatWidgetsList,
+      builder: (context, chats_state, child) {
+        return ListView.builder(
+          itemCount: chats_state.chatWidgetsList.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+                title: chats_state.chatWidgetsList[index]
+            );
+          }
         );
       }
     );
