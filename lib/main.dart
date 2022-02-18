@@ -1,3 +1,4 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:morelia_client_flutter/modules/chat_list.dart';
 import 'package:provider/provider.dart';
@@ -22,10 +23,13 @@ class MyApp extends StatelessWidget {
           title: const Text("MoreliaTalk"),
           leading: IconButton(
             icon: const Icon(Icons.menu),
-            onPressed: () => Provider.of<ChatListState>(context, listen: false).addChat(
-              "Hello",
-              "World",
-            )
+            onPressed: () {
+              var faker = new Faker();
+              Provider.of<ChatListState>(context, listen: false).addChat(
+                faker.person.name(),
+                faker.lorem.sentence(),
+              );
+            }
             // onPressed: () {},
           )
         ),
