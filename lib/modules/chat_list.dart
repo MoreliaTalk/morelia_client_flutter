@@ -3,27 +3,44 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ChatListState extends ChangeNotifier{
-  List<Widget> chatWidgetsList = [];
 
-  void addChat(){
-    chatWidgetsList.add(const Text("Hello"));
+class ChatItem extends StatelessWidget {
+  String title;
+  String lastMessage;
+  ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(this.title),
+      subtitle: Text(this.lastMessage),
+      tileColor: Colors.red,
+    );
+  }
+}
+
+
+class ChatListState extends ChangeNotifier {
+  List<ChatItem> chatWidgetsList = [];
+
+  addChat(String title, String lastMessage){
+    chatWidgetsList.add(ChatItem(title, lastMessage));
     notifyListeners();
   }
 }
 
-class ChatList extends StatelessWidget{
+class ChatList extends StatelessWidget {
   const ChatList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatListState>(
-      builder: (context, chats_state, child) {
+      builder: (context, chatsState, child) {
         return ListView.builder(
-          itemCount: chats_state.chatWidgetsList.length,
+          itemCount: chatsState.chatWidgetsList.length,
           itemBuilder: (context, index) {
             return ListTile(
-                title: chats_state.chatWidgetsList[index]
+                title: chatsState.chatWidgetsList[index]
             );
           }
         );

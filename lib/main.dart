@@ -22,8 +22,11 @@ class MyApp extends StatelessWidget {
           title: const Text("MoreliaTalk"),
           leading: IconButton(
             icon: const Icon(Icons.menu),
-            // onPressed: () => Provider.of<ChatListState>(context, listen: false).addChat()
-            onPressed: () {},
+            onPressed: () => Provider.of<ChatListState>(context, listen: false).addChat(
+              "Hello",
+              "World",
+            )
+            // onPressed: () {},
           )
         ),
         body: const ChatList()
