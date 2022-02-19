@@ -33,7 +33,14 @@ class MyApp extends StatelessWidget {
             // onPressed: () {},
           )
         ),
-        body: const ChatList()
+        body: Row(
+          children: const [
+            Expanded(
+              flex: 1,
+              child: ChatList()
+            ),
+          ],
+        ),
       ),
     );
   }
