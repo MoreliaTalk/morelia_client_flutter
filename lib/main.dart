@@ -34,14 +34,25 @@ class MyApp extends StatelessWidget {
             // onPressed: () {},
           )
         ),
-        body: Row(
-          children: [
-            const Expanded(
-              flex: 3,
-              child: ChatList()
-            ),
-            Expanded(flex: 6, child: Container()),
-          ],
+        body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints ) {
+            bool isHorizontal = constraints.maxWidth > 500;
+            if (isHorizontal) {
+              return (
+                Row(
+                  children: [
+                    const Expanded(
+                      flex: 3,
+                      child: ChatList()
+                    ),
+                    Expanded(flex: 6, child: Container()),
+                  ]
+                )
+              );
+            } else {
+              return ChatList();
+            }
+          },
         ),
       ),
     );

@@ -20,8 +20,13 @@ class ChatItem extends StatelessWidget {
         child: Text(avatarSymbols),
       ),
       title: Text(this.title),
-      subtitle: Text(this.lastMessage),
+      subtitle: Text(
+        this.lastMessage,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       minVerticalPadding: 10,
+
     );
   }
 }
