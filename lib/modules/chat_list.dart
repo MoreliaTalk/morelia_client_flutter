@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +9,15 @@ class ChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String avatarSymbols = "";
+    title.split(" ").forEach((value) {
+      avatarSymbols += value[0];
+    });
+
     return ListTile(
+      leading: CircleAvatar(
+        child: Text(avatarSymbols),
+      ),
       title: Text(this.title),
       subtitle: Text(this.lastMessage),
       tileColor: Colors.red,

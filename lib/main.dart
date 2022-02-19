@@ -36,9 +36,10 @@ class MyApp extends StatelessWidget {
         body: Row(
           children: const [
             Expanded(
-              flex: 1,
+              flex: 3,
               child: ChatList()
             ),
+            Expanded(flex: 6, child: Text("")),
           ],
         ),
       ),
