@@ -15,12 +15,13 @@ class ChatItem extends StatelessWidget {
     });
 
     return ListTile(
+      onTap: () => print("Hello"),
       leading: CircleAvatar(
         child: Text(avatarSymbols),
       ),
       title: Text(this.title),
       subtitle: Text(this.lastMessage),
-      tileColor: Colors.red,
+      minVerticalPadding: 10,
     );
   }
 }
@@ -42,13 +43,15 @@ class ChatList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ChatListState>(
       builder: (context, chatsState, child) {
-        return ListView.builder(
-          itemCount: chatsState.chatWidgetsList.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-                title: chatsState.chatWidgetsList[index]
-            );
-          }
+        return Container(
+          child: (
+            ListView.builder(
+              itemCount: chatsState.chatWidgetsList.length,
+              itemBuilder: (context, index) {
+                return chatsState.chatWidgetsList[index];
+              }
+            )
+          )
         );
       }
     );

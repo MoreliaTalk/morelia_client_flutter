@@ -18,13 +18,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(brightness: Brightness.dark),
       home: Scaffold(
         appBar: AppBar(
           title: const Text("MoreliaTalk"),
           leading: IconButton(
             icon: const Icon(Icons.menu),
             onPressed: () {
-              var faker = new Faker();
+              var faker = Faker();
               Provider.of<ChatListState>(context, listen: false).addChat(
                 faker.person.name(),
                 faker.lorem.sentence(),
@@ -34,12 +35,12 @@ class MyApp extends StatelessWidget {
           )
         ),
         body: Row(
-          children: const [
-            Expanded(
+          children: [
+            const Expanded(
               flex: 3,
               child: ChatList()
             ),
-            Expanded(flex: 6, child: Text("")),
+            Expanded(flex: 6, child: Container()),
           ],
         ),
       ),
