@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:morelia_client_flutter/modules/message_area.dart';
 import 'package:provider/provider.dart';
 
 
 class ChatItem extends StatelessWidget {
-  String title;
-  String lastMessage;
-  ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
+  const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
+  final String title;
+  final String lastMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,9 @@ class ChatItem extends StatelessWidget {
     });
 
     return ListTile(
-      onTap: () => print("Hello"),
+      onTap: () => Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const MessagePage())
+      ),
       leading: CircleAvatar(
         child: Text(avatarSymbols),
       ),
@@ -26,7 +29,6 @@ class ChatItem extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       minVerticalPadding: 10,
-
     );
   }
 }
