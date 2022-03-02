@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:morelia_client_flutter/modules/message_area.dart';
+import 'package:morelia_client_flutter/components/message_area.dart';
 import 'package:provider/provider.dart';
-
 
 class ChatItem extends StatelessWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
@@ -17,14 +16,14 @@ class ChatItem extends StatelessWidget {
 
     return ListTile(
       onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const MessagePage())
+          context, MaterialPageRoute(builder: (context) => MessagePage(chatName: title))
       ),
       leading: CircleAvatar(
         child: Text(avatarSymbols),
       ),
-      title: Text(this.title),
+      title: Text(title),
       subtitle: Text(
-        this.lastMessage,
+        lastMessage,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -33,11 +32,10 @@ class ChatItem extends StatelessWidget {
   }
 }
 
-
 class ChatListState extends ChangeNotifier {
   List<ChatItem> chatWidgetsList = [];
 
-  addChat(String title, String lastMessage){
+  addChat(String title, String lastMessage) {
     chatWidgetsList.add(ChatItem(title, lastMessage));
     notifyListeners();
   }
