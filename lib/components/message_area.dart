@@ -13,6 +13,17 @@ class Message extends StatelessWidget {
   }
 }
 
+class MessageArea extends StatelessWidget {
+  const MessageArea({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context){
+    return ListView(
+      children: const [Message("Hello!")],
+    );
+  }
+}
+
 class MessagePage extends StatelessWidget {
   const MessagePage({required this.chatName, Key? key}) : super(key: key);
   final String chatName;
@@ -23,11 +34,8 @@ class MessagePage extends StatelessWidget {
         appBar: AppBar(
           title: Text(chatName),
         ),
-        body: ListView(
-          children: const [
-            Message("Hello!")
-          ],
-        )
+        body: const MessageArea()
     );
   }
 }
+
