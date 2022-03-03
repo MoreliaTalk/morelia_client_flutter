@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ThemeState extends ChangeNotifier {
-  ThemeData currentTheme = ThemeData.dark();
-
-  void setTheme(ThemeData theme) {
-    currentTheme = theme;
-  }
-}
+final currentTheme = StateProvider<ThemeData>((ref) => ThemeData.dark());

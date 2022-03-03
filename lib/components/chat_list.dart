@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:morelia_client_flutter/components/message_area.dart';
-import 'package:provider/provider.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../modules/platform_const.dart';
 
 class ChatItem extends StatelessWidget {
@@ -18,14 +16,15 @@ class ChatItem extends StatelessWidget {
 
     return ListTile(
       onTap: () => {
-        if (isMobileDevice) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MessagePage(chatName: title)))
-        } else if (isDesktopDevice) {
-
-        }
+        if (isMobileDevice)
+          {
+            /*Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MessagePage(chatName: title))*)*/
+          }
+        else if (isDesktopDevice)
+          {}
       },
       leading: CircleAvatar(
         child: Text(avatarSymbols),
@@ -41,27 +40,29 @@ class ChatItem extends StatelessWidget {
   }
 }
 
-class ChatListState extends ChangeNotifier {
-  List<ChatItem> chatWidgetsList = [];
+class ChatListStateNotifier extends StateNotifier<List<ChatItem>> {
+  ChatListStateNotifier() : super([]);
 
   addChat(String title, String lastMessage) {
-    chatWidgetsList.add(ChatItem(title, lastMessage));
-    notifyListeners();
+    state = [...state, ChatItem(title, lastMessage)];
   }
 }
 
-class ChatList extends StatelessWidget {
+final chatListStateProvider =
+    StateNotifierProvider<ChatListStateNotifier, List<ChatItem>>(
+        (ref) => ChatListStateNotifier());
+
+class ChatList extends ConsumerWidget {
   const ChatList({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<ChatListState>(builder: (context, chatsState, child) {
-      return Container(
-          child: (ListView.builder(
-              itemCount: chatsState.chatWidgetsList.length,
-              itemBuilder: (context, index) {
-                return chatsState.chatWidgetsList[index];
-              })));
-    });
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<ChatItem> chats = ref.watch(chatListStateProvider);
+    return Container(
+        child: (ListView.builder(
+            itemCount: chats.length,
+            itemBuilder: (context, index) {
+              return chats[index];
+            })));
   }
 }

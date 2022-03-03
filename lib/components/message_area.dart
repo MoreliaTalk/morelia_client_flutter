@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:morelia_client_flutter/modules/theme_manager.dart';
-
 import '../modules/platform_const.dart';
 
 class Message extends StatelessWidget {
@@ -17,10 +15,20 @@ class MessageArea extends StatelessWidget {
   const MessageArea({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return ListView(
       children: const [Message("Hello!")],
     );
+  }
+}
+
+class MessagePageState extends ChangeNotifier {
+  late String currentChatUUID;
+  List<Message> messages = [];
+
+  void setChat(String uuid) {
+    currentChatUUID = uuid;
+    notifyListeners();
   }
 }
 
@@ -34,8 +42,6 @@ class MessagePage extends StatelessWidget {
         appBar: AppBar(
           title: Text(chatName),
         ),
-        body: const MessageArea()
-    );
+        body: const MessageArea());
   }
 }
-
