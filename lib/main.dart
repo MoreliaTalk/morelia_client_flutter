@@ -13,7 +13,6 @@ class MoreliaApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
-        theme: ref.watch(currentTheme), home: const MainPage());
+    return MaterialApp(theme: ref.watch(currentTheme), home: const MainPage());
   }
 }

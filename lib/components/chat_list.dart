@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../modules/platform_const.dart';
+import 'message_area.dart';
 
-class ChatItem extends StatelessWidget {
+class ChatItem extends ConsumerWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
   final String title;
   final String lastMessage;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     String avatarSymbols = "";
     title.split(" ").forEach((value) {
       avatarSymbols += value[0];
@@ -18,13 +19,15 @@ class ChatItem extends StatelessWidget {
       onTap: () => {
         if (isMobileDevice)
           {
-            /*Navigator.push(
+            Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MessagePage(chatName: title))*)*/
+                    builder: (context) => MessagePage(chatName: title)))
           }
         else if (isDesktopDevice)
-          {}
+          {
+            ref.watch(messagesStateProvider.notifier).setChat("123")
+          }
       },
       leading: CircleAvatar(
         child: Text(avatarSymbols),
@@ -60,6 +63,7 @@ class ChatList extends ConsumerWidget {
     List<ChatItem> chats = ref.watch(chatListStateProvider);
     return Container(
         child: (ListView.builder(
+            controller: ScrollController(),
             itemCount: chats.length,
             itemBuilder: (context, index) {
               return chats[index];
