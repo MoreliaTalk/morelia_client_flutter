@@ -20,11 +20,10 @@ class Message extends StatelessWidget {
     if (this.type == "my") {
       alig = Alignment.centerRight;
       borderRad = const BorderRadius.only(
-        topLeft: Radius.circular(10),
-        topRight: Radius.circular(10),
-        bottomLeft: Radius.circular(10),
-        bottomRight: Radius.circular(3)
-      );
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+          bottomLeft: Radius.circular(10),
+          bottomRight: Radius.circular(3));
       backgroundColor = Theme.of(context).colorScheme.primary;
     } else if (this.type == "other_user") {
       alig = Alignment.centerLeft;
@@ -32,12 +31,11 @@ class Message extends StatelessWidget {
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
           bottomLeft: Radius.circular(3),
-          bottomRight: Radius.circular(10)
-      );
+          bottomRight: Radius.circular(10));
       backgroundColor = Theme.of(context).colorScheme.secondary;
     }
 
-    if (HSLColor.fromColor(backgroundColor).lightness > 0.4){
+    if (HSLColor.fromColor(backgroundColor).lightness > 0.4) {
       textColor = Colors.black;
     } else {
       textColor = Colors.white;
@@ -52,7 +50,10 @@ class Message extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(10),
             margin: const EdgeInsets.all(10),
-            child: Text(this.text, style: TextStyle(color: textColor),)));
+            child: Text(
+              this.text,
+              style: TextStyle(color: textColor),
+            )));
   }
 }
 
@@ -66,7 +67,7 @@ class MessagesStateNotifier extends StateNotifier<List<Message>> {
     state = [];
     for (int i = 0; i < 30; i++) {
       String type;
-      if (i%2 > 0) {
+      if (i % 2 > 0) {
         type = "my";
       } else {
         type = "other_user";
@@ -104,8 +105,8 @@ class MessagePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var messagesList = ref.watch(messagesStateProvider.notifier);
-    messagesList.setChat("123");
+    Future.delayed(Duration.zero,
+        () async => ref.watch(messagesStateProvider.notifier).setChat("uuid"));
     return Scaffold(
         appBar: AppBar(
           title: Text(chatName),
