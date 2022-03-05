@@ -1,23 +1,60 @@
+import 'dart:ui';
+
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import '../modules/platform_const.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Message extends StatelessWidget {
-  const Message(this.text, {Key? key}) : super(key: key);
+  const Message(this.text, this.type, {Key? key}) : super(key: key);
   final String text;
+  final String type;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.all(10),
-          color: Theme.of(context).colorScheme.primary,
-          child: Text(this.text)
-        );
+    late Alignment alig;
+    late BorderRadius borderRad;
+    late Color backgroundColor;
+    late Color textColor;
+
+    if (this.type == "my") {
+      alig = Alignment.centerRight;
+      borderRad = const BorderRadius.only(
+        topLeft: Radius.circular(10),
+        topRight: Radius.circular(10),
+        bottomLeft: Radius.circular(10),
+        bottomRight: Radius.circular(3)
+      );
+      backgroundColor = Theme.of(context).colorScheme.primary;
+    } else if (this.type == "other_user") {
+      alig = Alignment.centerLeft;
+      borderRad = const BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+          bottomLeft: Radius.circular(3),
+          bottomRight: Radius.circular(10)
+      );
+      backgroundColor = Theme.of(context).colorScheme.secondary;
+    }
+
+    if (HSLColor.fromColor(backgroundColor).lightness > 0.4){
+      textColor = Colors.black;
+    } else {
+      textColor = Colors.white;
+    }
+
+    return Align(
+        alignment: alig,
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: borderRad,
+              color: backgroundColor,
+            ),
+            padding: const EdgeInsets.all(10),
+            margin: const EdgeInsets.all(10),
+            child: Text(this.text, style: TextStyle(color: textColor),)));
   }
 }
-
 
 class MessagesStateNotifier extends StateNotifier<List<Message>> {
   MessagesStateNotifier() : super(<Message>[]);
@@ -27,16 +64,25 @@ class MessagesStateNotifier extends StateNotifier<List<Message>> {
     // этот кусок кода для демонтраци работы чата
     var faker = Faker();
     state = [];
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 30; i++) {
+      String type;
+      if (i%2 > 0) {
+        type = "my";
+      } else {
+        type = "other_user";
+      }
+
       state = [
         ...state,
-        Message(faker.lorem.sentence()),
+        Message(faker.lorem.sentence(), type),
       ];
     }
   }
 }
 
-final messagesStateProvider = StateNotifierProvider<MessagesStateNotifier, List<Message>>((ref) => MessagesStateNotifier());
+final messagesStateProvider =
+    StateNotifierProvider<MessagesStateNotifier, List<Message>>(
+        (ref) => MessagesStateNotifier());
 
 class MessageArea extends ConsumerWidget {
   const MessageArea({Key? key}) : super(key: key);
@@ -44,12 +90,13 @@ class MessageArea extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<Message> messagesList = ref.watch(messagesStateProvider);
-    return ListView(
-      children: messagesList,
+    return ListView.builder(
+      controller: ScrollController(),
+      itemCount: messagesList.length,
+      itemBuilder: (context, index) => messagesList[index],
     );
   }
 }
-
 
 class MessagePage extends ConsumerWidget {
   const MessagePage({required this.chatName, Key? key}) : super(key: key);

@@ -25,9 +25,7 @@ class ChatItem extends ConsumerWidget {
                     builder: (context) => MessagePage(chatName: title)))
           }
         else if (isDesktopDevice)
-          {
-            ref.watch(messagesStateProvider.notifier).setChat("123")
-          }
+          {ref.watch(messagesStateProvider.notifier).setChat("123")}
       },
       leading: CircleAvatar(
         child: Text(avatarSymbols),
