@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.morelia_client_flutter">
+    package="io.gihub.moreliatalk.morelia_client_flutter">
    <application
         android:label="morelia_client_flutter"
         android:name="${applicationName}"
