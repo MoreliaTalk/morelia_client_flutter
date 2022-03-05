@@ -5,13 +5,16 @@ import 'package:flutter/material.dart';
 import '../modules/platform_const.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-const typeMyMessage = "my";
-const typeOtherUserMessage = "other_user";
+
+enum TypesMessages {
+  my,
+  otherUser
+}
 
 class Message extends StatelessWidget {
   const Message(this.text, this.type, {Key? key}) : super(key: key);
   final String text;
-  final String type;
+  final TypesMessages type;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class Message extends StatelessWidget {
     late Color backgroundColor;
     late Color textColor;
 
-    if (this.type == typeMyMessage) {
+    if (this.type == TypesMessages.my) {
       alig = Alignment.centerRight;
       borderRad = const BorderRadius.only(
           topLeft: Radius.circular(10),
@@ -28,7 +31,7 @@ class Message extends StatelessWidget {
           bottomLeft: Radius.circular(10),
           bottomRight: Radius.circular(3));
       backgroundColor = Theme.of(context).colorScheme.primary;
-    } else if (this.type == typeOtherUserMessage) {
+    } else if (this.type == TypesMessages.otherUser) {
       alig = Alignment.centerLeft;
       borderRad = const BorderRadius.only(
           topLeft: Radius.circular(10),
@@ -69,11 +72,11 @@ class MessagesStateNotifier extends StateNotifier<List<Message>> {
     var faker = Faker();
     state = [];
     for (int i = 0; i < 30; i++) {
-      String type;
+      TypesMessages type;
       if (i % 2 > 0) {
-        type = typeMyMessage;
+        type = TypesMessages.my;
       } else {
-        type = typeOtherUserMessage;
+        type = TypesMessages.otherUser;
       }
 
       state = [
