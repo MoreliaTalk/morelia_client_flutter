@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import '../modules/platform_const.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+const typeMyMessage = "my";
+const typeOtherUserMessage = "other_user";
+
 class Message extends StatelessWidget {
   const Message(this.text, this.type, {Key? key}) : super(key: key);
   final String text;
@@ -17,7 +20,7 @@ class Message extends StatelessWidget {
     late Color backgroundColor;
     late Color textColor;
 
-    if (this.type == "my") {
+    if (this.type == typeMyMessage) {
       alig = Alignment.centerRight;
       borderRad = const BorderRadius.only(
           topLeft: Radius.circular(10),
@@ -25,7 +28,7 @@ class Message extends StatelessWidget {
           bottomLeft: Radius.circular(10),
           bottomRight: Radius.circular(3));
       backgroundColor = Theme.of(context).colorScheme.primary;
-    } else if (this.type == "other_user") {
+    } else if (this.type == typeOtherUserMessage) {
       alig = Alignment.centerLeft;
       borderRad = const BorderRadius.only(
           topLeft: Radius.circular(10),
@@ -68,9 +71,9 @@ class MessagesStateNotifier extends StateNotifier<List<Message>> {
     for (int i = 0; i < 30; i++) {
       String type;
       if (i % 2 > 0) {
-        type = "my";
+        type = typeMyMessage;
       } else {
-        type = "other_user";
+        type = typeOtherUserMessage;
       }
 
       state = [
