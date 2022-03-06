@@ -39,6 +39,7 @@ dependencies:
   faker: ^2.0.0
   isar: ^2.2.1
   isar_flutter_libs: ^2.2.1
+  path_provider: ^2.0.9
 
 dev_dependencies:
   flutter_test:

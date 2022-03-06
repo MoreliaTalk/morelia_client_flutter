@@ -13,26 +13,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Morelia Flutter. If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:typed_data';
+import './models.dart';
 import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
+//import 'dart:async';
 
-part 'userconfig.q.dart';
+class DatabaseHandler {
+  late String database;
 
-@Collection()
-class UserConfig{
-  @Id()
-  int? uuid;
+  DatabaseHandler(this.database);
 
+  void connect(String database) async {
+    final dir = await getApplicationSupportDirectory();
+    final isar = await Isar.open(
+        schemas: [UserConfigSchema],
+        directory: dir.path,
+        inspector: true);
+  }
 
-  late String login;
-  late String hashPassword;
-  late String username;
-  late bool isBot;
-  late String authId;
-  late int tokenTTL;
-  late String email;
-  late ByteBuffer avatar;
-  late String bio;
-  late ByteBuffer salt;
-  late ByteBuffer key;
+  dynamic getName() async {
+    final username = await 
+  }
 }
