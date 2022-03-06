@@ -5,11 +5,7 @@ import 'package:flutter/material.dart';
 import '../modules/platform_const.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
-enum TypesMessages {
-  my,
-  otherUser
-}
+enum TypesMessages { my, otherUser }
 
 class Message extends StatelessWidget {
   const Message(this.text, this.type, {Key? key}) : super(key: key);
