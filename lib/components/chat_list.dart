@@ -1,3 +1,4 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../modules/platform_const.dart';
@@ -7,6 +8,7 @@ class ChatItem extends ConsumerWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
   final String title;
   final String lastMessage;
+  final String uuid = "123";
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,18 +17,9 @@ class ChatItem extends ConsumerWidget {
       avatarSymbols += value[0];
     });
 
+    Function(String uuid) onClick = ref.watch(onClickItemsFunction);
     return ListTile(
-      onTap: () => {
-        if (isMobileDevice)
-          {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MessagePage(chatName: title)))
-          }
-        else if (isDesktopDevice)
-          {ref.watch(messagesStateProvider.notifier).setChat("123")}
-      },
+      onTap: () => onClick(uuid),
       leading: CircleAvatar(
         child: Text(avatarSymbols),
       ),
@@ -53,18 +46,33 @@ final chatListStateProvider =
     StateNotifierProvider<ChatListStateNotifier, List<ChatItem>>(
         (ref) => ChatListStateNotifier());
 
+final onClickItemsFunction =
+    StateProvider<Function(String uuid)>((ref) => (String uuid) {});
+
 class ChatList extends ConsumerWidget {
   const ChatList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<ChatItem> chats = ref.watch(chatListStateProvider);
-    return Container(
-        child: (ListView.builder(
-            controller: ScrollController(),
-            itemCount: chats.length,
-            itemBuilder: (context, index) {
-              return chats[index];
-            })));
+    return Scaffold(
+      body: Container(
+          child: (ListView.builder(
+              controller: ScrollController(),
+              itemCount: chats.length,
+              itemBuilder: (context, index) {
+                return chats[index];
+              }))),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          var faker = Faker();
+          ref.watch(chatListStateProvider.notifier).addChat(
+                faker.person.name(),
+                faker.lorem.sentence(),
+              );
+        },
+      ),
+    );
   }
 }

@@ -5,11 +5,7 @@ import 'package:flutter/material.dart';
 import '../modules/platform_const.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
-enum TypesMessages {
-  my,
-  otherUser
-}
+enum TypesMessages { my, otherUser }
 
 class Message extends StatelessWidget {
   const Message(this.text, this.type, {Key? key}) : super(key: key);
@@ -63,60 +59,16 @@ class Message extends StatelessWidget {
   }
 }
 
-class MessagesStateNotifier extends StateNotifier<List<Message>> {
-  MessagesStateNotifier() : super(<Message>[]);
-
-  void setChat(String uuid) {
-    // TODO: сделать загрузку сообщений из бд
-    // этот кусок кода для демонтраци работы чата
-    var faker = Faker();
-    state = [];
-    for (int i = 0; i < 30; i++) {
-      TypesMessages type;
-      if (i % 2 > 0) {
-        type = TypesMessages.my;
-      } else {
-        type = TypesMessages.otherUser;
-      }
-
-      state = [
-        ...state,
-        Message(faker.lorem.sentence(), type),
-      ];
-    }
-  }
-}
-
-final messagesStateProvider =
-    StateNotifierProvider<MessagesStateNotifier, List<Message>>(
-        (ref) => MessagesStateNotifier());
-
 class MessageArea extends ConsumerWidget {
-  const MessageArea({Key? key}) : super(key: key);
+  const MessageArea({required this.messagesList, Key? key}) : super(key: key);
+  final List<Message> messagesList;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<Message> messagesList = ref.watch(messagesStateProvider);
     return ListView.builder(
       controller: ScrollController(),
       itemCount: messagesList.length,
       itemBuilder: (context, index) => messagesList[index],
     );
-  }
-}
-
-class MessagePage extends ConsumerWidget {
-  const MessagePage({required this.chatName, Key? key}) : super(key: key);
-  final String chatName;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    Future.delayed(Duration.zero,
-        () async => ref.watch(messagesStateProvider.notifier).setChat("uuid"));
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(chatName),
-        ),
-        body: const MessageArea());
   }
 }
