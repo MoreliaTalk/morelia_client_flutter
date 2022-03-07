@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../components/message_area.dart';
-/*
+
 class MessagesStateNotifier extends StateNotifier<List<Message>> {
-  MessagesStateNotifier() : super(<Message>[]);
+  MessagesStateNotifier() : super([]);
 
   void setChat(String uuid) {
     // TODO: сделать загрузку сообщений из бд
@@ -30,7 +30,7 @@ class MessagesStateNotifier extends StateNotifier<List<Message>> {
 
 final messagesStateProvider =
     StateNotifierProvider<MessagesStateNotifier, List<Message>>(
-        (ref) => MessagesStateNotifier());*/
+        (ref) => MessagesStateNotifier());
 
 class CommunicationPage extends ConsumerWidget {
   const CommunicationPage({required this.uuid, Key? key}) : super(key: key);
@@ -42,8 +42,8 @@ class CommunicationPage extends ConsumerWidget {
         appBar: AppBar(
           title: const Text("chatName"),
         ),
-        body: const MessageArea(
-          messagesList: [Message("faker.lorem.sentence()", TypesMessages.my)],
+        body: MessageArea(
+          messagesList: ref.watch(messagesStateProvider),
         ));
   }
 }
