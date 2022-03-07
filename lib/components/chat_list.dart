@@ -7,6 +7,7 @@ class ChatItem extends ConsumerWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
   final String title;
   final String lastMessage;
+  final String uuid = "";
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,18 +16,9 @@ class ChatItem extends ConsumerWidget {
       avatarSymbols += value[0];
     });
 
+    Function(String uuid) onClick = ref.watch(onClickItemsFunction);
     return ListTile(
-      onTap: () => {
-        if (isMobileDevice)
-          {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MessagePage(chatName: title)))
-          }
-        else if (isDesktopDevice)
-          {ref.watch(messagesStateProvider.notifier).setChat("123")}
-      },
+      onTap: () => onClick(uuid),
       leading: CircleAvatar(
         child: Text(avatarSymbols),
       ),
@@ -52,6 +44,10 @@ class ChatListStateNotifier extends StateNotifier<List<ChatItem>> {
 final chatListStateProvider =
     StateNotifierProvider<ChatListStateNotifier, List<ChatItem>>(
         (ref) => ChatListStateNotifier());
+
+final onClickItemsFunction = StateProvider<Function(String uuid)>(
+  (ref) => (String uuid) {}
+);
 
 class ChatList extends ConsumerWidget {
   const ChatList({Key? key}) : super(key: key);
