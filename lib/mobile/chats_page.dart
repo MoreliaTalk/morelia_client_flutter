@@ -20,17 +20,6 @@ class MobileChatsPage extends ConsumerWidget {
               GoRouter.of(context).push("/messages/" + uuid);
             });
     return Scaffold(
-      appBar: AppBar(
-          title: const Text("MoreliaTalk"),
-          leading: IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                var faker = Faker();
-                chats.addChat(
-                  faker.person.name(),
-                  faker.lorem.sentence(),
-                );
-              })),
       body: const ChatList(),
       bottomNavigationBar: MobileNavBar(),
     );

@@ -1,6 +1,7 @@
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'message_area.dart';
 
@@ -27,6 +28,7 @@ class CommunicationPage extends ConsumerWidget {
         Message(faker.lorem.sentence(), type),
       ];
     }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("chatName"),

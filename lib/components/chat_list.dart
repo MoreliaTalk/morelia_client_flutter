@@ -1,3 +1,4 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../modules/platform_const.dart';
@@ -54,12 +55,24 @@ class ChatList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<ChatItem> chats = ref.watch(chatListStateProvider);
-    return Container(
-        child: (ListView.builder(
-            controller: ScrollController(),
-            itemCount: chats.length,
-            itemBuilder: (context, index) {
-              return chats[index];
-            })));
+    return Scaffold(
+      body: Container(
+          child: (ListView.builder(
+              controller: ScrollController(),
+              itemCount: chats.length,
+              itemBuilder: (context, index) {
+                return chats[index];
+              }))),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          var faker = Faker();
+          ref.watch(chatListStateProvider.notifier).addChat(
+                faker.person.name(),
+                faker.lorem.sentence(),
+              );
+        },
+      ),
+    );
   }
 }
