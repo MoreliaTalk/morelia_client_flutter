@@ -7,7 +7,7 @@ class ChatItem extends ConsumerWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
   final String title;
   final String lastMessage;
-  final String uuid = "";
+  final String uuid = "123";
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,9 +45,8 @@ final chatListStateProvider =
     StateNotifierProvider<ChatListStateNotifier, List<ChatItem>>(
         (ref) => ChatListStateNotifier());
 
-final onClickItemsFunction = StateProvider<Function(String uuid)>(
-  (ref) => (String uuid) {}
-);
+final onClickItemsFunction =
+    StateProvider<Function(String uuid)>((ref) => (String uuid) {});
 
 class ChatList extends ConsumerWidget {
   const ChatList({Key? key}) : super(key: key);

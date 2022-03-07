@@ -1,11 +1,10 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 
-enum TypePlatformDevices {
-  mobile, desktop, notSupported
-}
+enum TypePlatformDevices { mobile, desktop, notSupported }
 
-TypePlatformDevices _getPlatform(){
+TypePlatformDevices _getPlatform() {
   TypePlatformDevices _platform;
   if (!kIsWeb) {
     if (Platform.isIOS || Platform.isAndroid) {
@@ -34,6 +33,5 @@ TypePlatformDevices _getPlatform(){
   return _platform;
 }
 
-TypePlatformDevices get currentPlatform => _getPlatform();
-
-
+TypePlatformDevices get currentPlatform => TypePlatformDevices.mobile;
+//TypePlatformDevices get currentPlatform => _getPlatform();

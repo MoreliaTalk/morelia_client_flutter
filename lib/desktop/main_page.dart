@@ -13,21 +13,25 @@ class DesktopMainPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var chats = ref.watch(chatListStateProvider.notifier);
     return Scaffold(
-        appBar: AppBar(
-            title: const Text("MoreliaTalk"),
-            leading: IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  var faker = Faker();
-                  chats.addChat(
-                    faker.person.name(),
-                    faker.lorem.sentence(),
-                  );
-                })),
-        body: (Row(children: const [
-          Expanded(flex: 3, child: ChatList()),
-          Expanded(flex: 6, child: MessageArea()),
-        ])),
-      );
+      appBar: AppBar(
+          title: const Text("MoreliaTalk"),
+          leading: IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                var faker = Faker();
+                chats.addChat(
+                  faker.person.name(),
+                  faker.lorem.sentence(),
+                );
+              })),
+      body: (Row(children: const [
+        Expanded(flex: 3, child: ChatList()),
+        Expanded(
+            flex: 6,
+            child: MessageArea(
+              messagesList: [],
+            )),
+      ])),
+    );
   }
 }
