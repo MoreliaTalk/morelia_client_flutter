@@ -8,7 +8,7 @@ import 'package:morelia_client_flutter/modules/theme_manager.dart'
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:morelia_client_flutter/desktop/main_page.dart';
 
-import 'mobile/communication_page.dart';
+import 'components/communication_page.dart';
 
 void main() {
   runApp(const ProviderScope(child: MoreliaApp()));

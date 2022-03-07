@@ -33,5 +33,5 @@ TypePlatformDevices _getPlatform() {
   return _platform;
 }
 
-TypePlatformDevices get currentPlatform => TypePlatformDevices.mobile;
-//TypePlatformDevices get currentPlatform => _getPlatform();
+//TypePlatformDevices get currentPlatform => TypePlatformDevices.mobile;
+TypePlatformDevices get currentPlatform => _getPlatform();
