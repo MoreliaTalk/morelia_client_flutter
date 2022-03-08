@@ -1,9 +1,6 @@
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:morelia_client_flutter/components/communication_page.dart';
-import 'package:morelia_client_flutter/components/message_area.dart';
-import 'package:morelia_client_flutter/mobile/chats_page.dart';
 
 import '../components/chat_list.dart';
 
