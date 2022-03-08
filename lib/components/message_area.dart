@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum TypesMessages { my, otherUser }
 
 class Message extends StatelessWidget {
-  const Message(this.text, this.type, {Key? key}) : super(key: key);
+  const Message({required this.text, required this.type, Key? key}) : super(key: key);
   final String text;
   final TypesMessages type;
 

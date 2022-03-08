@@ -25,7 +25,7 @@ class CommunicationPage extends ConsumerWidget {
 
       state = [
         ...state,
-        Message(faker.lorem.sentence(), type),
+        Message(text: faker.lorem.sentence(), type: type),
       ];
     }
 
