@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +15,7 @@ class Message extends StatelessWidget {
     late Color backgroundColor;
     late Color textColor;
 
-    if (this.type == TypesMessages.my) {
+    if (type == TypesMessages.my) {
       alig = Alignment.centerRight;
       borderRad = const BorderRadius.only(
         topLeft: Radius.circular(10),
@@ -26,7 +24,7 @@ class Message extends StatelessWidget {
         bottomRight: Radius.circular(3),
       );
       backgroundColor = Theme.of(context).colorScheme.primary;
-    } else if (this.type == TypesMessages.otherUser) {
+    } else if (type == TypesMessages.otherUser) {
       alig = Alignment.centerLeft;
       borderRad = const BorderRadius.only(
         topLeft: Radius.circular(10),
@@ -53,7 +51,7 @@ class Message extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             margin: const EdgeInsets.all(10),
             child: Text(
-              this.text,
+              text,
               style: TextStyle(color: textColor),
             )));
   }
