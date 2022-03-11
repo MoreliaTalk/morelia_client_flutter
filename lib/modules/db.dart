@@ -20,18 +20,42 @@ import 'package:path_provider/path_provider.dart';
 
 class DatabaseHandler {
   late String database;
+  late Isar userConfigConnect;
+  late Isar flowConnect;
+  late Isar messageConnect;
+  late Isar adminConnect;
+  late dynamic dir;
 
-  DatabaseHandler(this.database);
+  DatabaseHandler(String databaseName) {
+    database = databaseName;
+  }
 
   void connect(String database) async {
-    final dir = await getApplicationSupportDirectory();
-    final isar = await Isar.open(
+    dir = await getApplicationSupportDirectory();
+    userConfigConnect = await Isar.open(
         schemas: [UserConfigSchema],
         directory: dir.path,
         inspector: true);
+    flowConnect = await Isar.open(
+        schemas: [FlowSchema],
+        directory: dir.path,
+        inspector: true);
+    messageConnect = await Isar.open(
+        schemas: [MessageSchema],
+        directory: dir.path,
+        inspector: true);
+    adminConnect = await Isar.open(
+        schemas: [AdminSchema],
+        directory: dir.path,
+        inspector: true);
   }
-
-  dynamic getName() async {
-    final username = await 
+  void write(int id, String uuid, String login, String hashPassword,
+      {String? username, bool isBot = false, String? authId, int? tokenTTL, String? email, String? avatar, String? bio, String? salt, String? key}) async {
+    final dbWrite = await userConfigConnect.userConfigs.put(null);
+  }
+  
+  dynamic read(int id) async {
+    final post = await userConfigConnect.userConfigs.get(id);
+    return post;
   }
 }

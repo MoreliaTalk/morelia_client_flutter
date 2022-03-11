@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Morelia Flutter. If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:typed_data';
 import 'package:isar/isar.dart';
 
 part 'models.g.dart';
@@ -21,7 +20,7 @@ part 'models.g.dart';
 @Collection()
 class UserConfig{
   @Id()
-  int? id;
+  int id = Isar.autoIncrement;
 
   late String uuid;
   late String login;
@@ -31,16 +30,16 @@ class UserConfig{
   late String authId;
   late int tokenTTL;
   late String email;
-  late ByteBuffer avatar;
+  late String avatar;
   late String bio;
-  late ByteBuffer salt;
-  late ByteBuffer key;
+  late String salt;
+  late String key;
 }
 
 @Collection()
 class Flow{
   @Id()
-  int? id;
+  int id = Isar.autoIncrement;
 
   late String uuid;
   late int timeCreated;
@@ -53,16 +52,16 @@ class Flow{
 @Collection()
 class Message{
   @Id()
-  int? id;
+  int id = Isar.autoIncrement;
 
   late String uuid;
   late String text;
   late int time;
-  late ByteBuffer filePicture;
-  late ByteBuffer fileVideo;
-  late ByteBuffer fileAudio;
-  late ByteBuffer fileDocument;
-  late ByteBuffer emoji;
+  late String filePicture;
+  late String fileVideo;
+  late String fileAudio;
+  late String fileDocument;
+  late String emoji;
   late int editedTime;
   late bool editedStatus;
 }
@@ -70,7 +69,7 @@ class Message{
 @Collection()
 class Admin{
   @Id()
-  int? id;
+  int id = Isar.autoIncrement;
 
   late String username;
   late String hashPassword;
