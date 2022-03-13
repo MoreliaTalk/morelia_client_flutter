@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:morelia_client_flutter/components/message_area.dart';
+import 'package:morelia_client_flutter/components/common/message_area.dart';
 
 void main() {
   testWidgets('Test widget "Message" create', (WidgetTester tester) async {
