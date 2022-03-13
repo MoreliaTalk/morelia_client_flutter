@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:morelia_client_flutter/components/common/communication_page.dart';
-import '../desktop/vertical_menu_bar.dart';
 
+import '../common/communication_page.dart';
 import '../common/chat_list.dart';
+import '../desktop/vertical_menu_bar.dart';
 
 final currentChatPage =
     StateProvider<Widget>((ref) => const Center(child: Text("Select chat")));

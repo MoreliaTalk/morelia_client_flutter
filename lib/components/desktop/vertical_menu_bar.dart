@@ -13,7 +13,7 @@ class VerticalMenuBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(28.0),
         ),
         child: IconButton(
-          onPressed: () {  },
+          onPressed: () {},
           color: Theme.of(context).colorScheme.onSecondary,
           icon: const Icon(Icons.settings),
           iconSize: 40,
