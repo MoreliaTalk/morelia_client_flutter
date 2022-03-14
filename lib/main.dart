@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:morelia_client_flutter/components/common/settings_page.dart';
 import 'package:morelia_client_flutter/components/desktop/main_page.dart';
 import 'package:morelia_client_flutter/components/mobile/chats_page.dart';
 import 'package:morelia_client_flutter/modules/platform_const.dart';
@@ -22,18 +23,21 @@ class MoreliaApp extends ConsumerWidget {
     switch (currentPlatform) {
       case TypePlatformDevices.mobile:
         _router = GoRouter(routes: [
-          GoRoute(
-              path: "/", builder: (context, state) => const MobileChatsPage()),
+          GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
           GoRoute(
               path: "/messages/:uuid",
               builder: (context, state) =>
-                  CommunicationPage(uuid: state.params['uuid']!))
+                  CommunicationPage(uuid: state.params['uuid']!)),
+          GoRoute(
+              path: "/settings", builder: (context, _) => const SettingsPage())
         ]);
         break;
       case TypePlatformDevices.desktop:
         _router = GoRouter(routes: [
           GoRoute(
-              path: "/", builder: (context, state) => const DesktopMainPage())
+              path: "/", builder: (context, state) => const DesktopMainPage()),
+          GoRoute(
+              path: "/settings", builder: (context, _) => const SettingsPage())
         ]);
         break;
       case TypePlatformDevices.notSupported:
