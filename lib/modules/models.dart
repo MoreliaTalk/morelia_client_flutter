@@ -18,44 +18,66 @@ import 'package:isar/isar.dart';
 part 'models.g.dart';
 
 @Collection()
-class UserConfig{
+class UserConfig {
   @Id()
   int id = Isar.autoIncrement;
 
+  @Index(unique: true)
   late String uuid;
+
+  @Index(type: IndexType.hash)
   late String login;
+
+  @Index(type: IndexType.hash)
+  late String? username;
+
+  @Index()
+  late String? authId;
+
+  @Index(type: IndexType.hash)
+  late String? email;
+
+  @Index(type: IndexType.hash)
+  late String? bio;
+
   late String hashPassword;
-  late String username;
   late bool isBot;
-  late String authId;
-  late int tokenTTL;
-  late String email;
-  late String avatar;
-  late String bio;
-  late String salt;
-  late String key;
+  late int? tokenTTL;
+  late String? avatar;
+  late String? salt;
+  late String? key;
 }
 
 @Collection()
-class Flow{
+class Flow {
   @Id()
   int id = Isar.autoIncrement;
 
+  @Index(unique: true)
   late String uuid;
-  late int timeCreated;
-  late String flowType;
+
+  @Index(type: IndexType.hash)
   late String title;
+
+  @Index(type: IndexType.hash)
   late String info;
+
+  late String flowType;
+  late int timeCreated;
   late String owner;
 }
 
 @Collection()
-class Message{
+class Message {
   @Id()
   int id = Isar.autoIncrement;
 
+  @Index(unique: true)
   late String uuid;
+
+  @Index(type: IndexType.hash)
   late String text;
+
   late int time;
   late String filePicture;
   late String fileVideo;
@@ -67,10 +89,21 @@ class Message{
 }
 
 @Collection()
-class Admin{
+class Admin {
   @Id()
   int id = Isar.autoIncrement;
 
+  @Index(type: IndexType.hash)
   late String username;
+
   late String hashPassword;
+}
+
+@Collection()
+class ApplicationSettings {
+  @Id()
+  int id = Isar.autoIncrement;
+
+  late String server;
+  late String port;
 }
