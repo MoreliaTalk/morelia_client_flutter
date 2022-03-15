@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:morelia_client_flutter/components/common/settings_page.dart';
 
 class VerticalMenuBar extends StatelessWidget {
   const VerticalMenuBar({Key? key}) : super(key: key);
@@ -15,7 +16,13 @@ class VerticalMenuBar extends StatelessWidget {
         ),
         child: IconButton(
           onPressed: () {
-            GoRouter.of(context).push("/settings");
+            showDialog(context: context, builder: (BuildContext context) => const Dialog(
+              child: FractionallySizedBox(
+                widthFactor: 0.3,
+                heightFactor: 1,
+                child: SettingsPage()
+              ),
+            ));
           },
           color: Theme.of(context).colorScheme.onSecondary,
           icon: const Icon(Icons.settings),

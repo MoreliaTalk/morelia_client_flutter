@@ -27,9 +27,7 @@ class MoreliaApp extends ConsumerWidget {
           GoRoute(
               path: "/messages/:uuid",
               builder: (context, state) =>
-                  CommunicationPage(uuid: state.params['uuid']!)),
-          GoRoute(
-              path: "/settings", builder: (context, _) => const SettingsPage())
+                  CommunicationPage(uuid: state.params['uuid']!))
         ]);
         break;
       case TypePlatformDevices.desktop:
