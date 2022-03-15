@@ -16,13 +16,14 @@ class VerticalMenuBar extends StatelessWidget {
         ),
         child: IconButton(
           onPressed: () {
-            showDialog(context: context, builder: (BuildContext context) => const Dialog(
-              child: FractionallySizedBox(
-                widthFactor: 0.3,
-                heightFactor: 1,
-                child: SettingsPage()
-              ),
-            ));
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => const Dialog(
+                      child: FractionallySizedBox(
+                          widthFactor: 0.3,
+                          heightFactor: 1,
+                          child: SettingsPage()),
+                    ));
           },
           color: Theme.of(context).colorScheme.onSecondary,
           icon: const Icon(Icons.settings),
