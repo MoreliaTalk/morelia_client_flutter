@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart';
 
 GoRoute settingsRoute = GoRoute(
@@ -25,14 +25,14 @@ class SettingsPage extends ConsumerWidget {
                 child: const Text("Dark Theme"),
                 value: "Dark Theme",
                 onTap: () {
-                  theme.state = ThemeData.dark();
+                  theme.state = darkTheme;
                 },
               ),
               DropdownMenuItem(
                 child: const Text("Light Theme"),
                 value: "Light Theme",
                 onTap: () {
-                  theme.state = ThemeData.light();
+                  theme.state = lightTheme;
                 },
               )
             ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../common/communication_page.dart';
 import '../common/chat_list.dart';
+import '../common/communication_page.dart';
 import '../desktop/vertical_menu_bar.dart';
 
 final currentChatPage =

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:morelia_client_flutter/components/common/settings_page.dart';
 
 class VerticalMenuBar extends StatelessWidget {
   const VerticalMenuBar({Key? key}) : super(key: key);
