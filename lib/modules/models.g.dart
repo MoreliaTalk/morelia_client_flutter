@@ -17,7 +17,7 @@ extension GetUserConfigCollection on Isar {
 final UserConfigSchema = CollectionSchema(
   name: 'UserConfig',
   schema:
-      '{"name":"UserConfig","idName":"id","properties":[{"name":"authId","type":"String"},{"name":"avatar","type":"String"},{"name":"bio","type":"String"},{"name":"email","type":"String"},{"name":"hashPassword","type":"String"},{"name":"isBot","type":"Bool"},{"name":"key","type":"String"},{"name":"login","type":"String"},{"name":"salt","type":"String"},{"name":"tokenTTL","type":"Long"},{"name":"username","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"authId","unique":false,"properties":[{"name":"authId","type":"Hash","caseSensitive":true}]},{"name":"bio","unique":false,"properties":[{"name":"bio","type":"Hash","caseSensitive":true}]},{"name":"email","unique":false,"properties":[{"name":"email","type":"Hash","caseSensitive":true}]},{"name":"login","unique":false,"properties":[{"name":"login","type":"Hash","caseSensitive":true}]},{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[]}',
+      '{"name":"UserConfig","idName":"id","properties":[{"name":"authId","type":"String"},{"name":"avatar","type":"String"},{"name":"bio","type":"String"},{"name":"email","type":"String"},{"name":"hashPassword","type":"String"},{"name":"isBot","type":"Bool"},{"name":"key","type":"String"},{"name":"login","type":"String"},{"name":"salt","type":"String"},{"name":"tokenTTL","type":"Long"},{"name":"username","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"bio","unique":false,"properties":[{"name":"bio","type":"Hash","caseSensitive":true}]},{"name":"email","unique":false,"properties":[{"name":"email","type":"Hash","caseSensitive":true}]},{"name":"login","unique":false,"properties":[{"name":"login","type":"Hash","caseSensitive":true}]},{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"flows","target":"Flow"},{"name":"messages","target":"Message"}]}',
   nativeAdapter: const _UserConfigNativeAdapter(),
   webAdapter: const _UserConfigWebAdapter(),
   idName: 'id',
@@ -36,18 +36,8 @@ final UserConfigSchema = CollectionSchema(
     'uuid': 11
   },
   listProperties: {},
-  indexIds: {
-    'authId': 0,
-    'bio': 1,
-    'email': 2,
-    'login': 3,
-    'username': 4,
-    'uuid': 5
-  },
+  indexIds: {'bio': 0, 'email': 1, 'login': 2, 'username': 3, 'uuid': 4},
   indexTypes: {
-    'authId': [
-      NativeIndexType.stringHash,
-    ],
     'bio': [
       NativeIndexType.stringHash,
     ],
@@ -64,9 +54,9 @@ final UserConfigSchema = CollectionSchema(
       NativeIndexType.stringHash,
     ]
   },
-  linkIds: {},
+  linkIds: {'flows': 0, 'messages': 1},
   backlinkIds: {},
-  linkedCollections: [],
+  linkedCollections: ['Flow', 'Message'],
   getId: (obj) {
     if (obj.id == Isar.autoIncrement) {
       return null;
@@ -75,7 +65,7 @@ final UserConfigSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [],
+  getLinks: (obj) => [obj.flows, obj.messages],
   version: 2,
 );
 
@@ -117,6 +107,8 @@ class _UserConfigWebAdapter extends IsarWebTypeAdapter<UserConfig> {
     object.tokenTTL = IsarNative.jsObjectGet(jsObj, 'tokenTTL');
     object.username = IsarNative.jsObjectGet(jsObj, 'username');
     object.uuid = IsarNative.jsObjectGet(jsObj, 'uuid') ?? '';
+    attachLinks(collection.isar,
+        IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity, object);
     return object;
   }
 
@@ -156,7 +148,22 @@ class _UserConfigWebAdapter extends IsarWebTypeAdapter<UserConfig> {
   }
 
   @override
-  void attachLinks(Isar isar, int id, UserConfig object) {}
+  void attachLinks(Isar isar, int id, UserConfig object) {
+    object.flows.attach(
+      id,
+      isar.userConfigs,
+      isar.getCollection<Flow>('Flow'),
+      'flows',
+      false,
+    );
+    object.messages.attach(
+      id,
+      isar.userConfigs,
+      isar.getCollection<Message>('Message'),
+      'messages',
+      false,
+    );
+  }
 }
 
 class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
@@ -263,6 +270,7 @@ class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
     object.tokenTTL = reader.readLongOrNull(offsets[9]);
     object.username = reader.readStringOrNull(offsets[10]);
     object.uuid = reader.readString(offsets[11]);
+    attachLinks(collection.isar, id, object);
     return object;
   }
 
@@ -302,7 +310,22 @@ class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
   }
 
   @override
-  void attachLinks(Isar isar, int id, UserConfig object) {}
+  void attachLinks(Isar isar, int id, UserConfig object) {
+    object.flows.attach(
+      id,
+      isar.userConfigs,
+      isar.getCollection<Flow>('Flow'),
+      'flows',
+      false,
+    );
+    object.messages.attach(
+      id,
+      isar.userConfigs,
+      isar.getCollection<Message>('Message'),
+      'messages',
+      false,
+    );
+  }
 }
 
 extension UserConfigByIndex on IsarCollection<UserConfig> {
@@ -347,10 +370,6 @@ extension UserConfigQueryWhereSort
     on QueryBuilder<UserConfig, UserConfig, QWhere> {
   QueryBuilder<UserConfig, UserConfig, QAfterWhere> anyId() {
     return addWhereClauseInternal(const WhereClause(indexName: null));
-  }
-
-  QueryBuilder<UserConfig, UserConfig, QAfterWhere> anyAuthId() {
-    return addWhereClauseInternal(const WhereClause(indexName: 'authId'));
   }
 
   QueryBuilder<UserConfig, UserConfig, QAfterWhere> anyBio() {
@@ -444,60 +463,6 @@ extension UserConfigQueryWhere
       includeLower: includeLower,
       upper: [upperId],
       includeUpper: includeUpper,
-    ));
-  }
-
-  QueryBuilder<UserConfig, UserConfig, QAfterWhereClause> authIdEqualTo(
-      String? authId) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: 'authId',
-      lower: [authId],
-      includeLower: true,
-      upper: [authId],
-      includeUpper: true,
-    ));
-  }
-
-  QueryBuilder<UserConfig, UserConfig, QAfterWhereClause> authIdNotEqualTo(
-      String? authId) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(WhereClause(
-        indexName: 'authId',
-        upper: [authId],
-        includeUpper: false,
-      )).addWhereClauseInternal(WhereClause(
-        indexName: 'authId',
-        lower: [authId],
-        includeLower: false,
-      ));
-    } else {
-      return addWhereClauseInternal(WhereClause(
-        indexName: 'authId',
-        lower: [authId],
-        includeLower: false,
-      )).addWhereClauseInternal(WhereClause(
-        indexName: 'authId',
-        upper: [authId],
-        includeUpper: false,
-      ));
-    }
-  }
-
-  QueryBuilder<UserConfig, UserConfig, QAfterWhereClause> authIdIsNull() {
-    return addWhereClauseInternal(const WhereClause(
-      indexName: 'authId',
-      upper: [null],
-      includeUpper: true,
-      lower: [null],
-      includeLower: true,
-    ));
-  }
-
-  QueryBuilder<UserConfig, UserConfig, QAfterWhereClause> authIdIsNotNull() {
-    return addWhereClauseInternal(const WhereClause(
-      indexName: 'authId',
-      lower: [null],
-      includeLower: false,
     ));
   }
 
@@ -1946,7 +1911,25 @@ extension UserConfigQueryFilter
 }
 
 extension UserConfigQueryLinks
-    on QueryBuilder<UserConfig, UserConfig, QFilterCondition> {}
+    on QueryBuilder<UserConfig, UserConfig, QFilterCondition> {
+  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> flows(
+      FilterQuery<Flow> q) {
+    return linkInternal(
+      isar.flows,
+      q,
+      'flows',
+    );
+  }
+
+  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> messages(
+      FilterQuery<Message> q) {
+    return linkInternal(
+      isar.messages,
+      q,
+      'messages',
+    );
+  }
+}
 
 extension UserConfigQueryWhereSortBy
     on QueryBuilder<UserConfig, UserConfig, QSortBy> {
@@ -2293,7 +2276,7 @@ extension GetFlowCollection on Isar {
 final FlowSchema = CollectionSchema(
   name: 'Flow',
   schema:
-      '{"name":"Flow","idName":"id","properties":[{"name":"flowType","type":"String"},{"name":"info","type":"String"},{"name":"owner","type":"String"},{"name":"timeCreated","type":"Long"},{"name":"title","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"info","unique":false,"properties":[{"name":"info","type":"Hash","caseSensitive":true}]},{"name":"title","unique":false,"properties":[{"name":"title","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[]}',
+      '{"name":"Flow","idName":"id","properties":[{"name":"flowType","type":"String"},{"name":"info","type":"String"},{"name":"owner","type":"String"},{"name":"timeCreated","type":"Long"},{"name":"title","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"info","unique":false,"properties":[{"name":"info","type":"Hash","caseSensitive":true}]},{"name":"title","unique":false,"properties":[{"name":"title","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"messages","target":"Message"},{"name":"users","target":"UserConfig"}]}',
   nativeAdapter: const _FlowNativeAdapter(),
   webAdapter: const _FlowWebAdapter(),
   idName: 'id',
@@ -2318,9 +2301,9 @@ final FlowSchema = CollectionSchema(
       NativeIndexType.stringHash,
     ]
   },
-  linkIds: {},
+  linkIds: {'messages': 0, 'users': 1},
   backlinkIds: {},
-  linkedCollections: [],
+  linkedCollections: ['Message', 'UserConfig'],
   getId: (obj) {
     if (obj.id == Isar.autoIncrement) {
       return null;
@@ -2329,7 +2312,7 @@ final FlowSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [],
+  getLinks: (obj) => [obj.messages, obj.users],
   version: 2,
 );
 
@@ -2354,12 +2337,14 @@ class _FlowWebAdapter extends IsarWebTypeAdapter<Flow> {
     final object = Flow();
     object.flowType = IsarNative.jsObjectGet(jsObj, 'flowType') ?? '';
     object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
-    object.info = IsarNative.jsObjectGet(jsObj, 'info') ?? '';
+    object.info = IsarNative.jsObjectGet(jsObj, 'info');
     object.owner = IsarNative.jsObjectGet(jsObj, 'owner') ?? '';
     object.timeCreated =
         IsarNative.jsObjectGet(jsObj, 'timeCreated') ?? double.negativeInfinity;
-    object.title = IsarNative.jsObjectGet(jsObj, 'title') ?? '';
+    object.title = IsarNative.jsObjectGet(jsObj, 'title');
     object.uuid = IsarNative.jsObjectGet(jsObj, 'uuid') ?? '';
+    attachLinks(collection.isar,
+        IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity, object);
     return object;
   }
 
@@ -2372,14 +2357,14 @@ class _FlowWebAdapter extends IsarWebTypeAdapter<Flow> {
         return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
             as P;
       case 'info':
-        return (IsarNative.jsObjectGet(jsObj, 'info') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'info')) as P;
       case 'owner':
         return (IsarNative.jsObjectGet(jsObj, 'owner') ?? '') as P;
       case 'timeCreated':
         return (IsarNative.jsObjectGet(jsObj, 'timeCreated') ??
             double.negativeInfinity) as P;
       case 'title':
-        return (IsarNative.jsObjectGet(jsObj, 'title') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'title')) as P;
       case 'uuid':
         return (IsarNative.jsObjectGet(jsObj, 'uuid') ?? '') as P;
       default:
@@ -2388,7 +2373,22 @@ class _FlowWebAdapter extends IsarWebTypeAdapter<Flow> {
   }
 
   @override
-  void attachLinks(Isar isar, int id, Flow object) {}
+  void attachLinks(Isar isar, int id, Flow object) {
+    object.messages.attach(
+      id,
+      isar.flows,
+      isar.getCollection<Message>('Message'),
+      'messages',
+      false,
+    );
+    object.users.attach(
+      id,
+      isar.flows,
+      isar.getCollection<UserConfig>('UserConfig'),
+      'users',
+      false,
+    );
+  }
 }
 
 class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
@@ -2402,16 +2402,22 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
     final _flowType = IsarBinaryWriter.utf8Encoder.convert(value0);
     dynamicSize += (_flowType.length) as int;
     final value1 = object.info;
-    final _info = IsarBinaryWriter.utf8Encoder.convert(value1);
-    dynamicSize += (_info.length) as int;
+    IsarUint8List? _info;
+    if (value1 != null) {
+      _info = IsarBinaryWriter.utf8Encoder.convert(value1);
+    }
+    dynamicSize += (_info?.length ?? 0) as int;
     final value2 = object.owner;
     final _owner = IsarBinaryWriter.utf8Encoder.convert(value2);
     dynamicSize += (_owner.length) as int;
     final value3 = object.timeCreated;
     final _timeCreated = value3;
     final value4 = object.title;
-    final _title = IsarBinaryWriter.utf8Encoder.convert(value4);
-    dynamicSize += (_title.length) as int;
+    IsarUint8List? _title;
+    if (value4 != null) {
+      _title = IsarBinaryWriter.utf8Encoder.convert(value4);
+    }
+    dynamicSize += (_title?.length ?? 0) as int;
     final value5 = object.uuid;
     final _uuid = IsarBinaryWriter.utf8Encoder.convert(value5);
     dynamicSize += (_uuid.length) as int;
@@ -2435,11 +2441,12 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
     final object = Flow();
     object.flowType = reader.readString(offsets[0]);
     object.id = id;
-    object.info = reader.readString(offsets[1]);
+    object.info = reader.readStringOrNull(offsets[1]);
     object.owner = reader.readString(offsets[2]);
     object.timeCreated = reader.readLong(offsets[3]);
-    object.title = reader.readString(offsets[4]);
+    object.title = reader.readStringOrNull(offsets[4]);
     object.uuid = reader.readString(offsets[5]);
+    attachLinks(collection.isar, id, object);
     return object;
   }
 
@@ -2452,13 +2459,13 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
       case 0:
         return (reader.readString(offset)) as P;
       case 1:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 2:
         return (reader.readString(offset)) as P;
       case 3:
         return (reader.readLong(offset)) as P;
       case 4:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 5:
         return (reader.readString(offset)) as P;
       default:
@@ -2467,7 +2474,22 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
   }
 
   @override
-  void attachLinks(Isar isar, int id, Flow object) {}
+  void attachLinks(Isar isar, int id, Flow object) {
+    object.messages.attach(
+      id,
+      isar.flows,
+      isar.getCollection<Message>('Message'),
+      'messages',
+      false,
+    );
+    object.users.attach(
+      id,
+      isar.flows,
+      isar.getCollection<UserConfig>('UserConfig'),
+      'users',
+      false,
+    );
+  }
 }
 
 extension FlowByIndex on IsarCollection<Flow> {
@@ -2598,7 +2620,7 @@ extension FlowQueryWhere on QueryBuilder<Flow, Flow, QWhereClause> {
     ));
   }
 
-  QueryBuilder<Flow, Flow, QAfterWhereClause> infoEqualTo(String info) {
+  QueryBuilder<Flow, Flow, QAfterWhereClause> infoEqualTo(String? info) {
     return addWhereClauseInternal(WhereClause(
       indexName: 'info',
       lower: [info],
@@ -2608,7 +2630,7 @@ extension FlowQueryWhere on QueryBuilder<Flow, Flow, QWhereClause> {
     ));
   }
 
-  QueryBuilder<Flow, Flow, QAfterWhereClause> infoNotEqualTo(String info) {
+  QueryBuilder<Flow, Flow, QAfterWhereClause> infoNotEqualTo(String? info) {
     if (whereSortInternal == Sort.asc) {
       return addWhereClauseInternal(WhereClause(
         indexName: 'info',
@@ -2632,7 +2654,25 @@ extension FlowQueryWhere on QueryBuilder<Flow, Flow, QWhereClause> {
     }
   }
 
-  QueryBuilder<Flow, Flow, QAfterWhereClause> titleEqualTo(String title) {
+  QueryBuilder<Flow, Flow, QAfterWhereClause> infoIsNull() {
+    return addWhereClauseInternal(const WhereClause(
+      indexName: 'info',
+      upper: [null],
+      includeUpper: true,
+      lower: [null],
+      includeLower: true,
+    ));
+  }
+
+  QueryBuilder<Flow, Flow, QAfterWhereClause> infoIsNotNull() {
+    return addWhereClauseInternal(const WhereClause(
+      indexName: 'info',
+      lower: [null],
+      includeLower: false,
+    ));
+  }
+
+  QueryBuilder<Flow, Flow, QAfterWhereClause> titleEqualTo(String? title) {
     return addWhereClauseInternal(WhereClause(
       indexName: 'title',
       lower: [title],
@@ -2642,7 +2682,7 @@ extension FlowQueryWhere on QueryBuilder<Flow, Flow, QWhereClause> {
     ));
   }
 
-  QueryBuilder<Flow, Flow, QAfterWhereClause> titleNotEqualTo(String title) {
+  QueryBuilder<Flow, Flow, QAfterWhereClause> titleNotEqualTo(String? title) {
     if (whereSortInternal == Sort.asc) {
       return addWhereClauseInternal(WhereClause(
         indexName: 'title',
@@ -2664,6 +2704,24 @@ extension FlowQueryWhere on QueryBuilder<Flow, Flow, QWhereClause> {
         includeUpper: false,
       ));
     }
+  }
+
+  QueryBuilder<Flow, Flow, QAfterWhereClause> titleIsNull() {
+    return addWhereClauseInternal(const WhereClause(
+      indexName: 'title',
+      upper: [null],
+      includeUpper: true,
+      lower: [null],
+      includeLower: true,
+    ));
+  }
+
+  QueryBuilder<Flow, Flow, QAfterWhereClause> titleIsNotNull() {
+    return addWhereClauseInternal(const WhereClause(
+      indexName: 'title',
+      lower: [null],
+      includeLower: false,
+    ));
   }
 
   QueryBuilder<Flow, Flow, QAfterWhereClause> uuidEqualTo(String uuid) {
@@ -2851,8 +2909,16 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
     ));
   }
 
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> infoIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'info',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Flow, Flow, QAfterFilterCondition> infoEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -2864,7 +2930,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> infoGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -2878,7 +2944,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> infoLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -2892,8 +2958,8 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> infoBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -3101,8 +3167,16 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
     ));
   }
 
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> titleIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'title',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Flow, Flow, QAfterFilterCondition> titleEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -3114,7 +3188,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> titleGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -3128,7 +3202,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> titleLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -3142,8 +3216,8 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> titleBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -3304,7 +3378,25 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 }
 
-extension FlowQueryLinks on QueryBuilder<Flow, Flow, QFilterCondition> {}
+extension FlowQueryLinks on QueryBuilder<Flow, Flow, QFilterCondition> {
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> messages(
+      FilterQuery<Message> q) {
+    return linkInternal(
+      isar.messages,
+      q,
+      'messages',
+    );
+  }
+
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> users(
+      FilterQuery<UserConfig> q) {
+    return linkInternal(
+      isar.userConfigs,
+      q,
+      'users',
+    );
+  }
+}
 
 extension FlowQueryWhereSortBy on QueryBuilder<Flow, Flow, QSortBy> {
   QueryBuilder<Flow, Flow, QAfterSortBy> sortByFlowType() {
@@ -3466,7 +3558,7 @@ extension FlowQueryProperty on QueryBuilder<Flow, Flow, QQueryProperty> {
     return addPropertyNameInternal('id');
   }
 
-  QueryBuilder<Flow, String, QQueryOperations> infoProperty() {
+  QueryBuilder<Flow, String?, QQueryOperations> infoProperty() {
     return addPropertyNameInternal('info');
   }
 
@@ -3478,7 +3570,7 @@ extension FlowQueryProperty on QueryBuilder<Flow, Flow, QQueryProperty> {
     return addPropertyNameInternal('timeCreated');
   }
 
-  QueryBuilder<Flow, String, QQueryOperations> titleProperty() {
+  QueryBuilder<Flow, String?, QQueryOperations> titleProperty() {
     return addPropertyNameInternal('title');
   }
 
@@ -3525,8 +3617,8 @@ final MessageSchema = CollectionSchema(
     ]
   },
   linkIds: {},
-  backlinkIds: {},
-  linkedCollections: [],
+  backlinkIds: {'flow': 0, 'user': 1},
+  linkedCollections: ['Flow', 'UserConfig'],
   getId: (obj) {
     if (obj.id == Isar.autoIncrement) {
       return null;
@@ -3535,7 +3627,7 @@ final MessageSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [],
+  getLinks: (obj) => [obj.flow, obj.user],
   version: 2,
 );
 
@@ -3564,18 +3656,19 @@ class _MessageWebAdapter extends IsarWebTypeAdapter<Message> {
     final object = Message();
     object.editedStatus =
         IsarNative.jsObjectGet(jsObj, 'editedStatus') ?? false;
-    object.editedTime =
-        IsarNative.jsObjectGet(jsObj, 'editedTime') ?? double.negativeInfinity;
-    object.emoji = IsarNative.jsObjectGet(jsObj, 'emoji') ?? '';
-    object.fileAudio = IsarNative.jsObjectGet(jsObj, 'fileAudio') ?? '';
-    object.fileDocument = IsarNative.jsObjectGet(jsObj, 'fileDocument') ?? '';
-    object.filePicture = IsarNative.jsObjectGet(jsObj, 'filePicture') ?? '';
-    object.fileVideo = IsarNative.jsObjectGet(jsObj, 'fileVideo') ?? '';
+    object.editedTime = IsarNative.jsObjectGet(jsObj, 'editedTime');
+    object.emoji = IsarNative.jsObjectGet(jsObj, 'emoji');
+    object.fileAudio = IsarNative.jsObjectGet(jsObj, 'fileAudio');
+    object.fileDocument = IsarNative.jsObjectGet(jsObj, 'fileDocument');
+    object.filePicture = IsarNative.jsObjectGet(jsObj, 'filePicture');
+    object.fileVideo = IsarNative.jsObjectGet(jsObj, 'fileVideo');
     object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
-    object.text = IsarNative.jsObjectGet(jsObj, 'text') ?? '';
+    object.text = IsarNative.jsObjectGet(jsObj, 'text');
     object.time =
         IsarNative.jsObjectGet(jsObj, 'time') ?? double.negativeInfinity;
     object.uuid = IsarNative.jsObjectGet(jsObj, 'uuid') ?? '';
+    attachLinks(collection.isar,
+        IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity, object);
     return object;
   }
 
@@ -3585,23 +3678,22 @@ class _MessageWebAdapter extends IsarWebTypeAdapter<Message> {
       case 'editedStatus':
         return (IsarNative.jsObjectGet(jsObj, 'editedStatus') ?? false) as P;
       case 'editedTime':
-        return (IsarNative.jsObjectGet(jsObj, 'editedTime') ??
-            double.negativeInfinity) as P;
+        return (IsarNative.jsObjectGet(jsObj, 'editedTime')) as P;
       case 'emoji':
-        return (IsarNative.jsObjectGet(jsObj, 'emoji') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'emoji')) as P;
       case 'fileAudio':
-        return (IsarNative.jsObjectGet(jsObj, 'fileAudio') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'fileAudio')) as P;
       case 'fileDocument':
-        return (IsarNative.jsObjectGet(jsObj, 'fileDocument') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'fileDocument')) as P;
       case 'filePicture':
-        return (IsarNative.jsObjectGet(jsObj, 'filePicture') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'filePicture')) as P;
       case 'fileVideo':
-        return (IsarNative.jsObjectGet(jsObj, 'fileVideo') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'fileVideo')) as P;
       case 'id':
         return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
             as P;
       case 'text':
-        return (IsarNative.jsObjectGet(jsObj, 'text') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'text')) as P;
       case 'time':
         return (IsarNative.jsObjectGet(jsObj, 'time') ??
             double.negativeInfinity) as P;
@@ -3613,7 +3705,22 @@ class _MessageWebAdapter extends IsarWebTypeAdapter<Message> {
   }
 
   @override
-  void attachLinks(Isar isar, int id, Message object) {}
+  void attachLinks(Isar isar, int id, Message object) {
+    object.flow.attach(
+      id,
+      isar.messages,
+      isar.getCollection<Flow>('Flow'),
+      'flow',
+      true,
+    );
+    object.user.attach(
+      id,
+      isar.messages,
+      isar.getCollection<UserConfig>('UserConfig'),
+      'user',
+      true,
+    );
+  }
 }
 
 class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
@@ -3628,23 +3735,41 @@ class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
     final value1 = object.editedTime;
     final _editedTime = value1;
     final value2 = object.emoji;
-    final _emoji = IsarBinaryWriter.utf8Encoder.convert(value2);
-    dynamicSize += (_emoji.length) as int;
+    IsarUint8List? _emoji;
+    if (value2 != null) {
+      _emoji = IsarBinaryWriter.utf8Encoder.convert(value2);
+    }
+    dynamicSize += (_emoji?.length ?? 0) as int;
     final value3 = object.fileAudio;
-    final _fileAudio = IsarBinaryWriter.utf8Encoder.convert(value3);
-    dynamicSize += (_fileAudio.length) as int;
+    IsarUint8List? _fileAudio;
+    if (value3 != null) {
+      _fileAudio = IsarBinaryWriter.utf8Encoder.convert(value3);
+    }
+    dynamicSize += (_fileAudio?.length ?? 0) as int;
     final value4 = object.fileDocument;
-    final _fileDocument = IsarBinaryWriter.utf8Encoder.convert(value4);
-    dynamicSize += (_fileDocument.length) as int;
+    IsarUint8List? _fileDocument;
+    if (value4 != null) {
+      _fileDocument = IsarBinaryWriter.utf8Encoder.convert(value4);
+    }
+    dynamicSize += (_fileDocument?.length ?? 0) as int;
     final value5 = object.filePicture;
-    final _filePicture = IsarBinaryWriter.utf8Encoder.convert(value5);
-    dynamicSize += (_filePicture.length) as int;
+    IsarUint8List? _filePicture;
+    if (value5 != null) {
+      _filePicture = IsarBinaryWriter.utf8Encoder.convert(value5);
+    }
+    dynamicSize += (_filePicture?.length ?? 0) as int;
     final value6 = object.fileVideo;
-    final _fileVideo = IsarBinaryWriter.utf8Encoder.convert(value6);
-    dynamicSize += (_fileVideo.length) as int;
+    IsarUint8List? _fileVideo;
+    if (value6 != null) {
+      _fileVideo = IsarBinaryWriter.utf8Encoder.convert(value6);
+    }
+    dynamicSize += (_fileVideo?.length ?? 0) as int;
     final value7 = object.text;
-    final _text = IsarBinaryWriter.utf8Encoder.convert(value7);
-    dynamicSize += (_text.length) as int;
+    IsarUint8List? _text;
+    if (value7 != null) {
+      _text = IsarBinaryWriter.utf8Encoder.convert(value7);
+    }
+    dynamicSize += (_text?.length ?? 0) as int;
     final value8 = object.time;
     final _time = value8;
     final value9 = object.uuid;
@@ -3673,16 +3798,17 @@ class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
       IsarBinaryReader reader, List<int> offsets) {
     final object = Message();
     object.editedStatus = reader.readBool(offsets[0]);
-    object.editedTime = reader.readLong(offsets[1]);
-    object.emoji = reader.readString(offsets[2]);
-    object.fileAudio = reader.readString(offsets[3]);
-    object.fileDocument = reader.readString(offsets[4]);
-    object.filePicture = reader.readString(offsets[5]);
-    object.fileVideo = reader.readString(offsets[6]);
+    object.editedTime = reader.readLongOrNull(offsets[1]);
+    object.emoji = reader.readStringOrNull(offsets[2]);
+    object.fileAudio = reader.readStringOrNull(offsets[3]);
+    object.fileDocument = reader.readStringOrNull(offsets[4]);
+    object.filePicture = reader.readStringOrNull(offsets[5]);
+    object.fileVideo = reader.readStringOrNull(offsets[6]);
     object.id = id;
-    object.text = reader.readString(offsets[7]);
+    object.text = reader.readStringOrNull(offsets[7]);
     object.time = reader.readLong(offsets[8]);
     object.uuid = reader.readString(offsets[9]);
+    attachLinks(collection.isar, id, object);
     return object;
   }
 
@@ -3695,19 +3821,19 @@ class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
       case 0:
         return (reader.readBool(offset)) as P;
       case 1:
-        return (reader.readLong(offset)) as P;
+        return (reader.readLongOrNull(offset)) as P;
       case 2:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 3:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 4:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 5:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 6:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 7:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 8:
         return (reader.readLong(offset)) as P;
       case 9:
@@ -3718,7 +3844,22 @@ class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
   }
 
   @override
-  void attachLinks(Isar isar, int id, Message object) {}
+  void attachLinks(Isar isar, int id, Message object) {
+    object.flow.attach(
+      id,
+      isar.messages,
+      isar.getCollection<Flow>('Flow'),
+      'flow',
+      true,
+    );
+    object.user.attach(
+      id,
+      isar.messages,
+      isar.getCollection<UserConfig>('UserConfig'),
+      'user',
+      true,
+    );
+  }
 }
 
 extension MessageByIndex on IsarCollection<Message> {
@@ -3845,7 +3986,7 @@ extension MessageQueryWhere on QueryBuilder<Message, Message, QWhereClause> {
     ));
   }
 
-  QueryBuilder<Message, Message, QAfterWhereClause> textEqualTo(String text) {
+  QueryBuilder<Message, Message, QAfterWhereClause> textEqualTo(String? text) {
     return addWhereClauseInternal(WhereClause(
       indexName: 'text',
       lower: [text],
@@ -3856,7 +3997,7 @@ extension MessageQueryWhere on QueryBuilder<Message, Message, QWhereClause> {
   }
 
   QueryBuilder<Message, Message, QAfterWhereClause> textNotEqualTo(
-      String text) {
+      String? text) {
     if (whereSortInternal == Sort.asc) {
       return addWhereClauseInternal(WhereClause(
         indexName: 'text',
@@ -3878,6 +4019,24 @@ extension MessageQueryWhere on QueryBuilder<Message, Message, QWhereClause> {
         includeUpper: false,
       ));
     }
+  }
+
+  QueryBuilder<Message, Message, QAfterWhereClause> textIsNull() {
+    return addWhereClauseInternal(const WhereClause(
+      indexName: 'text',
+      upper: [null],
+      includeUpper: true,
+      lower: [null],
+      includeLower: true,
+    ));
+  }
+
+  QueryBuilder<Message, Message, QAfterWhereClause> textIsNotNull() {
+    return addWhereClauseInternal(const WhereClause(
+      indexName: 'text',
+      lower: [null],
+      includeLower: false,
+    ));
   }
 
   QueryBuilder<Message, Message, QAfterWhereClause> uuidEqualTo(String uuid) {
@@ -3927,8 +4086,16 @@ extension MessageQueryFilter
     ));
   }
 
+  QueryBuilder<Message, Message, QAfterFilterCondition> editedTimeIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'editedTime',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Message, Message, QAfterFilterCondition> editedTimeEqualTo(
-      int value) {
+      int? value) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.eq,
       property: 'editedTime',
@@ -3937,7 +4104,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> editedTimeGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -3949,7 +4116,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> editedTimeLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -3961,8 +4128,8 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> editedTimeBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -3975,8 +4142,16 @@ extension MessageQueryFilter
     ));
   }
 
+  QueryBuilder<Message, Message, QAfterFilterCondition> emojiIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'emoji',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Message, Message, QAfterFilterCondition> emojiEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -3988,7 +4163,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> emojiGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4002,7 +4177,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> emojiLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4016,8 +4191,8 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> emojiBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -4078,8 +4253,16 @@ extension MessageQueryFilter
     ));
   }
 
+  QueryBuilder<Message, Message, QAfterFilterCondition> fileAudioIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'fileAudio',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Message, Message, QAfterFilterCondition> fileAudioEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -4091,7 +4274,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileAudioGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4105,7 +4288,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileAudioLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4119,8 +4302,8 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileAudioBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -4181,8 +4364,16 @@ extension MessageQueryFilter
     ));
   }
 
+  QueryBuilder<Message, Message, QAfterFilterCondition> fileDocumentIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'fileDocument',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Message, Message, QAfterFilterCondition> fileDocumentEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -4194,7 +4385,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileDocumentGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4208,7 +4399,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileDocumentLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4222,8 +4413,8 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileDocumentBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -4284,8 +4475,16 @@ extension MessageQueryFilter
     ));
   }
 
+  QueryBuilder<Message, Message, QAfterFilterCondition> filePictureIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'filePicture',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Message, Message, QAfterFilterCondition> filePictureEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -4297,7 +4496,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> filePictureGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4311,7 +4510,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> filePictureLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4325,8 +4524,8 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> filePictureBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -4387,8 +4586,16 @@ extension MessageQueryFilter
     ));
   }
 
+  QueryBuilder<Message, Message, QAfterFilterCondition> fileVideoIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'fileVideo',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Message, Message, QAfterFilterCondition> fileVideoEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -4400,7 +4607,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileVideoGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4414,7 +4621,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileVideoLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4428,8 +4635,8 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> fileVideoBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -4537,8 +4744,16 @@ extension MessageQueryFilter
     ));
   }
 
+  QueryBuilder<Message, Message, QAfterFilterCondition> textIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'text',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Message, Message, QAfterFilterCondition> textEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -4550,7 +4765,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> textGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4564,7 +4779,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> textLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -4578,8 +4793,8 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> textBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -4792,7 +5007,25 @@ extension MessageQueryFilter
 }
 
 extension MessageQueryLinks
-    on QueryBuilder<Message, Message, QFilterCondition> {}
+    on QueryBuilder<Message, Message, QFilterCondition> {
+  QueryBuilder<Message, Message, QAfterFilterCondition> flow(
+      FilterQuery<Flow> q) {
+    return linkInternal(
+      isar.flows,
+      q,
+      'flow',
+    );
+  }
+
+  QueryBuilder<Message, Message, QAfterFilterCondition> user(
+      FilterQuery<UserConfig> q) {
+    return linkInternal(
+      isar.userConfigs,
+      q,
+      'user',
+    );
+  }
+}
 
 extension MessageQueryWhereSortBy on QueryBuilder<Message, Message, QSortBy> {
   QueryBuilder<Message, Message, QAfterSortBy> sortByEditedStatus() {
@@ -5035,27 +5268,27 @@ extension MessageQueryProperty
     return addPropertyNameInternal('editedStatus');
   }
 
-  QueryBuilder<Message, int, QQueryOperations> editedTimeProperty() {
+  QueryBuilder<Message, int?, QQueryOperations> editedTimeProperty() {
     return addPropertyNameInternal('editedTime');
   }
 
-  QueryBuilder<Message, String, QQueryOperations> emojiProperty() {
+  QueryBuilder<Message, String?, QQueryOperations> emojiProperty() {
     return addPropertyNameInternal('emoji');
   }
 
-  QueryBuilder<Message, String, QQueryOperations> fileAudioProperty() {
+  QueryBuilder<Message, String?, QQueryOperations> fileAudioProperty() {
     return addPropertyNameInternal('fileAudio');
   }
 
-  QueryBuilder<Message, String, QQueryOperations> fileDocumentProperty() {
+  QueryBuilder<Message, String?, QQueryOperations> fileDocumentProperty() {
     return addPropertyNameInternal('fileDocument');
   }
 
-  QueryBuilder<Message, String, QQueryOperations> filePictureProperty() {
+  QueryBuilder<Message, String?, QQueryOperations> filePictureProperty() {
     return addPropertyNameInternal('filePicture');
   }
 
-  QueryBuilder<Message, String, QQueryOperations> fileVideoProperty() {
+  QueryBuilder<Message, String?, QQueryOperations> fileVideoProperty() {
     return addPropertyNameInternal('fileVideo');
   }
 
@@ -5063,7 +5296,7 @@ extension MessageQueryProperty
     return addPropertyNameInternal('id');
   }
 
-  QueryBuilder<Message, String, QQueryOperations> textProperty() {
+  QueryBuilder<Message, String?, QQueryOperations> textProperty() {
     return addPropertyNameInternal('text');
   }
 
@@ -5078,606 +5311,18 @@ extension MessageQueryProperty
 
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast
 
-extension GetAdminCollection on Isar {
-  IsarCollection<Admin> get admins {
-    return getCollection('Admin');
+extension GetApplicationSettingCollection on Isar {
+  IsarCollection<ApplicationSetting> get applicationSettings {
+    return getCollection('ApplicationSetting');
   }
 }
 
-final AdminSchema = CollectionSchema(
-  name: 'Admin',
+final ApplicationSettingSchema = CollectionSchema(
+  name: 'ApplicationSetting',
   schema:
-      '{"name":"Admin","idName":"id","properties":[{"name":"hashPassword","type":"String"},{"name":"username","type":"String"}],"indexes":[{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]}],"links":[]}',
-  nativeAdapter: const _AdminNativeAdapter(),
-  webAdapter: const _AdminWebAdapter(),
-  idName: 'id',
-  propertyIds: {'hashPassword': 0, 'username': 1},
-  listProperties: {},
-  indexIds: {'username': 0},
-  indexTypes: {
-    'username': [
-      NativeIndexType.stringHash,
-    ]
-  },
-  linkIds: {},
-  backlinkIds: {},
-  linkedCollections: [],
-  getId: (obj) {
-    if (obj.id == Isar.autoIncrement) {
-      return null;
-    } else {
-      return obj.id;
-    }
-  },
-  setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [],
-  version: 2,
-);
-
-class _AdminWebAdapter extends IsarWebTypeAdapter<Admin> {
-  const _AdminWebAdapter();
-
-  @override
-  Object serialize(IsarCollection<Admin> collection, Admin object) {
-    final jsObj = IsarNative.newJsObject();
-    IsarNative.jsObjectSet(jsObj, 'hashPassword', object.hashPassword);
-    IsarNative.jsObjectSet(jsObj, 'id', object.id);
-    IsarNative.jsObjectSet(jsObj, 'username', object.username);
-    return jsObj;
-  }
-
-  @override
-  Admin deserialize(IsarCollection<Admin> collection, dynamic jsObj) {
-    final object = Admin();
-    object.hashPassword = IsarNative.jsObjectGet(jsObj, 'hashPassword') ?? '';
-    object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
-    object.username = IsarNative.jsObjectGet(jsObj, 'username') ?? '';
-    return object;
-  }
-
-  @override
-  P deserializeProperty<P>(Object jsObj, String propertyName) {
-    switch (propertyName) {
-      case 'hashPassword':
-        return (IsarNative.jsObjectGet(jsObj, 'hashPassword') ?? '') as P;
-      case 'id':
-        return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
-            as P;
-      case 'username':
-        return (IsarNative.jsObjectGet(jsObj, 'username') ?? '') as P;
-      default:
-        throw 'Illegal propertyName';
-    }
-  }
-
-  @override
-  void attachLinks(Isar isar, int id, Admin object) {}
-}
-
-class _AdminNativeAdapter extends IsarNativeTypeAdapter<Admin> {
-  const _AdminNativeAdapter();
-
-  @override
-  void serialize(IsarCollection<Admin> collection, IsarRawObject rawObj,
-      Admin object, int staticSize, List<int> offsets, AdapterAlloc alloc) {
-    var dynamicSize = 0;
-    final value0 = object.hashPassword;
-    final _hashPassword = IsarBinaryWriter.utf8Encoder.convert(value0);
-    dynamicSize += (_hashPassword.length) as int;
-    final value1 = object.username;
-    final _username = IsarBinaryWriter.utf8Encoder.convert(value1);
-    dynamicSize += (_username.length) as int;
-    final size = staticSize + dynamicSize;
-
-    rawObj.buffer = alloc(size);
-    rawObj.buffer_length = size;
-    final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
-    final writer = IsarBinaryWriter(buffer, staticSize);
-    writer.writeBytes(offsets[0], _hashPassword);
-    writer.writeBytes(offsets[1], _username);
-  }
-
-  @override
-  Admin deserialize(IsarCollection<Admin> collection, int id,
-      IsarBinaryReader reader, List<int> offsets) {
-    final object = Admin();
-    object.hashPassword = reader.readString(offsets[0]);
-    object.id = id;
-    object.username = reader.readString(offsets[1]);
-    return object;
-  }
-
-  @override
-  P deserializeProperty<P>(
-      int id, IsarBinaryReader reader, int propertyIndex, int offset) {
-    switch (propertyIndex) {
-      case -1:
-        return id as P;
-      case 0:
-        return (reader.readString(offset)) as P;
-      case 1:
-        return (reader.readString(offset)) as P;
-      default:
-        throw 'Illegal propertyIndex';
-    }
-  }
-
-  @override
-  void attachLinks(Isar isar, int id, Admin object) {}
-}
-
-extension AdminQueryWhereSort on QueryBuilder<Admin, Admin, QWhere> {
-  QueryBuilder<Admin, Admin, QAfterWhere> anyId() {
-    return addWhereClauseInternal(const WhereClause(indexName: null));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterWhere> anyUsername() {
-    return addWhereClauseInternal(const WhereClause(indexName: 'username'));
-  }
-}
-
-extension AdminQueryWhere on QueryBuilder<Admin, Admin, QWhereClause> {
-  QueryBuilder<Admin, Admin, QAfterWhereClause> idEqualTo(int id) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: null,
-      lower: [id],
-      includeLower: true,
-      upper: [id],
-      includeUpper: true,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterWhereClause> idNotEqualTo(int id) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(WhereClause(
-        indexName: null,
-        upper: [id],
-        includeUpper: false,
-      )).addWhereClauseInternal(WhereClause(
-        indexName: null,
-        lower: [id],
-        includeLower: false,
-      ));
-    } else {
-      return addWhereClauseInternal(WhereClause(
-        indexName: null,
-        lower: [id],
-        includeLower: false,
-      )).addWhereClauseInternal(WhereClause(
-        indexName: null,
-        upper: [id],
-        includeUpper: false,
-      ));
-    }
-  }
-
-  QueryBuilder<Admin, Admin, QAfterWhereClause> idGreaterThan(
-    int id, {
-    bool include = false,
-  }) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: null,
-      lower: [id],
-      includeLower: include,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterWhereClause> idLessThan(
-    int id, {
-    bool include = false,
-  }) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: null,
-      upper: [id],
-      includeUpper: include,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterWhereClause> idBetween(
-    int lowerId,
-    int upperId, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: null,
-      lower: [lowerId],
-      includeLower: includeLower,
-      upper: [upperId],
-      includeUpper: includeUpper,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterWhereClause> usernameEqualTo(
-      String username) {
-    return addWhereClauseInternal(WhereClause(
-      indexName: 'username',
-      lower: [username],
-      includeLower: true,
-      upper: [username],
-      includeUpper: true,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterWhereClause> usernameNotEqualTo(
-      String username) {
-    if (whereSortInternal == Sort.asc) {
-      return addWhereClauseInternal(WhereClause(
-        indexName: 'username',
-        upper: [username],
-        includeUpper: false,
-      )).addWhereClauseInternal(WhereClause(
-        indexName: 'username',
-        lower: [username],
-        includeLower: false,
-      ));
-    } else {
-      return addWhereClauseInternal(WhereClause(
-        indexName: 'username',
-        lower: [username],
-        includeLower: false,
-      )).addWhereClauseInternal(WhereClause(
-        indexName: 'username',
-        upper: [username],
-        includeUpper: false,
-      ));
-    }
-  }
-}
-
-extension AdminQueryFilter on QueryBuilder<Admin, Admin, QFilterCondition> {
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> hashPasswordEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'hashPassword',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> hashPasswordGreaterThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'hashPassword',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> hashPasswordLessThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'hashPassword',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> hashPasswordBetween(
-    String lower,
-    String upper, {
-    bool caseSensitive = true,
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'hashPassword',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> hashPasswordStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.startsWith,
-      property: 'hashPassword',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> hashPasswordEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.endsWith,
-      property: 'hashPassword',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> hashPasswordContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.contains,
-      property: 'hashPassword',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> hashPasswordMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.matches,
-      property: 'hashPassword',
-      value: pattern,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> idEqualTo(int value) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'id',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> idGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'id',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> idLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'id',
-      value: value,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> idBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'id',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> usernameEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'username',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> usernameGreaterThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'username',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> usernameLessThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'username',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> usernameBetween(
-    String lower,
-    String upper, {
-    bool caseSensitive = true,
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'username',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> usernameStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.startsWith,
-      property: 'username',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> usernameEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.endsWith,
-      property: 'username',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> usernameContains(
-      String value,
-      {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.contains,
-      property: 'username',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<Admin, Admin, QAfterFilterCondition> usernameMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.matches,
-      property: 'username',
-      value: pattern,
-      caseSensitive: caseSensitive,
-    ));
-  }
-}
-
-extension AdminQueryLinks on QueryBuilder<Admin, Admin, QFilterCondition> {}
-
-extension AdminQueryWhereSortBy on QueryBuilder<Admin, Admin, QSortBy> {
-  QueryBuilder<Admin, Admin, QAfterSortBy> sortByHashPassword() {
-    return addSortByInternal('hashPassword', Sort.asc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> sortByHashPasswordDesc() {
-    return addSortByInternal('hashPassword', Sort.desc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> sortById() {
-    return addSortByInternal('id', Sort.asc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> sortByIdDesc() {
-    return addSortByInternal('id', Sort.desc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> sortByUsername() {
-    return addSortByInternal('username', Sort.asc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> sortByUsernameDesc() {
-    return addSortByInternal('username', Sort.desc);
-  }
-}
-
-extension AdminQueryWhereSortThenBy on QueryBuilder<Admin, Admin, QSortThenBy> {
-  QueryBuilder<Admin, Admin, QAfterSortBy> thenByHashPassword() {
-    return addSortByInternal('hashPassword', Sort.asc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> thenByHashPasswordDesc() {
-    return addSortByInternal('hashPassword', Sort.desc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> thenById() {
-    return addSortByInternal('id', Sort.asc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> thenByIdDesc() {
-    return addSortByInternal('id', Sort.desc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> thenByUsername() {
-    return addSortByInternal('username', Sort.asc);
-  }
-
-  QueryBuilder<Admin, Admin, QAfterSortBy> thenByUsernameDesc() {
-    return addSortByInternal('username', Sort.desc);
-  }
-}
-
-extension AdminQueryWhereDistinct on QueryBuilder<Admin, Admin, QDistinct> {
-  QueryBuilder<Admin, Admin, QDistinct> distinctByHashPassword(
-      {bool caseSensitive = true}) {
-    return addDistinctByInternal('hashPassword', caseSensitive: caseSensitive);
-  }
-
-  QueryBuilder<Admin, Admin, QDistinct> distinctById() {
-    return addDistinctByInternal('id');
-  }
-
-  QueryBuilder<Admin, Admin, QDistinct> distinctByUsername(
-      {bool caseSensitive = true}) {
-    return addDistinctByInternal('username', caseSensitive: caseSensitive);
-  }
-}
-
-extension AdminQueryProperty on QueryBuilder<Admin, Admin, QQueryProperty> {
-  QueryBuilder<Admin, String, QQueryOperations> hashPasswordProperty() {
-    return addPropertyNameInternal('hashPassword');
-  }
-
-  QueryBuilder<Admin, int, QQueryOperations> idProperty() {
-    return addPropertyNameInternal('id');
-  }
-
-  QueryBuilder<Admin, String, QQueryOperations> usernameProperty() {
-    return addPropertyNameInternal('username');
-  }
-}
-
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast
-
-extension GetApplicationSettingsCollection on Isar {
-  IsarCollection<ApplicationSettings> get applicationSettingss {
-    return getCollection('ApplicationSettings');
-  }
-}
-
-final ApplicationSettingsSchema = CollectionSchema(
-  name: 'ApplicationSettings',
-  schema:
-      '{"name":"ApplicationSettings","idName":"id","properties":[{"name":"port","type":"String"},{"name":"server","type":"String"}],"indexes":[],"links":[]}',
-  nativeAdapter: const _ApplicationSettingsNativeAdapter(),
-  webAdapter: const _ApplicationSettingsWebAdapter(),
+      '{"name":"ApplicationSetting","idName":"id","properties":[{"name":"port","type":"String"},{"name":"server","type":"String"}],"indexes":[],"links":[]}',
+  nativeAdapter: const _ApplicationSettingNativeAdapter(),
+  webAdapter: const _ApplicationSettingWebAdapter(),
   idName: 'id',
   propertyIds: {'port': 0, 'server': 1},
   listProperties: {},
@@ -5698,13 +5343,13 @@ final ApplicationSettingsSchema = CollectionSchema(
   version: 2,
 );
 
-class _ApplicationSettingsWebAdapter
-    extends IsarWebTypeAdapter<ApplicationSettings> {
-  const _ApplicationSettingsWebAdapter();
+class _ApplicationSettingWebAdapter
+    extends IsarWebTypeAdapter<ApplicationSetting> {
+  const _ApplicationSettingWebAdapter();
 
   @override
-  Object serialize(IsarCollection<ApplicationSettings> collection,
-      ApplicationSettings object) {
+  Object serialize(IsarCollection<ApplicationSetting> collection,
+      ApplicationSetting object) {
     final jsObj = IsarNative.newJsObject();
     IsarNative.jsObjectSet(jsObj, 'id', object.id);
     IsarNative.jsObjectSet(jsObj, 'port', object.port);
@@ -5713,9 +5358,9 @@ class _ApplicationSettingsWebAdapter
   }
 
   @override
-  ApplicationSettings deserialize(
-      IsarCollection<ApplicationSettings> collection, dynamic jsObj) {
-    final object = ApplicationSettings();
+  ApplicationSetting deserialize(
+      IsarCollection<ApplicationSetting> collection, dynamic jsObj) {
+    final object = ApplicationSetting();
     object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
     object.port = IsarNative.jsObjectGet(jsObj, 'port') ?? '';
     object.server = IsarNative.jsObjectGet(jsObj, 'server') ?? '';
@@ -5738,18 +5383,18 @@ class _ApplicationSettingsWebAdapter
   }
 
   @override
-  void attachLinks(Isar isar, int id, ApplicationSettings object) {}
+  void attachLinks(Isar isar, int id, ApplicationSetting object) {}
 }
 
-class _ApplicationSettingsNativeAdapter
-    extends IsarNativeTypeAdapter<ApplicationSettings> {
-  const _ApplicationSettingsNativeAdapter();
+class _ApplicationSettingNativeAdapter
+    extends IsarNativeTypeAdapter<ApplicationSetting> {
+  const _ApplicationSettingNativeAdapter();
 
   @override
   void serialize(
-      IsarCollection<ApplicationSettings> collection,
+      IsarCollection<ApplicationSetting> collection,
       IsarRawObject rawObj,
-      ApplicationSettings object,
+      ApplicationSetting object,
       int staticSize,
       List<int> offsets,
       AdapterAlloc alloc) {
@@ -5771,12 +5416,9 @@ class _ApplicationSettingsNativeAdapter
   }
 
   @override
-  ApplicationSettings deserialize(
-      IsarCollection<ApplicationSettings> collection,
-      int id,
-      IsarBinaryReader reader,
-      List<int> offsets) {
-    final object = ApplicationSettings();
+  ApplicationSetting deserialize(IsarCollection<ApplicationSetting> collection,
+      int id, IsarBinaryReader reader, List<int> offsets) {
+    final object = ApplicationSetting();
     object.id = id;
     object.port = reader.readString(offsets[0]);
     object.server = reader.readString(offsets[1]);
@@ -5799,19 +5441,19 @@ class _ApplicationSettingsNativeAdapter
   }
 
   @override
-  void attachLinks(Isar isar, int id, ApplicationSettings object) {}
+  void attachLinks(Isar isar, int id, ApplicationSetting object) {}
 }
 
-extension ApplicationSettingsQueryWhereSort
-    on QueryBuilder<ApplicationSettings, ApplicationSettings, QWhere> {
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterWhere> anyId() {
+extension ApplicationSettingQueryWhereSort
+    on QueryBuilder<ApplicationSetting, ApplicationSetting, QWhere> {
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterWhere> anyId() {
     return addWhereClauseInternal(const WhereClause(indexName: null));
   }
 }
 
-extension ApplicationSettingsQueryWhere
-    on QueryBuilder<ApplicationSettings, ApplicationSettings, QWhereClause> {
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterWhereClause>
+extension ApplicationSettingQueryWhere
+    on QueryBuilder<ApplicationSetting, ApplicationSetting, QWhereClause> {
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterWhereClause>
       idEqualTo(int id) {
     return addWhereClauseInternal(WhereClause(
       indexName: null,
@@ -5822,7 +5464,7 @@ extension ApplicationSettingsQueryWhere
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterWhereClause>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterWhereClause>
       idNotEqualTo(int id) {
     if (whereSortInternal == Sort.asc) {
       return addWhereClauseInternal(WhereClause(
@@ -5847,7 +5489,7 @@ extension ApplicationSettingsQueryWhere
     }
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterWhereClause>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterWhereClause>
       idGreaterThan(
     int id, {
     bool include = false,
@@ -5859,7 +5501,7 @@ extension ApplicationSettingsQueryWhere
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterWhereClause>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterWhereClause>
       idLessThan(
     int id, {
     bool include = false,
@@ -5871,7 +5513,7 @@ extension ApplicationSettingsQueryWhere
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterWhereClause>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterWhereClause>
       idBetween(
     int lowerId,
     int upperId, {
@@ -5888,9 +5530,9 @@ extension ApplicationSettingsQueryWhere
   }
 }
 
-extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
-    ApplicationSettings, QFilterCondition> {
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+extension ApplicationSettingQueryFilter
+    on QueryBuilder<ApplicationSetting, ApplicationSetting, QFilterCondition> {
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       idEqualTo(int value) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.eq,
@@ -5899,7 +5541,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       idGreaterThan(
     int value, {
     bool include = false,
@@ -5912,7 +5554,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       idLessThan(
     int value, {
     bool include = false,
@@ -5925,7 +5567,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       idBetween(
     int lower,
     int upper, {
@@ -5941,7 +5583,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       portEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -5954,7 +5596,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       portGreaterThan(
     String value, {
     bool caseSensitive = true,
@@ -5969,7 +5611,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       portLessThan(
     String value, {
     bool caseSensitive = true,
@@ -5984,7 +5626,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       portBetween(
     String lower,
     String upper, {
@@ -6002,7 +5644,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       portStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -6015,7 +5657,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       portEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -6028,7 +5670,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       portContains(String value, {bool caseSensitive = true}) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.contains,
@@ -6038,7 +5680,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       portMatches(String pattern, {bool caseSensitive = true}) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.matches,
@@ -6048,7 +5690,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       serverEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -6061,7 +5703,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       serverGreaterThan(
     String value, {
     bool caseSensitive = true,
@@ -6076,7 +5718,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       serverLessThan(
     String value, {
     bool caseSensitive = true,
@@ -6091,7 +5733,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       serverBetween(
     String lower,
     String upper, {
@@ -6109,7 +5751,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       serverStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -6122,7 +5764,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       serverEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -6135,7 +5777,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       serverContains(String value, {bool caseSensitive = true}) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.contains,
@@ -6145,7 +5787,7 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
     ));
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterFilterCondition>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       serverMatches(String pattern, {bool caseSensitive = true}) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.matches,
@@ -6156,104 +5798,104 @@ extension ApplicationSettingsQueryFilter on QueryBuilder<ApplicationSettings,
   }
 }
 
-extension ApplicationSettingsQueryLinks on QueryBuilder<ApplicationSettings,
-    ApplicationSettings, QFilterCondition> {}
+extension ApplicationSettingQueryLinks
+    on QueryBuilder<ApplicationSetting, ApplicationSetting, QFilterCondition> {}
 
-extension ApplicationSettingsQueryWhereSortBy
-    on QueryBuilder<ApplicationSettings, ApplicationSettings, QSortBy> {
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+extension ApplicationSettingQueryWhereSortBy
+    on QueryBuilder<ApplicationSetting, ApplicationSetting, QSortBy> {
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       sortById() {
     return addSortByInternal('id', Sort.asc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       sortByIdDesc() {
     return addSortByInternal('id', Sort.desc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       sortByPort() {
     return addSortByInternal('port', Sort.asc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       sortByPortDesc() {
     return addSortByInternal('port', Sort.desc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       sortByServer() {
     return addSortByInternal('server', Sort.asc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       sortByServerDesc() {
     return addSortByInternal('server', Sort.desc);
   }
 }
 
-extension ApplicationSettingsQueryWhereSortThenBy
-    on QueryBuilder<ApplicationSettings, ApplicationSettings, QSortThenBy> {
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+extension ApplicationSettingQueryWhereSortThenBy
+    on QueryBuilder<ApplicationSetting, ApplicationSetting, QSortThenBy> {
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       thenById() {
     return addSortByInternal('id', Sort.asc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       thenByIdDesc() {
     return addSortByInternal('id', Sort.desc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       thenByPort() {
     return addSortByInternal('port', Sort.asc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       thenByPortDesc() {
     return addSortByInternal('port', Sort.desc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       thenByServer() {
     return addSortByInternal('server', Sort.asc);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QAfterSortBy>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       thenByServerDesc() {
     return addSortByInternal('server', Sort.desc);
   }
 }
 
-extension ApplicationSettingsQueryWhereDistinct
-    on QueryBuilder<ApplicationSettings, ApplicationSettings, QDistinct> {
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QDistinct>
+extension ApplicationSettingQueryWhereDistinct
+    on QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct> {
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct>
       distinctById() {
     return addDistinctByInternal('id');
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QDistinct>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct>
       distinctByPort({bool caseSensitive = true}) {
     return addDistinctByInternal('port', caseSensitive: caseSensitive);
   }
 
-  QueryBuilder<ApplicationSettings, ApplicationSettings, QDistinct>
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct>
       distinctByServer({bool caseSensitive = true}) {
     return addDistinctByInternal('server', caseSensitive: caseSensitive);
   }
 }
 
-extension ApplicationSettingsQueryProperty
-    on QueryBuilder<ApplicationSettings, ApplicationSettings, QQueryProperty> {
-  QueryBuilder<ApplicationSettings, int, QQueryOperations> idProperty() {
+extension ApplicationSettingQueryProperty
+    on QueryBuilder<ApplicationSetting, ApplicationSetting, QQueryProperty> {
+  QueryBuilder<ApplicationSetting, int, QQueryOperations> idProperty() {
     return addPropertyNameInternal('id');
   }
 
-  QueryBuilder<ApplicationSettings, String, QQueryOperations> portProperty() {
+  QueryBuilder<ApplicationSetting, String, QQueryOperations> portProperty() {
     return addPropertyNameInternal('port');
   }
 
-  QueryBuilder<ApplicationSettings, String, QQueryOperations> serverProperty() {
+  QueryBuilder<ApplicationSetting, String, QQueryOperations> serverProperty() {
     return addPropertyNameInternal('server');
   }
 }

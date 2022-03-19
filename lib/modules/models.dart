@@ -31,7 +31,6 @@ class UserConfig {
   @Index(type: IndexType.hash)
   late String? username;
 
-  @Index()
   late String? authId;
 
   @Index(type: IndexType.hash)
@@ -46,6 +45,9 @@ class UserConfig {
   late String? avatar;
   late String? salt;
   late String? key;
+
+  final messages = IsarLinks<Message>();
+  final flows = IsarLink<Flow>();
 }
 
 @Collection()
@@ -57,14 +59,17 @@ class Flow {
   late String uuid;
 
   @Index(type: IndexType.hash)
-  late String title;
+  late String? title;
 
   @Index(type: IndexType.hash)
-  late String info;
+  late String? info;
 
   late String flowType;
   late int timeCreated;
   late String owner;
+
+  final messages = IsarLinks<Message>();
+  final users = IsarLink<UserConfig>();
 }
 
 @Collection()
@@ -76,31 +81,26 @@ class Message {
   late String uuid;
 
   @Index(type: IndexType.hash)
-  late String text;
+  late String? text;
 
   late int time;
-  late String filePicture;
-  late String fileVideo;
-  late String fileAudio;
-  late String fileDocument;
-  late String emoji;
-  late int editedTime;
+  late String? filePicture;
+  late String? fileVideo;
+  late String? fileAudio;
+  late String? fileDocument;
+  late String? emoji;
+  late int? editedTime;
   late bool editedStatus;
+
+  @Backlink(to: 'messages')
+  final user = IsarLink<UserConfig>();
+
+  @Backlink(to: 'messages')
+  final flow = IsarLink<Flow>();
 }
 
 @Collection()
-class Admin {
-  @Id()
-  int id = Isar.autoIncrement;
-
-  @Index(type: IndexType.hash)
-  late String username;
-
-  late String hashPassword;
-}
-
-@Collection()
-class ApplicationSettings {
+class ApplicationSetting {
   @Id()
   int id = Isar.autoIncrement;
 
