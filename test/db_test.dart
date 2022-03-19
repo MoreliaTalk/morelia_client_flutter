@@ -1,20 +1,14 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import "package:flutter_test/flutter_test.dart";
 import 'package:morelia_client_flutter/modules/db.dart';
+import 'package:faker/faker.dart';
 
 void main() {
-  test('Function test', () async {
-    writeUserConfig(uuid: "uuid", login: "login", hashPassword: "hashPassword");
-    var result = await readByUuid("uuid");
-    expect(result[1], 1);
-  });
   test('Class test', () async {
     var dbOne = DatabaseHandler(testing: true);
     print("1ST run ${dbOne.dbConnect}");
-    var dbTwo = DatabaseHandler(testing: true);
-    print("2ST run ${dbTwo.dbConnect}");
-    writeUserConfig(uuid: "uuid", login: "login", hashPassword: "hashPassword");
-    var result = await readByUuid("uuid");
-    expect(result[1], 1);
+    await dbOne.addUser("uuid12", "login", "hashPassword");
+    var result = await dbOne.getAllUser();
+    expect(result[0].id, 1);
+    await dbOne.deleteDb(result[0].id);
   });
 }
