@@ -5,6 +5,7 @@ import 'package:morelia_client_flutter/components/common/settings_page.dart';
 import 'package:morelia_client_flutter/components/desktop/main_page.dart';
 import 'package:morelia_client_flutter/components/mobile/chats_page.dart';
 import 'package:morelia_client_flutter/modules/platform_const.dart';
+import 'package:morelia_client_flutter/modules/router.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart'
     show currentTheme;
 
@@ -19,29 +20,8 @@ class MoreliaApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    GoRouter _router;
-    switch (currentPlatform) {
-      case TypePlatformDevices.mobile:
-        _router = GoRouter(routes: [
-          GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
-          GoRoute(
-              path: "/messages/:uuid",
-              builder: (context, state) =>
-                  CommunicationPage(uuid: state.params['uuid']!))
-        ]);
-        break;
-      case TypePlatformDevices.desktop:
-        _router = GoRouter(routes: [
-          GoRoute(
-              path: "/", builder: (context, state) => const DesktopMainPage()),
-          GoRoute(
-              path: "/settings", builder: (context, _) => const SettingsPage())
-        ]);
-        break;
-      case TypePlatformDevices.notSupported:
-        return const Center(
-            child: Text("Sorry, your platform is not suported"));
-    }
+    GoRouter _router = MoreliaRouter().router;
+
     return MaterialApp.router(
       theme: ref.watch(currentTheme),
       routeInformationParser: _router.routeInformationParser,
