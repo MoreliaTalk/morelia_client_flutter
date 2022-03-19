@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum TypesMessages { my, otherUser }
 
 class Message extends StatelessWidget {
-  const Message({required this.text, required this.type, Key? key})
+  const Message({required this.messageText, required this.messageType, Key? key})
       : super(key: key);
-  final String text;
-  final TypesMessages type;
+  final String messageText;
+  final TypesMessages messageType;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class Message extends StatelessWidget {
     late Color backgroundColor;
     late Color textColor;
 
-    if (type == TypesMessages.my) {
+    if (messageType == TypesMessages.my) {
       alig = Alignment.centerRight;
       borderRad = const BorderRadius.only(
         topLeft: Radius.circular(10),
@@ -25,7 +25,7 @@ class Message extends StatelessWidget {
         bottomRight: Radius.circular(3),
       );
       backgroundColor = Theme.of(context).colorScheme.primary;
-    } else if (type == TypesMessages.otherUser) {
+    } else if (messageType == TypesMessages.otherUser) {
       alig = Alignment.centerLeft;
       borderRad = const BorderRadius.only(
         topLeft: Radius.circular(10),
@@ -52,7 +52,7 @@ class Message extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             margin: const EdgeInsets.all(10),
             child: Text(
-              text,
+              messageText,
               style: TextStyle(color: textColor),
             )));
   }

@@ -15,16 +15,16 @@ class CommunicationPage extends ConsumerWidget {
     var faker = Faker();
     List<Message> state = [];
     for (int i = 0; i < 30; i++) {
-      TypesMessages type;
+      TypesMessages newMessageType;
       if (i % 2 > 0) {
-        type = TypesMessages.my;
+        newMessageType = TypesMessages.my;
       } else {
-        type = TypesMessages.otherUser;
+        newMessageType = TypesMessages.otherUser;
       }
 
       state = [
         ...state,
-        Message(text: faker.lorem.sentence(), type: type),
+        Message(messageText: faker.lorem.sentence(), messageType: newMessageType),
       ];
     }
 
