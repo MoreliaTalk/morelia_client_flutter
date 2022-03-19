@@ -18,19 +18,19 @@ class SettingsPage extends ConsumerWidget {
       appBar: AppBar(title: const Text("Settings")),
       body: ListView(children: [
         ListTile(
-          title: Text("Color theme"),
-          trailing: DropdownButton<Text>(
+          title: const Text("Color theme"),
+          trailing: DropdownButton<String>(
             items: [
               DropdownMenuItem(
                 child: const Text("Dark Theme"),
-                value: Text("0"),
+                value: "Dark Theme",
                 onTap: () {
                   theme.state = ThemeData.dark();
                 },
               ),
               DropdownMenuItem(
                 child: const Text("Light Theme"),
-                value: Text("0"),
+                value: "Light Theme",
                 onTap: () {
                   theme.state = ThemeData.light();
                 },
