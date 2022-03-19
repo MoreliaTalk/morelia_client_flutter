@@ -1,7 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import 'message_area.dart';
 
@@ -16,16 +15,16 @@ class CommunicationPage extends ConsumerWidget {
     var faker = Faker();
     List<Message> state = [];
     for (int i = 0; i < 30; i++) {
-      TypesMessages type;
+      TypesMessages newMessageType;
       if (i % 2 > 0) {
-        type = TypesMessages.my;
+        newMessageType = TypesMessages.my;
       } else {
-        type = TypesMessages.otherUser;
+        newMessageType = TypesMessages.otherUser;
       }
 
       state = [
         ...state,
-        Message(faker.lorem.sentence(), type),
+        Message(messageText: faker.lorem.sentence(), messageType: newMessageType),
       ];
     }
 
