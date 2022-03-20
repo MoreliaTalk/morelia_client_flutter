@@ -83,7 +83,7 @@ class Message {
   @Index(type: IndexType.hash)
   late String? text;
 
-  late int time;
+  late int? time;
   late String? filePicture;
   late String? fileVideo;
   late String? fileAudio;

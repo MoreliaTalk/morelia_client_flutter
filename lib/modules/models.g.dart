@@ -3664,8 +3664,7 @@ class _MessageWebAdapter extends IsarWebTypeAdapter<Message> {
     object.fileVideo = IsarNative.jsObjectGet(jsObj, 'fileVideo');
     object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
     object.text = IsarNative.jsObjectGet(jsObj, 'text');
-    object.time =
-        IsarNative.jsObjectGet(jsObj, 'time') ?? double.negativeInfinity;
+    object.time = IsarNative.jsObjectGet(jsObj, 'time');
     object.uuid = IsarNative.jsObjectGet(jsObj, 'uuid') ?? '';
     attachLinks(collection.isar,
         IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity, object);
@@ -3695,8 +3694,7 @@ class _MessageWebAdapter extends IsarWebTypeAdapter<Message> {
       case 'text':
         return (IsarNative.jsObjectGet(jsObj, 'text')) as P;
       case 'time':
-        return (IsarNative.jsObjectGet(jsObj, 'time') ??
-            double.negativeInfinity) as P;
+        return (IsarNative.jsObjectGet(jsObj, 'time')) as P;
       case 'uuid':
         return (IsarNative.jsObjectGet(jsObj, 'uuid') ?? '') as P;
       default:
@@ -3806,7 +3804,7 @@ class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
     object.fileVideo = reader.readStringOrNull(offsets[6]);
     object.id = id;
     object.text = reader.readStringOrNull(offsets[7]);
-    object.time = reader.readLong(offsets[8]);
+    object.time = reader.readLongOrNull(offsets[8]);
     object.uuid = reader.readString(offsets[9]);
     attachLinks(collection.isar, id, object);
     return object;
@@ -3835,7 +3833,7 @@ class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
       case 7:
         return (reader.readStringOrNull(offset)) as P;
       case 8:
-        return (reader.readLong(offset)) as P;
+        return (reader.readLongOrNull(offset)) as P;
       case 9:
         return (reader.readString(offset)) as P;
       default:
@@ -4855,7 +4853,16 @@ extension MessageQueryFilter
     ));
   }
 
-  QueryBuilder<Message, Message, QAfterFilterCondition> timeEqualTo(int value) {
+  QueryBuilder<Message, Message, QAfterFilterCondition> timeIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'time',
+      value: null,
+    ));
+  }
+
+  QueryBuilder<Message, Message, QAfterFilterCondition> timeEqualTo(
+      int? value) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.eq,
       property: 'time',
@@ -4864,7 +4871,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> timeGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -4876,7 +4883,7 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> timeLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -4888,8 +4895,8 @@ extension MessageQueryFilter
   }
 
   QueryBuilder<Message, Message, QAfterFilterCondition> timeBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -5300,7 +5307,7 @@ extension MessageQueryProperty
     return addPropertyNameInternal('text');
   }
 
-  QueryBuilder<Message, int, QQueryOperations> timeProperty() {
+  QueryBuilder<Message, int?, QQueryOperations> timeProperty() {
     return addPropertyNameInternal('time');
   }
 
