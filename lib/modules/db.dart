@@ -31,10 +31,20 @@ class DatabaseReadError implements Exception {
   String toString() => "DatabaseReadError: $message";
 }
 
+class DatabaseConnectedError implements Exception {
+  final String message;
+
+  const DatabaseConnectedError([this.message = ""]);
+
+  @override
+  String toString() => "DatabaseConnectedError: $message";
+}
+
 class DatabaseHandler {
   late Future<Isar> dbConnect;
   late Future<Directory> dir;
   late String _check;
+
   static DatabaseHandler _singleConnect = DatabaseHandler.connect('blank');
 
   DatabaseHandler.connect(this._check) {
@@ -42,13 +52,17 @@ class DatabaseHandler {
   }
 
   factory DatabaseHandler({bool testing = false}) {
+    const String libWin = 'libisar_windows_x64.dll';
+    const String libMac = 'libisar_macos_x64.dylib';
+    const String libLinux = 'libisar_linux_x64.so';
+
     if (testing == true && currentPlatform == TypePlatformDevices.desktop) {
       final dartToolDir = path.join(Directory.current.path, '.dart_tool');
       try {
         Isar.initializeLibraries(libraries: {
-          'windows': path.join(dartToolDir, 'libisar_windows_x64.dll'),
-          'macos': path.join(dartToolDir, 'libisar_macos_x64.dylib'),
-          'linux': path.join(dartToolDir, 'libisar_linux_x64.so')
+          'windows': path.join(dartToolDir, libWin),
+          'macos': path.join(dartToolDir, libMac),
+          'linux': path.join(dartToolDir, libLinux)
         });
       } catch (e) {
         throw 'InitializeLibraries error';
@@ -57,7 +71,7 @@ class DatabaseHandler {
     if (_singleConnect._check == 'blank') {
       _singleConnect = DatabaseHandler.connect('dbConnected');
     } else {
-      throw 'Class already created';
+      throw const DatabaseConnectedError('Class already created');
     }
     return _singleConnect;
   }
@@ -72,29 +86,30 @@ class DatabaseHandler {
     ], directory: dir.path);
   }
 
-  Future<dynamic>? getAllUser() async {
+  Future<List<dynamic>> getAllUser() async {
     Isar conn = await dbConnect;
     return conn.userConfigs.where().findAll();
   }
 
-  Future<dynamic>? getUserByUuid(String uuid) async {
+  Future<List<dynamic>> getUserByUuid(String uuid) async {
     Isar conn = await dbConnect;
     return conn.userConfigs.where().uuidEqualTo(uuid).findAll();
   }
 
-  Future<dynamic>? getUserByLogin(String login) async {
+  Future<List<dynamic>> getUserByLogin(String login) async {
     final conn = await dbConnect;
     return conn.userConfigs.where().loginEqualTo(login).findAll();
   }
 
-  Future<dynamic>? getUserByLoginAndPassword(
-      {required String login, required String hashPassword}) async {
+  Future<List<dynamic>> getUserByLoginAndPassword(
+      String login, String hashPassword) async {
     final conn = await dbConnect;
     return conn.userConfigs
         .where()
         .loginEqualTo(login)
         .filter()
-        .hashPasswordEqualTo(hashPassword);
+        .hashPasswordEqualTo(hashPassword)
+        .findAll();
   }
 
   Future<void> addUser(String uuid, String login, String hashPassword,
@@ -126,10 +141,8 @@ class DatabaseHandler {
     });
   }
 
-  Future<void> updateUser(String uuid,
-      [String? login,
-      String? hashPassword,
-      String? username,
+  Future<void> updateUser(String uuid, String login, String hashPassword,
+      [String? username,
       bool isBot = false,
       String? authId,
       int? tokenTTL,
@@ -139,14 +152,16 @@ class DatabaseHandler {
       String? salt,
       String? key]) async {
     final conn = await dbConnect;
-    final dbQuery = conn.userConfigs.where().uuidEqualTo(uuid).findFirst();
+    final dbQuery = await conn.userConfigs.where().uuidEqualTo(uuid).findAll();
 
-    if (await dbQuery == null) {
+    if (dbQuery[0].id <= 0) {
       throw const DatabaseReadError('UUID not found');
     } else {
       final user = UserConfig()
-        ..login = login!
-        ..hashPassword = hashPassword!
+        ..id = dbQuery[0].id
+        ..uuid = dbQuery[0].uuid
+        ..login = login
+        ..hashPassword = hashPassword
         ..username = username
         ..isBot = isBot
         ..authId = authId
@@ -162,37 +177,37 @@ class DatabaseHandler {
     }
   }
 
-  Future<dynamic>? getAllMessage() async {
+  Future<List<dynamic>> getAllMessage() async {
     final conn = await dbConnect;
     return conn.messages.where().findAll();
   }
 
-  Future<dynamic>? getMessageByUuid(String uuid) async {
+  Future<List<dynamic>> getMessageByUuid(String uuid) async {
     final conn = await dbConnect;
-    return conn.messages.where().uuidEqualTo(uuid).findFirst();
+    return conn.messages.where().uuidEqualTo(uuid).findAll();
   }
 
-  Future<dynamic>? getMessageByText(String text) async {
+  Future<List<dynamic>> getMessageByText(String text) async {
     final conn = await dbConnect;
     return conn.messages.where().filter().textContains(text).findAll();
   }
 
-  Future<dynamic>? getMessageByExactTime(int time) async {
+  Future<List<dynamic>> getMessageByExactTime(int time) async {
     final conn = await dbConnect;
     return conn.messages.filter().timeEqualTo(time).findAll();
   }
 
-  Future<dynamic>? getMessageByLessTime(int time) async {
+  Future<List<dynamic>> getMessageByLessTime(int time) async {
     final conn = await dbConnect;
     return conn.messages.filter().timeLessThan(time).findAll();
   }
 
-  Future<dynamic>? getMessageByMoreTime(int time) async {
+  Future<List<dynamic>> getMessageByMoreTime(int time) async {
     final conn = await dbConnect;
     return conn.messages.filter().timeGreaterThan(time).findAll();
   }
 
-  Future<dynamic>? getMessageByMoreTimeAndFlow(
+  Future<List<dynamic>> getMessageByMoreTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
     return conn.messages
@@ -203,7 +218,7 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<dynamic>? getMessageByLessTimeAndFlow(
+  Future<List<dynamic>> getMessageByLessTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
     return conn.messages
@@ -214,7 +229,7 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<dynamic>? getMessageByExactTimeAndFlow(
+  Future<List<dynamic>> getMessageByExactTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
     return conn.messages
@@ -262,13 +277,15 @@ class DatabaseHandler {
       int? editedTime,
       bool editedStatus = false]) async {
     final conn = await dbConnect;
-    final dbQuery = conn.messages.where().uuidEqualTo(uuid).findFirst();
+    final dbQuery = await conn.messages.where().uuidEqualTo(uuid).findAll();
 
-    if (await dbQuery == null) {
+    if (dbQuery[0].id <= 0) {
       throw const DatabaseReadError("Message UUID not found.");
     } else {
       final message = Message()
-        ..time = time!
+        ..id = dbQuery[0].id
+        ..uuid = dbQuery[0].uuid
+        ..time = time
         ..text = text
         ..filePicture = filePicture
         ..fileVideo = fileVideo
@@ -371,10 +388,17 @@ class DatabaseHandler {
     });
   }
 
-  Future<void> deleteDb(int id) async {
+  Future<void> deleteIndexInDb(int id) async {
     final conn = await dbConnect;
     await conn.writeTxn((conn) async {
       conn.userConfigs.delete(id);
+    });
+  }
+
+  Future<void> deleteAllIndexInDb(List<int> ids) async {
+    final conn = await dbConnect;
+    await conn.writeTxn((conn) async {
+      conn.userConfigs.deleteAll(ids);
     });
   }
 }
