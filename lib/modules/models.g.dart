@@ -2335,12 +2335,11 @@ class _FlowWebAdapter extends IsarWebTypeAdapter<Flow> {
   @override
   Flow deserialize(IsarCollection<Flow> collection, dynamic jsObj) {
     final object = Flow();
-    object.flowType = IsarNative.jsObjectGet(jsObj, 'flowType') ?? '';
+    object.flowType = IsarNative.jsObjectGet(jsObj, 'flowType');
     object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
     object.info = IsarNative.jsObjectGet(jsObj, 'info');
-    object.owner = IsarNative.jsObjectGet(jsObj, 'owner') ?? '';
-    object.timeCreated =
-        IsarNative.jsObjectGet(jsObj, 'timeCreated') ?? double.negativeInfinity;
+    object.owner = IsarNative.jsObjectGet(jsObj, 'owner');
+    object.timeCreated = IsarNative.jsObjectGet(jsObj, 'timeCreated');
     object.title = IsarNative.jsObjectGet(jsObj, 'title');
     object.uuid = IsarNative.jsObjectGet(jsObj, 'uuid') ?? '';
     attachLinks(collection.isar,
@@ -2352,17 +2351,16 @@ class _FlowWebAdapter extends IsarWebTypeAdapter<Flow> {
   P deserializeProperty<P>(Object jsObj, String propertyName) {
     switch (propertyName) {
       case 'flowType':
-        return (IsarNative.jsObjectGet(jsObj, 'flowType') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'flowType')) as P;
       case 'id':
         return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
             as P;
       case 'info':
         return (IsarNative.jsObjectGet(jsObj, 'info')) as P;
       case 'owner':
-        return (IsarNative.jsObjectGet(jsObj, 'owner') ?? '') as P;
+        return (IsarNative.jsObjectGet(jsObj, 'owner')) as P;
       case 'timeCreated':
-        return (IsarNative.jsObjectGet(jsObj, 'timeCreated') ??
-            double.negativeInfinity) as P;
+        return (IsarNative.jsObjectGet(jsObj, 'timeCreated')) as P;
       case 'title':
         return (IsarNative.jsObjectGet(jsObj, 'title')) as P;
       case 'uuid':
@@ -2399,8 +2397,11 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
       Flow object, int staticSize, List<int> offsets, AdapterAlloc alloc) {
     var dynamicSize = 0;
     final value0 = object.flowType;
-    final _flowType = IsarBinaryWriter.utf8Encoder.convert(value0);
-    dynamicSize += (_flowType.length) as int;
+    IsarUint8List? _flowType;
+    if (value0 != null) {
+      _flowType = IsarBinaryWriter.utf8Encoder.convert(value0);
+    }
+    dynamicSize += (_flowType?.length ?? 0) as int;
     final value1 = object.info;
     IsarUint8List? _info;
     if (value1 != null) {
@@ -2408,8 +2409,11 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
     }
     dynamicSize += (_info?.length ?? 0) as int;
     final value2 = object.owner;
-    final _owner = IsarBinaryWriter.utf8Encoder.convert(value2);
-    dynamicSize += (_owner.length) as int;
+    IsarUint8List? _owner;
+    if (value2 != null) {
+      _owner = IsarBinaryWriter.utf8Encoder.convert(value2);
+    }
+    dynamicSize += (_owner?.length ?? 0) as int;
     final value3 = object.timeCreated;
     final _timeCreated = value3;
     final value4 = object.title;
@@ -2439,11 +2443,11 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
   Flow deserialize(IsarCollection<Flow> collection, int id,
       IsarBinaryReader reader, List<int> offsets) {
     final object = Flow();
-    object.flowType = reader.readString(offsets[0]);
+    object.flowType = reader.readStringOrNull(offsets[0]);
     object.id = id;
     object.info = reader.readStringOrNull(offsets[1]);
-    object.owner = reader.readString(offsets[2]);
-    object.timeCreated = reader.readLong(offsets[3]);
+    object.owner = reader.readStringOrNull(offsets[2]);
+    object.timeCreated = reader.readLongOrNull(offsets[3]);
     object.title = reader.readStringOrNull(offsets[4]);
     object.uuid = reader.readString(offsets[5]);
     attachLinks(collection.isar, id, object);
@@ -2457,13 +2461,13 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
       case -1:
         return id as P;
       case 0:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 1:
         return (reader.readStringOrNull(offset)) as P;
       case 2:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 3:
-        return (reader.readLong(offset)) as P;
+        return (reader.readLongOrNull(offset)) as P;
       case 4:
         return (reader.readStringOrNull(offset)) as P;
       case 5:
@@ -2760,8 +2764,16 @@ extension FlowQueryWhere on QueryBuilder<Flow, Flow, QWhereClause> {
 }
 
 extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> flowTypeIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'flowType',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Flow, Flow, QAfterFilterCondition> flowTypeEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -2773,7 +2785,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> flowTypeGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -2787,7 +2799,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> flowTypeLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -2801,8 +2813,8 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> flowTypeBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -3018,8 +3030,16 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
     ));
   }
 
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> ownerIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'owner',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Flow, Flow, QAfterFilterCondition> ownerEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -3031,7 +3051,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> ownerGreaterThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -3045,7 +3065,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> ownerLessThan(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
     bool include = false,
   }) {
@@ -3059,8 +3079,8 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> ownerBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool caseSensitive = true,
     bool includeLower = true,
     bool includeUpper = true,
@@ -3119,8 +3139,16 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
     ));
   }
 
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> timeCreatedIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'timeCreated',
+      value: null,
+    ));
+  }
+
   QueryBuilder<Flow, Flow, QAfterFilterCondition> timeCreatedEqualTo(
-      int value) {
+      int? value) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.eq,
       property: 'timeCreated',
@@ -3129,7 +3157,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> timeCreatedGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -3141,7 +3169,7 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> timeCreatedLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return addFilterConditionInternal(FilterCondition(
@@ -3153,8 +3181,8 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
   }
 
   QueryBuilder<Flow, Flow, QAfterFilterCondition> timeCreatedBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -3550,7 +3578,7 @@ extension FlowQueryWhereDistinct on QueryBuilder<Flow, Flow, QDistinct> {
 }
 
 extension FlowQueryProperty on QueryBuilder<Flow, Flow, QQueryProperty> {
-  QueryBuilder<Flow, String, QQueryOperations> flowTypeProperty() {
+  QueryBuilder<Flow, String?, QQueryOperations> flowTypeProperty() {
     return addPropertyNameInternal('flowType');
   }
 
@@ -3562,11 +3590,11 @@ extension FlowQueryProperty on QueryBuilder<Flow, Flow, QQueryProperty> {
     return addPropertyNameInternal('info');
   }
 
-  QueryBuilder<Flow, String, QQueryOperations> ownerProperty() {
+  QueryBuilder<Flow, String?, QQueryOperations> ownerProperty() {
     return addPropertyNameInternal('owner');
   }
 
-  QueryBuilder<Flow, int, QQueryOperations> timeCreatedProperty() {
+  QueryBuilder<Flow, int?, QQueryOperations> timeCreatedProperty() {
     return addPropertyNameInternal('timeCreated');
   }
 

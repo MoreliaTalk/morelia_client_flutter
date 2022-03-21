@@ -64,12 +64,12 @@ class Flow {
   @Index(type: IndexType.hash)
   late String? info;
 
-  late String flowType;
-  late int timeCreated;
-  late String owner;
+  late String? flowType;
+  late int? timeCreated;
+  late String? owner;
 
   final messages = IsarLinks<Message>();
-  final users = IsarLink<UserConfig>();
+  final users = IsarLinks<UserConfig>();
 }
 
 @Collection()
