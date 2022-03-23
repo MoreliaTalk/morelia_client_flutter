@@ -27,7 +27,7 @@ Map<String, dynamic> _$FlowToJson(Flow instance) => <String, dynamic>{
       'title': instance.title,
       'info': instance.info,
       'owner': instance.owner,
-      'users': instance.users,
+      'users': instance.users?.map((e) => e.toJson()).toList(),
       'message_start': instance.message_start,
       'message_end': instance.message_end,
     };
@@ -113,9 +113,9 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
 
 Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
       'time': instance.time,
-      'user': instance.user,
-      'flow': instance.flow,
-      'message': instance.message,
+      'user': instance.user?.map((e) => e.toJson()).toList(),
+      'flow': instance.flow?.map((e) => e.toJson()).toList(),
+      'message': instance.message?.map((e) => e.toJson()).toList(),
       'meta': instance.meta,
     };
 
@@ -159,8 +159,8 @@ Validator _$ValidatorFromJson(Map<String, dynamic> json) => Validator(
 
 Map<String, dynamic> _$ValidatorToJson(Validator instance) => <String, dynamic>{
       'type': instance.type,
-      'data': instance.data,
-      'errors': instance.errors,
-      'jsonapi': instance.jsonapi,
+      'data': instance.data?.toJson(),
+      'errors': instance.errors?.toJson(),
+      'jsonapi': instance.jsonapi?.toJson(),
       'meta': instance.meta,
     };

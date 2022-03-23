@@ -21,7 +21,7 @@ class Uint8ListConverter implements JsonConverter<Uint8List?, List<int>?> {
   }
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Flow {
   Flow(
       {this.uuid,
@@ -47,7 +47,7 @@ class Flow {
   Map<String, dynamic> toJson() => _$FlowToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class User {
   User(
       {this.uuid,
@@ -77,7 +77,7 @@ class User {
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Message {
   Message(
       {required this.uuid,
@@ -111,7 +111,7 @@ class Message {
   Map<String, dynamic> toJson() => _$MessageToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Data {
   Data({this.time, this.user, this.flow, this.message, this.meta});
   int? time;
@@ -124,7 +124,7 @@ class Data {
   Map<String, dynamic> toJson() => _$DataToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Errors {
   Errors({this.code, this.status, this.time, this.detail});
   int? code;
@@ -136,7 +136,7 @@ class Errors {
   Map<String, dynamic> toJson() => _$ErrorsToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Version {
   Version({required this.version, this.revision});
   late String version;
@@ -146,7 +146,7 @@ class Version {
   Map<String, dynamic> toJson() => _$VersionToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Validator {
   Validator({this.type, this.jsonapi, this.meta});
   String? type;
