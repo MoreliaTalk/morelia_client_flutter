@@ -4,8 +4,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'api.g.dart';
 
-const version = '1.0';
-const revision = '17';
+const protocolVersion = '1.0';
+const protocolRevision = '17';
 
 class Uint8ListConverter implements JsonConverter<Uint8List?, List<int>?> {
   const Uint8ListConverter();
@@ -148,8 +148,8 @@ class Version {
 
 @JsonSerializable(explicitToJson: true)
 class Validator {
-  Validator({this.type, this.jsonapi, this.meta});
-  String? type;
+  Validator({required this.type, this.jsonapi, this.meta});
+  late String type;
   Data? data;
   Errors? errors;
   Version? jsonapi;

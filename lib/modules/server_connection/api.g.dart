@@ -144,7 +144,7 @@ Map<String, dynamic> _$VersionToJson(Version instance) => <String, dynamic>{
     };
 
 Validator _$ValidatorFromJson(Map<String, dynamic> json) => Validator(
-      type: json['type'] as String?,
+      type: json['type'] as String,
       jsonapi: json['jsonapi'] == null
           ? null
           : Version.fromJson(json['jsonapi'] as Map<String, dynamic>),
