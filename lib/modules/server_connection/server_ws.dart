@@ -47,6 +47,19 @@ class ServerWebsockets {
     return await _sendData(newRequest);
   }
 
+  Future<Validator> authentication(
+      {required String password,
+        required String login}) async {
+    var newRequest = Validator(type: "authentication");
+    newRequest = _addProtocolVersionToRequest(newRequest);
+
+    newRequest.data = Data();
+    newRequest.data?.user = [];
+    newRequest.data?.user?.add(User(
+        password: password, login: login));
+    return await _sendData(newRequest);
+  }
+
   void connect() {
     _channel = WebSocketChannel.connect(Uri.parse(_url));
   }
