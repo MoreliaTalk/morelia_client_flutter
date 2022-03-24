@@ -11,7 +11,7 @@ class ServerWebsockets {
 
   ServerWebsockets(this._url);
 
-  Future<Validator> sendData(Validator data) async {
+  Future<Validator> _sendData(Validator data) async {
     Completer<Validator> completer = Completer();
     _channel.stream.listen((response) {
       completer.complete(Validator.fromJson(jsonDecode(response)));
@@ -32,7 +32,7 @@ class ServerWebsockets {
     }
   }
 
-  void sendProtocolMethod__register_user(
+  Future<Validator> register_user(
       {required String password,
       required String login,
       String? email,
@@ -44,17 +44,10 @@ class ServerWebsockets {
     newRequest.data?.user = [];
     newRequest.data?.user?.add(User(
         password: password, login: login, email: email, username: username));
-    print(await sendData(newRequest));
+    return await _sendData(newRequest);
   }
 
   void connect() {
     _channel = WebSocketChannel.connect(Uri.parse(_url));
   }
-}
-
-void main() {
-  var server = ServerWebsockets("ws://localhost:8000/ws");
-  server.connect();
-  server.sendProtocolMethod__register_user(
-      login: "Userdd", password: "password");
 }
