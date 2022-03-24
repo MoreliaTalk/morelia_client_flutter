@@ -65,7 +65,8 @@ class User {
   String? login;
   String? username;
   String? bio;
-  @Uint8ListConverter() Uint8List? avatar;
+  @Uint8ListConverter()
+  Uint8List? avatar;
   String? password;
   bool? is_bot;
   String? auth_id;
@@ -99,15 +100,21 @@ class Message {
   String? from_user;
   int? time;
   String? from_flow;
-  @Uint8ListConverter() Uint8List? file_picture;
-  @Uint8ListConverter() Uint8List? file_video;
-  @Uint8ListConverter() Uint8List? file_audio;
-  @Uint8ListConverter() Uint8List? file_document;
-  @Uint8ListConverter() Uint8List? emoji;
+  @Uint8ListConverter()
+  Uint8List? file_picture;
+  @Uint8ListConverter()
+  Uint8List? file_video;
+  @Uint8ListConverter()
+  Uint8List? file_audio;
+  @Uint8ListConverter()
+  Uint8List? file_document;
+  @Uint8ListConverter()
+  Uint8List? emoji;
   int? edited_time;
   bool? edited_status;
 
-  factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
+  factory Message.fromJson(Map<String, dynamic> json) =>
+      _$MessageFromJson(json);
   Map<String, dynamic> toJson() => _$MessageToJson(this);
 }
 
@@ -142,7 +149,8 @@ class Version {
   late String version;
   String? revision;
 
-  factory Version.fromJson(Map<String, dynamic> json) => _$VersionFromJson(json);
+  factory Version.fromJson(Map<String, dynamic> json) =>
+      _$VersionFromJson(json);
   Map<String, dynamic> toJson() => _$VersionToJson(this);
 }
 
@@ -155,6 +163,7 @@ class Validator {
   Version? jsonapi;
   dynamic meta;
 
-  factory Validator.fromJson(Map<String, dynamic> json) => _$ValidatorFromJson(json);
+  factory Validator.fromJson(Map<String, dynamic> json) =>
+      _$ValidatorFromJson(json);
   Map<String, dynamic> toJson() => _$ValidatorToJson(this);
 }
