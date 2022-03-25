@@ -81,7 +81,7 @@ class User {
 @JsonSerializable(explicitToJson: true)
 class Message {
   Message(
-      {required this.uuid,
+      {this.uuid,
       this.client_id,
       this.text,
       this.from_user,
@@ -94,7 +94,7 @@ class Message {
       this.emoji,
       this.edited_time,
       this.edited_status});
-  late String uuid;
+  String? uuid;
   int? client_id;
   String? text;
   String? from_user;
