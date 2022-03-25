@@ -60,6 +60,19 @@ class ServerWebsockets {
     return await _sendData(newRequest);
   }
 
+  Future<Validator> get_update(
+      {required String uuid,
+        required String auth_id, required int time}) async {
+    var newRequest = Validator(type: "get_update");
+    newRequest = _addProtocolVersionToRequest(newRequest);
+
+    newRequest.data = Data();
+    newRequest.data?.time = time;
+    newRequest.data?.user = [];
+    newRequest.data?.user?.add(User(auth_id: auth_id, uuid: uuid));
+    return await _sendData(newRequest);
+  }
+
   void connect() {
     _channel = WebSocketChannel.connect(Uri.parse(_url));
   }
