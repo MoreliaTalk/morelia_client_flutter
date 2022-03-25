@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:morelia_client_flutter/modules/server_connection/api.dart';
+import 'api.dart' as api;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
@@ -11,65 +11,64 @@ class ServerWebsockets {
 
   ServerWebsockets(this._url);
 
-  Future<Validator> _sendData(Validator data) async {
-    Completer<Validator> completer = Completer();
+  Future<api.Validator> _sendData(api.Validator data) async {
+    Completer<api.Validator> completer = Completer();
     _channel.stream.listen((response) {
-      completer.complete(Validator.fromJson(jsonDecode(response)));
+      completer.complete(api.Validator.fromJson(jsonDecode(response)));
     });
     _channel.sink.add(jsonEncode(data.toJson()));
     return completer.future;
   }
 
-  Validator _addProtocolVersionToRequest(Validator request) {
+  api.Validator _addProtocolVersionToRequest(api.Validator request) {
     if (request.jsonapi == null) {
-      request.jsonapi =
-          Version(version: protocolVersion, revision: protocolRevision);
+      request.jsonapi = api.Version(
+          version: api.protocolVersion, revision: api.protocolRevision);
       return request;
     } else {
-      request.jsonapi?.version = protocolVersion;
-      request.jsonapi?.revision = protocolRevision;
+      request.jsonapi?.version = api.protocolVersion;
+      request.jsonapi?.revision = api.protocolRevision;
       return request;
     }
   }
 
-  Future<Validator> register_user(
+  Future<api.Validator> register_user(
       {required String password,
       required String login,
       String? email,
       String? username}) async {
-    var newRequest = Validator(type: "register_user");
+    var newRequest = api.Validator(type: "register_user");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
-    newRequest.data = Data();
+    newRequest.data = api.Data();
     newRequest.data?.user = [];
-    newRequest.data?.user?.add(User(
+    newRequest.data?.user?.add(api.User(
         password: password, login: login, email: email, username: username));
     return await _sendData(newRequest);
   }
 
-  Future<Validator> authentication(
-      {required String password,
-        required String login}) async {
-    var newRequest = Validator(type: "authentication");
+  Future<api.Validator> authentication(
+      {required String password, required String login}) async {
+    var newRequest = api.Validator(type: "authentication");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
-    newRequest.data = Data();
+    newRequest.data = api.Data();
     newRequest.data?.user = [];
-    newRequest.data?.user?.add(User(
-        password: password, login: login));
+    newRequest.data?.user?.add(api.User(password: password, login: login));
     return await _sendData(newRequest);
   }
 
-  Future<Validator> get_update(
+  Future<api.Validator> get_update(
       {required String uuid,
-        required String auth_id, required int time}) async {
-    var newRequest = Validator(type: "get_update");
+      required String auth_id,
+      required int time}) async {
+    var newRequest = api.Validator(type: "get_update");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
-    newRequest.data = Data();
+    newRequest.data = api.Data();
     newRequest.data?.time = time;
     newRequest.data?.user = [];
-    newRequest.data?.user?.add(User(auth_id: auth_id, uuid: uuid));
+    newRequest.data?.user?.add(api.User(auth_id: auth_id, uuid: uuid));
     return await _sendData(newRequest);
   }
 
