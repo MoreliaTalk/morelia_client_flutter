@@ -183,6 +183,24 @@ class ServerWebsockets {
     return await _sendData(newRequest);
   }
 
+  Future<api.Validator> delete_user({
+    required String uuid,
+    required String auth_id,
+    required String login,
+    required String password,
+  }) async {
+    var newRequest = api.Validator(type: "all_flow");
+    newRequest = _addProtocolVersionToRequest(newRequest);
+
+    newRequest.data = api.Data();
+
+    newRequest.data?.user = [];
+    newRequest.data?.user?.add(api.User(
+        login: login, password: password, uuid: uuid, auth_id: auth_id));
+
+    return await _sendData(newRequest);
+  }
+
   void connect() {
     _channel = WebSocketChannel.connect(Uri.parse(_url));
   }
