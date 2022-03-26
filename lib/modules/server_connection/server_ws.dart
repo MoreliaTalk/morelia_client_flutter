@@ -222,6 +222,37 @@ class ServerWebsockets {
     return await _sendData(newRequest);
   }
 
+  Future<api.Validator> edited_message(
+      {required String user_uuid,
+      required String auth_id,
+      required String message_uuid,
+      String? text,
+      Uint8List? file_picture,
+      Uint8List? file_video,
+      Uint8List? file_audio,
+      Uint8List? file_document,
+      Uint8List? emoji}) async {
+    var newRequest = api.Validator(type: "edited_message");
+    newRequest = _addProtocolVersionToRequest(newRequest);
+
+    newRequest.data = api.Data();
+
+    newRequest.data?.user = [];
+    newRequest.data?.user?.add(api.User(uuid: user_uuid, auth_id: auth_id));
+
+    newRequest.data?.message = [];
+    newRequest.data?.message?.add(api.Message(
+        uuid: message_uuid,
+        text: text,
+        file_picture: file_picture,
+        file_video: file_video,
+        file_audio: file_audio,
+        file_document: file_document,
+        emoji: emoji));
+
+    return await _sendData(newRequest);
+  }
+
   void connect() {
     _channel = WebSocketChannel.connect(Uri.parse(_url));
   }
