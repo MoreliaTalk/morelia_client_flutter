@@ -110,9 +110,9 @@ class ServerWebsockets {
 
   Future<api.Validator> all_messages(
       {required String user_uuid,
-        required String auth_id,
-        required String flow_uuid,
-        required int time}) async {
+      required String auth_id,
+      required String flow_uuid,
+      required int time}) async {
     var newRequest = api.Validator(type: "all_messages");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
@@ -124,6 +124,32 @@ class ServerWebsockets {
 
     newRequest.data?.flow = [];
     newRequest.data?.flow?.add(api.Flow(uuid: flow_uuid));
+    return await _sendData(newRequest);
+  }
+
+  Future<api.Validator> add_flow(
+      {required String user_uuid,
+      required String auth_id,
+      required String flow_type,
+      required String flow_owner,
+      required List<String> flow_users,
+      String? flow_title,
+      String? flow_info}) async {
+    var newRequest = api.Validator(type: "add_flow");
+    newRequest = _addProtocolVersionToRequest(newRequest);
+
+    newRequest.data = api.Data();
+
+    newRequest.data?.user = [];
+    newRequest.data?.user?.add(api.User(auth_id: auth_id, uuid: user_uuid));
+
+    newRequest.data?.flow = [];
+    newRequest.data?.flow?.add(api.Flow(
+        type: flow_type,
+        title: flow_title,
+        info: flow_info,
+        owner: flow_owner,
+        users: flow_users));
     return await _sendData(newRequest);
   }
 

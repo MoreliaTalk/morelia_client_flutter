@@ -13,9 +13,8 @@ Flow _$FlowFromJson(Map<String, dynamic> json) => Flow(
       title: json['title'] as String?,
       info: json['info'] as String?,
       owner: json['owner'] as String?,
-      users: (json['users'] as List<dynamic>?)
-          ?.map((e) => User.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      users:
+          (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),
       message_start: json['message_start'] as int?,
       message_end: json['message_end'] as int?,
     );
@@ -27,7 +26,7 @@ Map<String, dynamic> _$FlowToJson(Flow instance) => <String, dynamic>{
       'title': instance.title,
       'info': instance.info,
       'owner': instance.owner,
-      'users': instance.users?.map((e) => e.toJson()).toList(),
+      'users': instance.users,
       'message_start': instance.message_start,
       'message_end': instance.message_end,
     };
@@ -61,7 +60,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
     };
 
 Message _$MessageFromJson(Map<String, dynamic> json) => Message(
-      uuid: json['uuid'] as String,
+      uuid: json['uuid'] as String?,
       client_id: json['client_id'] as int?,
       text: json['text'] as String?,
       from_user: json['from_user'] as String?,

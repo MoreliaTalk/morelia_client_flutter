@@ -39,7 +39,7 @@ class Flow {
   String? title;
   String? info;
   String? owner;
-  List<User>? users;
+  List<String>? users;
   int? message_start;
   int? message_end;
 
