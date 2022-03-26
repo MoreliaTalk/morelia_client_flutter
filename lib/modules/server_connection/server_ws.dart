@@ -59,11 +59,10 @@ class ServerWebsockets {
     return await _sendData(newRequest);
   }
 
-  Future<api.Validator> get_update({
-    required String user_uuid,
-    required String auth_id,
-    required int time
-  }) async {
+  Future<api.Validator> get_update(
+      {required String user_uuid,
+      required String auth_id,
+      required int time}) async {
     var newRequest = api.Validator(type: "get_update");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
@@ -76,17 +75,16 @@ class ServerWebsockets {
 
   Future<api.Validator> send_message(
       {required String user_uuid,
-        required String auth_id,
-        required String flow_uuid,
-        required int time,
-        required int client_id,
-        required String text,
-        required Uint8List file_picture,
-        required Uint8List file_video,
-        required Uint8List file_audio,
-        required Uint8List file_document,
-        required Uint8List emoji
-      }) async {
+      required String auth_id,
+      required String flow_uuid,
+      required int time,
+      required int client_id,
+      required String text,
+      required Uint8List file_picture,
+      required Uint8List file_video,
+      required Uint8List file_audio,
+      required Uint8List file_document,
+      required Uint8List emoji}) async {
     var newRequest = api.Validator(type: "send_message");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
@@ -97,19 +95,35 @@ class ServerWebsockets {
     newRequest.data?.user?.add(api.User(auth_id: auth_id, uuid: user_uuid));
 
     newRequest.data?.flow = [];
-    newRequest.data?.flow?.add(api.Flow(
-      uuid: flow_uuid
-    ));
+    newRequest.data?.flow?.add(api.Flow(uuid: flow_uuid));
     newRequest.data?.message = [];
     newRequest.data?.message?.add(api.Message(
-      text: text,
-      file_picture: file_picture,
-      file_video: file_video,
-      file_audio: file_audio,
-      file_document: file_document,
-      emoji: emoji
-    ));
+        text: text,
+        file_picture: file_picture,
+        file_video: file_video,
+        file_audio: file_audio,
+        file_document: file_document,
+        emoji: emoji));
 
+    return await _sendData(newRequest);
+  }
+
+  Future<api.Validator> all_messages(
+      {required String user_uuid,
+        required String auth_id,
+        required String flow_uuid,
+        required int time}) async {
+    var newRequest = api.Validator(type: "all_messages");
+    newRequest = _addProtocolVersionToRequest(newRequest);
+
+    newRequest.data = api.Data();
+    newRequest.data?.time = time;
+
+    newRequest.data?.user = [];
+    newRequest.data?.user?.add(api.User(auth_id: auth_id, uuid: user_uuid));
+
+    newRequest.data?.flow = [];
+    newRequest.data?.flow?.add(api.Flow(uuid: flow_uuid));
     return await _sendData(newRequest);
   }
 
