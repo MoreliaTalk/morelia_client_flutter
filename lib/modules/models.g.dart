@@ -17,7 +17,7 @@ extension GetUserConfigCollection on Isar {
 final UserConfigSchema = CollectionSchema(
   name: 'UserConfig',
   schema:
-      '{"name":"UserConfig","idName":"id","properties":[{"name":"authId","type":"String"},{"name":"avatar","type":"String"},{"name":"bio","type":"String"},{"name":"email","type":"String"},{"name":"hashPassword","type":"String"},{"name":"isBot","type":"Bool"},{"name":"key","type":"String"},{"name":"login","type":"String"},{"name":"salt","type":"String"},{"name":"tokenTTL","type":"Long"},{"name":"username","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"bio","unique":false,"properties":[{"name":"bio","type":"Hash","caseSensitive":true}]},{"name":"email","unique":false,"properties":[{"name":"email","type":"Hash","caseSensitive":true}]},{"name":"login","unique":false,"properties":[{"name":"login","type":"Hash","caseSensitive":true}]},{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"flows","target":"Flow"},{"name":"messages","target":"Message"}]}',
+      '{"name":"UserConfig","idName":"id","properties":[{"name":"authId","type":"String"},{"name":"avatar","type":"String"},{"name":"bio","type":"String"},{"name":"email","type":"String"},{"name":"hashPassword","type":"String"},{"name":"isBot","type":"Bool"},{"name":"key","type":"String"},{"name":"login","type":"String"},{"name":"salt","type":"String"},{"name":"tokenTTL","type":"Long"},{"name":"username","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"bio","unique":false,"properties":[{"name":"bio","type":"Hash","caseSensitive":true}]},{"name":"email","unique":false,"properties":[{"name":"email","type":"Hash","caseSensitive":true}]},{"name":"login","unique":false,"properties":[{"name":"login","type":"Hash","caseSensitive":true}]},{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"toFlows","target":"Flow"},{"name":"toMessages","target":"Message"}]}',
   nativeAdapter: const _UserConfigNativeAdapter(),
   webAdapter: const _UserConfigWebAdapter(),
   idName: 'id',
@@ -54,7 +54,7 @@ final UserConfigSchema = CollectionSchema(
       NativeIndexType.stringHash,
     ]
   },
-  linkIds: {'flows': 0, 'messages': 1},
+  linkIds: {'toFlows': 0, 'toMessages': 1},
   backlinkIds: {},
   linkedCollections: ['Flow', 'Message'],
   getId: (obj) {
@@ -65,7 +65,7 @@ final UserConfigSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [obj.flows, obj.messages],
+  getLinks: (obj) => [obj.toFlows, obj.toMessages],
   version: 2,
 );
 
@@ -149,18 +149,18 @@ class _UserConfigWebAdapter extends IsarWebTypeAdapter<UserConfig> {
 
   @override
   void attachLinks(Isar isar, int id, UserConfig object) {
-    object.flows.attach(
+    object.toFlows.attach(
       id,
       isar.userConfigs,
       isar.getCollection<Flow>('Flow'),
-      'flows',
+      'toFlows',
       false,
     );
-    object.messages.attach(
+    object.toMessages.attach(
       id,
       isar.userConfigs,
       isar.getCollection<Message>('Message'),
-      'messages',
+      'toMessages',
       false,
     );
   }
@@ -311,18 +311,18 @@ class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
 
   @override
   void attachLinks(Isar isar, int id, UserConfig object) {
-    object.flows.attach(
+    object.toFlows.attach(
       id,
       isar.userConfigs,
       isar.getCollection<Flow>('Flow'),
-      'flows',
+      'toFlows',
       false,
     );
-    object.messages.attach(
+    object.toMessages.attach(
       id,
       isar.userConfigs,
       isar.getCollection<Message>('Message'),
-      'messages',
+      'toMessages',
       false,
     );
   }
@@ -1912,21 +1912,21 @@ extension UserConfigQueryFilter
 
 extension UserConfigQueryLinks
     on QueryBuilder<UserConfig, UserConfig, QFilterCondition> {
-  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> flows(
+  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> toFlows(
       FilterQuery<Flow> q) {
     return linkInternal(
       isar.flows,
       q,
-      'flows',
+      'toFlows',
     );
   }
 
-  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> messages(
+  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> toMessages(
       FilterQuery<Message> q) {
     return linkInternal(
       isar.messages,
       q,
-      'messages',
+      'toMessages',
     );
   }
 }
@@ -2276,7 +2276,7 @@ extension GetFlowCollection on Isar {
 final FlowSchema = CollectionSchema(
   name: 'Flow',
   schema:
-      '{"name":"Flow","idName":"id","properties":[{"name":"flowType","type":"String"},{"name":"info","type":"String"},{"name":"owner","type":"String"},{"name":"timeCreated","type":"Long"},{"name":"title","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"info","unique":false,"properties":[{"name":"info","type":"Hash","caseSensitive":true}]},{"name":"title","unique":false,"properties":[{"name":"title","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"messages","target":"Message"},{"name":"users","target":"UserConfig"}]}',
+      '{"name":"Flow","idName":"id","properties":[{"name":"flowType","type":"String"},{"name":"info","type":"String"},{"name":"owner","type":"String"},{"name":"timeCreated","type":"Long"},{"name":"title","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"info","unique":false,"properties":[{"name":"info","type":"Hash","caseSensitive":true}]},{"name":"title","unique":false,"properties":[{"name":"title","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"toMessages","target":"Message"},{"name":"toUsers","target":"UserConfig"}]}',
   nativeAdapter: const _FlowNativeAdapter(),
   webAdapter: const _FlowWebAdapter(),
   idName: 'id',
@@ -2301,7 +2301,7 @@ final FlowSchema = CollectionSchema(
       NativeIndexType.stringHash,
     ]
   },
-  linkIds: {'messages': 0, 'users': 1},
+  linkIds: {'toMessages': 0, 'toUsers': 1},
   backlinkIds: {},
   linkedCollections: ['Message', 'UserConfig'],
   getId: (obj) {
@@ -2312,7 +2312,7 @@ final FlowSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [obj.messages, obj.users],
+  getLinks: (obj) => [obj.toMessages, obj.toUsers],
   version: 2,
 );
 
@@ -2372,18 +2372,18 @@ class _FlowWebAdapter extends IsarWebTypeAdapter<Flow> {
 
   @override
   void attachLinks(Isar isar, int id, Flow object) {
-    object.messages.attach(
+    object.toMessages.attach(
       id,
       isar.flows,
       isar.getCollection<Message>('Message'),
-      'messages',
+      'toMessages',
       false,
     );
-    object.users.attach(
+    object.toUsers.attach(
       id,
       isar.flows,
       isar.getCollection<UserConfig>('UserConfig'),
-      'users',
+      'toUsers',
       false,
     );
   }
@@ -2479,18 +2479,18 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
 
   @override
   void attachLinks(Isar isar, int id, Flow object) {
-    object.messages.attach(
+    object.toMessages.attach(
       id,
       isar.flows,
       isar.getCollection<Message>('Message'),
-      'messages',
+      'toMessages',
       false,
     );
-    object.users.attach(
+    object.toUsers.attach(
       id,
       isar.flows,
       isar.getCollection<UserConfig>('UserConfig'),
-      'users',
+      'toUsers',
       false,
     );
   }
@@ -3407,21 +3407,21 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
 }
 
 extension FlowQueryLinks on QueryBuilder<Flow, Flow, QFilterCondition> {
-  QueryBuilder<Flow, Flow, QAfterFilterCondition> messages(
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> toMessages(
       FilterQuery<Message> q) {
     return linkInternal(
       isar.messages,
       q,
-      'messages',
+      'toMessages',
     );
   }
 
-  QueryBuilder<Flow, Flow, QAfterFilterCondition> users(
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> toUsers(
       FilterQuery<UserConfig> q) {
     return linkInternal(
       isar.userConfigs,
       q,
-      'users',
+      'toUsers',
     );
   }
 }
@@ -3645,7 +3645,7 @@ final MessageSchema = CollectionSchema(
     ]
   },
   linkIds: {},
-  backlinkIds: {'flow': 0, 'user': 1},
+  backlinkIds: {'toFlow': 0, 'toUser': 1},
   linkedCollections: ['Flow', 'UserConfig'],
   getId: (obj) {
     if (obj.id == Isar.autoIncrement) {
@@ -3655,7 +3655,7 @@ final MessageSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [obj.flow, obj.user],
+  getLinks: (obj) => [obj.toFlow, obj.toUser],
   version: 2,
 );
 
@@ -3732,18 +3732,18 @@ class _MessageWebAdapter extends IsarWebTypeAdapter<Message> {
 
   @override
   void attachLinks(Isar isar, int id, Message object) {
-    object.flow.attach(
+    object.toFlow.attach(
       id,
       isar.messages,
       isar.getCollection<Flow>('Flow'),
-      'flow',
+      'toFlow',
       true,
     );
-    object.user.attach(
+    object.toUser.attach(
       id,
       isar.messages,
       isar.getCollection<UserConfig>('UserConfig'),
-      'user',
+      'toUser',
       true,
     );
   }
@@ -3871,18 +3871,18 @@ class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
 
   @override
   void attachLinks(Isar isar, int id, Message object) {
-    object.flow.attach(
+    object.toFlow.attach(
       id,
       isar.messages,
       isar.getCollection<Flow>('Flow'),
-      'flow',
+      'toFlow',
       true,
     );
-    object.user.attach(
+    object.toUser.attach(
       id,
       isar.messages,
       isar.getCollection<UserConfig>('UserConfig'),
-      'user',
+      'toUser',
       true,
     );
   }
@@ -5043,21 +5043,21 @@ extension MessageQueryFilter
 
 extension MessageQueryLinks
     on QueryBuilder<Message, Message, QFilterCondition> {
-  QueryBuilder<Message, Message, QAfterFilterCondition> flow(
+  QueryBuilder<Message, Message, QAfterFilterCondition> toFlow(
       FilterQuery<Flow> q) {
     return linkInternal(
       isar.flows,
       q,
-      'flow',
+      'toFlow',
     );
   }
 
-  QueryBuilder<Message, Message, QAfterFilterCondition> user(
+  QueryBuilder<Message, Message, QAfterFilterCondition> toUser(
       FilterQuery<UserConfig> q) {
     return linkInternal(
       isar.userConfigs,
       q,
-      'user',
+      'toUser',
     );
   }
 }
