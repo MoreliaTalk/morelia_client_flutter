@@ -153,6 +153,19 @@ class ServerWebsockets {
     return await _sendData(newRequest);
   }
 
+  Future<api.Validator> all_flow(
+      {required String user_uuid,
+        required String auth_id}) async {
+    var newRequest = api.Validator(type: "all_flow");
+    newRequest = _addProtocolVersionToRequest(newRequest);
+
+    newRequest.data = api.Data();
+
+    newRequest.data?.user = [];
+    newRequest.data?.user?.add(api.User(auth_id: auth_id, uuid: user_uuid));
+    return await _sendData(newRequest);
+  }
+
   void connect() {
     _channel = WebSocketChannel.connect(Uri.parse(_url));
   }
