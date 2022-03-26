@@ -169,7 +169,7 @@ class ServerWebsockets {
       {required String user_uuid,
       required String auth_id,
       required List<String> users_uuids_for_request}) async {
-    var newRequest = api.Validator(type: "all_flow");
+    var newRequest = api.Validator(type: "user_info");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
     newRequest.data = api.Data();
@@ -183,13 +183,12 @@ class ServerWebsockets {
     return await _sendData(newRequest);
   }
 
-  Future<api.Validator> delete_user({
-    required String uuid,
-    required String auth_id,
-    required String login,
-    required String password,
-  }) async {
-    var newRequest = api.Validator(type: "all_flow");
+  Future<api.Validator> delete_user(
+      {required String uuid,
+      required String auth_id,
+      required String login,
+      required String password}) async {
+    var newRequest = api.Validator(type: "delete_user");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
     newRequest.data = api.Data();
@@ -197,6 +196,28 @@ class ServerWebsockets {
     newRequest.data?.user = [];
     newRequest.data?.user?.add(api.User(
         login: login, password: password, uuid: uuid, auth_id: auth_id));
+
+    return await _sendData(newRequest);
+  }
+
+  Future<api.Validator> delete_message(
+      {required String user_uuid,
+      required String auth_id,
+      required String flow_uuid,
+      required String message_uuid}) async {
+    var newRequest = api.Validator(type: "delete_message");
+    newRequest = _addProtocolVersionToRequest(newRequest);
+
+    newRequest.data = api.Data();
+
+    newRequest.data?.user = [];
+    newRequest.data?.user?.add(api.User(uuid: user_uuid, auth_id: auth_id));
+
+    newRequest.data?.flow = [];
+    newRequest.data?.flow?.add(api.Flow(uuid: flow_uuid));
+
+    newRequest.data?.message = [];
+    newRequest.data?.message?.add(api.Message(uuid: message_uuid));
 
     return await _sendData(newRequest);
   }
