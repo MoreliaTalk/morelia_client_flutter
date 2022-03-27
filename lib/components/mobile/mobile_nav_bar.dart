@@ -21,8 +21,7 @@ class MobileNavBar extends HookWidget {
         if (index == _NavBarItems.Chats.index) {
           GoRouter.of(context).go("/");
         } else if (index == _NavBarItems.Settings.index) {
-          // TODO: создать страницу настроек
-          print("TODO");
+          GoRouter.of(context).go("/settings");
         }
         currentSelected.value = index;
       },

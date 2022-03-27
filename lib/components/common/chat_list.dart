@@ -1,8 +1,6 @@
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../modules/platform_const.dart';
-import 'message_area.dart';
 
 class ChatItem extends ConsumerWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
