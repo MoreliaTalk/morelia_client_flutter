@@ -285,23 +285,118 @@ void main() {
       connection.user_info(user_uuid: "user_uuid", auth_id: "auth_id");
       await completer.future;
     });
-  });
-}
 
-/*
-test("Test get_update", () async {
-    final server = await io.HttpServer.bind("localhost", 8444);
+    test("Test delete_user", () async {
+      final server = await io.HttpServer.bind("localhost", 8444);
 
-    Completer completer = Completer();
-    server.transform(io.WebSocketTransformer()).listen((webSocket) {
-      webSocket.listen((request) {
-        assert(request == jsonEncode(newRequest.toJson()));
-        completer.complete();
+      Completer completer = Completer();
+      server.transform(io.WebSocketTransformer()).listen((webSocket) {
+        webSocket.listen((request) {
+          var newRequest = api.Validator(type: "delete_user");
+
+          newRequest.jsonapi = api.Version(
+              version: api.protocolVersion, revision: api.protocolRevision);
+          newRequest.data = api.Data();
+          newRequest.data?.user = [];
+          newRequest.data?.user?.add(api.User(
+              login: "login", password: "password", uuid: "uuid", auth_id: "auth_id"));
+
+          assert(request == jsonEncode(newRequest.toJson()));
+          completer.complete();
+        });
       });
+
+      var connection = ServerConnection("ws://localhost:8444/");
+      connection.connect();
+
+      connection.delete_user(uuid: "uuid", auth_id: "auth_id", login: "login", password: "password");
+      await completer.future;
     });
 
-    var connection = ServerConnection("ws://localhost:8444/");
-    connection.connect();
-    await completer.future;
+    test("Test delete_message", () async {
+      final server = await io.HttpServer.bind("localhost", 8444);
+
+      Completer completer = Completer();
+      server.transform(io.WebSocketTransformer()).listen((webSocket) {
+        webSocket.listen((request) {
+          var newRequest = api.Validator(type: "delete_message");
+
+          newRequest.jsonapi = api.Version(
+              version: api.protocolVersion, revision: api.protocolRevision);
+          newRequest.data = api.Data();
+          newRequest.data?.user = [];
+          newRequest.data?.user?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
+          newRequest.data?.flow = [];
+          newRequest.data?.flow?.add(api.Flow(uuid: "flow_uuid"));
+          newRequest.data?.message = [];
+          newRequest.data?.message?.add(api.Message(uuid: "message_uuid"));
+
+          assert(request == jsonEncode(newRequest.toJson()));
+          completer.complete();
+        });
+      });
+
+      var connection = ServerConnection("ws://localhost:8444/");
+      connection.connect();
+
+      connection.delete_message(user_uuid: "user_uuid", auth_id: "auth_id", flow_uuid: "flow_uuid", message_uuid: "message_uuid");
+      await completer.future;
+    });
+
+    test("Test edited_message", () async {
+      final server = await io.HttpServer.bind("localhost", 8444);
+
+      Completer completer = Completer();
+      server.transform(io.WebSocketTransformer()).listen((webSocket) {
+        webSocket.listen((request) {
+          var newRequest = api.Validator(type: "edited_message");
+
+          newRequest.jsonapi = api.Version(
+              version: api.protocolVersion, revision: api.protocolRevision);
+          newRequest.data = api.Data();
+          newRequest.data?.user = [];
+          newRequest.data?.user?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
+          newRequest.data?.message = [];
+          newRequest.data?.message?.add(api.Message(
+              uuid: "message_uuid",
+              text: "text"));
+
+          assert(request == jsonEncode(newRequest.toJson()));
+          completer.complete();
+        });
+      });
+
+      var connection = ServerConnection("ws://localhost:8444/");
+      connection.connect();
+
+      connection.edited_message(user_uuid: "user_uuid", auth_id: "auth_id", message_uuid: "message_uuid");
+      await completer.future;
+    });
+
+    test("Test ping_pong", () async {
+      final server = await io.HttpServer.bind("localhost", 8444);
+
+      Completer completer = Completer();
+      server.transform(io.WebSocketTransformer()).listen((webSocket) {
+        webSocket.listen((request) {
+          var newRequest = api.Validator(type: "ping_pong");
+
+          newRequest.jsonapi = api.Version(
+              version: api.protocolVersion, revision: api.protocolRevision);
+          newRequest.data = api.Data();
+          newRequest.data?.user = [];
+          newRequest.data?.user?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
+
+          assert(request == jsonEncode(newRequest.toJson()));
+          completer.complete();
+        });
+      });
+
+      var connection = ServerConnection("ws://localhost:8444/");
+      connection.connect();
+
+      connection.ping_pong(user_uuid: "user_uuid", auth_id: "auth_id");
+      await completer.future;
+    });
   });
-*/
+}
