@@ -10,28 +10,28 @@ import 'package:morelia_client_flutter/modules/server_connection/api.dart'
 void main() {
   group("Tests ServerConnection class", () {
     test("Test connect", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server
           .transform(io.WebSocketTransformer())
           .listen((_) => completer.complete());
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       await completer.future;
     });
 
     test("Test disconnect", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
         webSocket.listen((event) {}, onDone: () => completer.complete());
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
       connection.disconnect();
 
@@ -39,7 +39,7 @@ void main() {
     });
 
     test("Test register_user", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -55,7 +55,7 @@ void main() {
           completer.complete();
         });
       });
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.register_user(password: "password", login: "login");
@@ -63,7 +63,7 @@ void main() {
     });
 
     test("Test authentication", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -82,7 +82,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.authentication(login: "login", password: "password");
@@ -90,7 +90,7 @@ void main() {
     });
 
     test("Test get_update", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -109,7 +109,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.get_update(
@@ -118,7 +118,7 @@ void main() {
     });
 
     test("Test send_message", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -144,7 +144,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.send_message(
@@ -158,7 +158,7 @@ void main() {
     });
 
     test("Test all_messages", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -181,7 +181,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.all_messages(
@@ -193,7 +193,7 @@ void main() {
     });
 
     test("Test add_flow", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -220,7 +220,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.add_flow(
@@ -235,7 +235,7 @@ void main() {
     });
 
     test("Test all_flow", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -253,7 +253,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.all_flow(user_uuid: "user_uuid", auth_id: "auth_id");
@@ -261,7 +261,7 @@ void main() {
     });
 
     test("Test user_info", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -279,7 +279,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.user_info(user_uuid: "user_uuid", auth_id: "auth_id");
@@ -287,7 +287,7 @@ void main() {
     });
 
     test("Test delete_user", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -306,7 +306,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.delete_user(uuid: "uuid", auth_id: "auth_id", login: "login", password: "password");
@@ -314,7 +314,7 @@ void main() {
     });
 
     test("Test delete_message", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -336,7 +336,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.delete_message(user_uuid: "user_uuid", auth_id: "auth_id", flow_uuid: "flow_uuid", message_uuid: "message_uuid");
@@ -344,7 +344,7 @@ void main() {
     });
 
     test("Test edited_message", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -366,15 +366,15 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
-      connection.edited_message(user_uuid: "user_uuid", auth_id: "auth_id", message_uuid: "message_uuid");
+      connection.edited_message(user_uuid: "user_uuid", auth_id: "auth_id", message_uuid: "message_uuid", text: "text");
       await completer.future;
     });
 
     test("Test ping_pong", () async {
-      final server = await io.HttpServer.bind("localhost", 8444);
+      final server = await io.HttpServer.bind("localhost", 0);
 
       Completer completer = Completer();
       server.transform(io.WebSocketTransformer()).listen((webSocket) {
@@ -392,7 +392,7 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:8444/");
+      var connection = ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.ping_pong(user_uuid: "user_uuid", auth_id: "auth_id");
