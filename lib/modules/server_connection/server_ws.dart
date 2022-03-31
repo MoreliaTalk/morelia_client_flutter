@@ -109,6 +109,7 @@ class ServerConnection {
     newRequest.data?.flow?.add(api.Flow(uuid: flow_uuid));
     newRequest.data?.message = [];
     newRequest.data?.message?.add(api.Message(
+        client_id: client_id,
         text: text,
         file_picture: file_picture,
         file_video: file_video,
@@ -131,7 +132,7 @@ class ServerConnection {
     newRequest.data?.time = time;
 
     newRequest.data?.user = [];
-    newRequest.data?.user?.add(api.User(auth_id: auth_id, uuid: user_uuid));
+    newRequest.data?.user?.add(api.User(uuid: user_uuid, auth_id: auth_id));
 
     newRequest.data?.flow = [];
     newRequest.data?.flow?.add(api.Flow(uuid: flow_uuid));
