@@ -5,11 +5,11 @@ import 'dart:typed_data';
 import 'api.dart' as api;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ServerWebsockets {
+class ServerConnection {
   final String _url;
   late WebSocketChannel _channel;
 
-  ServerWebsockets(this._url);
+  ServerConnection(this._url);
 
   void connect() {
     _channel = WebSocketChannel.connect(Uri.parse(_url));
