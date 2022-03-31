@@ -41,28 +41,32 @@ class ServerConnection {
   }
 
   Future<api.Validator> register_user(
-      {required String password,
-      required String login,
-      String? email,
-      String? username}) async {
+      {required String login,
+      required String password,
+      String? username,
+      String? email}) async {
     var newRequest = api.Validator(type: "register_user");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
     newRequest.data = api.Data();
     newRequest.data?.user = [];
     newRequest.data?.user?.add(api.User(
-        password: password, login: login, email: email, username: username));
+      login: login,
+      password: password,
+      username: username,
+      email: email,
+    ));
     return await _sendData(newRequest);
   }
 
   Future<api.Validator> authentication(
-      {required String password, required String login}) async {
+      {required String login, required String password}) async {
     var newRequest = api.Validator(type: "authentication");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
     newRequest.data = api.Data();
     newRequest.data?.user = [];
-    newRequest.data?.user?.add(api.User(password: password, login: login));
+    newRequest.data?.user?.add(api.User(login: login, password: password));
     return await _sendData(newRequest);
   }
 
@@ -87,11 +91,11 @@ class ServerConnection {
       required int time,
       required int client_id,
       required String text,
-      required Uint8List file_picture,
-      required Uint8List file_video,
-      required Uint8List file_audio,
-      required Uint8List file_document,
-      required Uint8List emoji}) async {
+      Uint8List? file_picture,
+      Uint8List? file_video,
+      Uint8List? file_audio,
+      Uint8List? file_document,
+      Uint8List? emoji}) async {
     var newRequest = api.Validator(type: "send_message");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
