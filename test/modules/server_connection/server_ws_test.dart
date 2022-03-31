@@ -17,7 +17,8 @@ void main() {
           .transform(io.WebSocketTransformer())
           .listen((_) => completer.complete());
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       await completer.future;
@@ -31,7 +32,8 @@ void main() {
         webSocket.listen((event) {}, onDone: () => completer.complete());
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
       connection.disconnect();
 
@@ -55,7 +57,8 @@ void main() {
           completer.complete();
         });
       });
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.register_user(password: "password", login: "login");
@@ -82,7 +85,8 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.authentication(login: "login", password: "password");
@@ -109,7 +113,8 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.get_update(
@@ -144,7 +149,8 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.send_message(
@@ -181,7 +187,8 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.all_messages(
@@ -220,7 +227,8 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.add_flow(
@@ -247,13 +255,15 @@ void main() {
 
           newRequest.data = api.Data();
           newRequest.data?.user = [];
-          newRequest.data?.user?.add(api.User(auth_id: "auth_id", uuid: "user_uuid"));
+          newRequest.data?.user
+              ?.add(api.User(auth_id: "auth_id", uuid: "user_uuid"));
           assert(request == jsonEncode(newRequest.toJson()));
           completer.complete();
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.all_flow(user_uuid: "user_uuid", auth_id: "auth_id");
@@ -272,14 +282,16 @@ void main() {
               version: api.protocolVersion, revision: api.protocolRevision);
           newRequest.data = api.Data();
           newRequest.data?.user = [];
-          newRequest.data?.user?.add(api.User(auth_id: "auth_id", uuid: "user_uuid"));
+          newRequest.data?.user
+              ?.add(api.User(auth_id: "auth_id", uuid: "user_uuid"));
 
           assert(request == jsonEncode(newRequest.toJson()));
           completer.complete();
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.user_info(user_uuid: "user_uuid", auth_id: "auth_id");
@@ -299,17 +311,25 @@ void main() {
           newRequest.data = api.Data();
           newRequest.data?.user = [];
           newRequest.data?.user?.add(api.User(
-              login: "login", password: "password", uuid: "uuid", auth_id: "auth_id"));
+              login: "login",
+              password: "password",
+              uuid: "uuid",
+              auth_id: "auth_id"));
 
           assert(request == jsonEncode(newRequest.toJson()));
           completer.complete();
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
-      connection.delete_user(uuid: "uuid", auth_id: "auth_id", login: "login", password: "password");
+      connection.delete_user(
+          uuid: "uuid",
+          auth_id: "auth_id",
+          login: "login",
+          password: "password");
       await completer.future;
     });
 
@@ -325,7 +345,8 @@ void main() {
               version: api.protocolVersion, revision: api.protocolRevision);
           newRequest.data = api.Data();
           newRequest.data?.user = [];
-          newRequest.data?.user?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
+          newRequest.data?.user
+              ?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
           newRequest.data?.flow = [];
           newRequest.data?.flow?.add(api.Flow(uuid: "flow_uuid"));
           newRequest.data?.message = [];
@@ -336,10 +357,15 @@ void main() {
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
-      connection.delete_message(user_uuid: "user_uuid", auth_id: "auth_id", flow_uuid: "flow_uuid", message_uuid: "message_uuid");
+      connection.delete_message(
+          user_uuid: "user_uuid",
+          auth_id: "auth_id",
+          flow_uuid: "flow_uuid",
+          message_uuid: "message_uuid");
       await completer.future;
     });
 
@@ -355,21 +381,26 @@ void main() {
               version: api.protocolVersion, revision: api.protocolRevision);
           newRequest.data = api.Data();
           newRequest.data?.user = [];
-          newRequest.data?.user?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
+          newRequest.data?.user
+              ?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
           newRequest.data?.message = [];
-          newRequest.data?.message?.add(api.Message(
-              uuid: "message_uuid",
-              text: "text"));
+          newRequest.data?.message
+              ?.add(api.Message(uuid: "message_uuid", text: "text"));
 
           assert(request == jsonEncode(newRequest.toJson()));
           completer.complete();
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
-      connection.edited_message(user_uuid: "user_uuid", auth_id: "auth_id", message_uuid: "message_uuid", text: "text");
+      connection.edited_message(
+          user_uuid: "user_uuid",
+          auth_id: "auth_id",
+          message_uuid: "message_uuid",
+          text: "text");
       await completer.future;
     });
 
@@ -385,14 +416,16 @@ void main() {
               version: api.protocolVersion, revision: api.protocolRevision);
           newRequest.data = api.Data();
           newRequest.data?.user = [];
-          newRequest.data?.user?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
+          newRequest.data?.user
+              ?.add(api.User(uuid: "user_uuid", auth_id: "auth_id"));
 
           assert(request == jsonEncode(newRequest.toJson()));
           completer.complete();
         });
       });
 
-      var connection = ServerConnection("ws://localhost:" + server.port.toString());
+      var connection =
+          ServerConnection("ws://localhost:" + server.port.toString());
       connection.connect();
 
       connection.ping_pong(user_uuid: "user_uuid", auth_id: "auth_id");

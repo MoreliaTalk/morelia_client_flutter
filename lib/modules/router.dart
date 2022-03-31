@@ -30,11 +30,17 @@ class MoreliaRouter {
         path: "/messages/:uuid",
         builder: (context, state) =>
             CommunicationPage(uuid: state.params['uuid']!)),
-    settingsRoute
+    GoRoute(
+        path: "/settings",
+        builder: (context, _) => const SettingsPage(),
+        routes: [])
   ]);
 
   final _desktopRouter = GoRouter(routes: [
     GoRoute(path: "/", builder: (context, state) => const DesktopMainPage()),
-    settingsRoute
+    GoRoute(
+        path: "/settings",
+        builder: (context, _) => const SettingsPage(),
+        routes: [])
   ]);
 }
