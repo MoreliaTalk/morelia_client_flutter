@@ -246,7 +246,6 @@ void main() {
               version: api.protocolVersion, revision: api.protocolRevision);
 
           newRequest.data = api.Data();
-
           newRequest.data?.user = [];
           newRequest.data?.user?.add(api.User(auth_id: "auth_id", uuid: "user_uuid"));
           assert(request == jsonEncode(newRequest.toJson()));
@@ -258,6 +257,32 @@ void main() {
       connection.connect();
 
       connection.all_flow(user_uuid: "user_uuid", auth_id: "auth_id");
+      await completer.future;
+    });
+
+    test("Test user_info", () async {
+      final server = await io.HttpServer.bind("localhost", 8444);
+
+      Completer completer = Completer();
+      server.transform(io.WebSocketTransformer()).listen((webSocket) {
+        webSocket.listen((request) {
+          var newRequest = api.Validator(type: "user_info");
+
+          newRequest.jsonapi = api.Version(
+              version: api.protocolVersion, revision: api.protocolRevision);
+          newRequest.data = api.Data();
+          newRequest.data?.user = [];
+          newRequest.data?.user?.add(api.User(auth_id: "auth_id", uuid: "user_uuid"));
+
+          assert(request == jsonEncode(newRequest.toJson()));
+          completer.complete();
+        });
+      });
+
+      var connection = ServerConnection("ws://localhost:8444/");
+      connection.connect();
+
+      connection.user_info(user_uuid: "user_uuid", auth_id: "auth_id");
       await completer.future;
     });
   });

@@ -180,7 +180,7 @@ class ServerConnection {
   Future<api.Validator> user_info(
       {required String user_uuid,
       required String auth_id,
-      required List<String> users_uuids_for_request}) async {
+      List<String>? users_uuids_for_request}) async {
     var newRequest = api.Validator(type: "user_info");
     newRequest = _addProtocolVersionToRequest(newRequest);
 
@@ -188,8 +188,11 @@ class ServerConnection {
 
     newRequest.data?.user = [];
     newRequest.data?.user?.add(api.User(auth_id: auth_id, uuid: user_uuid));
-    for (final user in users_uuids_for_request) {
-      newRequest.data?.user?.add(api.User(uuid: user));
+
+    if (users_uuids_for_request != null) {
+      for (final user in users_uuids_for_request) {
+        newRequest.data?.user?.add(api.User(uuid: user));
+      }
     }
 
     return await _sendData(newRequest);
