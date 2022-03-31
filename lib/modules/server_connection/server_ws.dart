@@ -4,13 +4,20 @@ import 'dart:typed_data';
 
 import 'api.dart' as api;
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/status.dart' as status;
 
 class ServerWebsockets {
   final String _url;
   late WebSocketChannel _channel;
 
   ServerWebsockets(this._url);
+
+  void connect() {
+    _channel = WebSocketChannel.connect(Uri.parse(_url));
+  }
+
+  void disconnect() {
+    _channel.sink.close(1000);
+  }
 
   Future<api.Validator> _sendData(api.Validator data) async {
     Completer<api.Validator> completer = Completer();
@@ -263,9 +270,5 @@ class ServerWebsockets {
     newRequest.data?.user?.add(api.User(uuid: user_uuid, auth_id: auth_id));
 
     return await _sendData(newRequest);
-  }
-
-  void connect() {
-    _channel = WebSocketChannel.connect(Uri.parse(_url));
   }
 }
