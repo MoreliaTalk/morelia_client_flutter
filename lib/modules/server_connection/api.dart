@@ -33,6 +33,7 @@ class Flow {
       this.users,
       this.message_start,
       this.message_end});
+
   String? uuid;
   int? time;
   String? type;
@@ -61,12 +62,15 @@ class User {
       this.token_ttl,
       this.email,
       this.time_created});
+
   String? uuid;
   String? login;
   String? username;
   String? bio;
+
   @Uint8ListConverter()
   Uint8List? avatar;
+
   String? password;
   bool? is_bot;
   String? auth_id;
@@ -100,16 +104,22 @@ class Message {
   String? from_user;
   int? time;
   String? from_flow;
+
   @Uint8ListConverter()
   Uint8List? file_picture;
+
   @Uint8ListConverter()
   Uint8List? file_video;
+
   @Uint8ListConverter()
   Uint8List? file_audio;
+
   @Uint8ListConverter()
   Uint8List? file_document;
+
   @Uint8ListConverter()
   Uint8List? emoji;
+
   int? edited_time;
   bool? edited_status;
 
@@ -121,6 +131,7 @@ class Message {
 @JsonSerializable(explicitToJson: true)
 class Data {
   Data({this.time, this.user, this.flow, this.message, this.meta});
+
   int? time;
   List<User>? user;
   List<Flow>? flow;
@@ -134,6 +145,7 @@ class Data {
 @JsonSerializable(explicitToJson: true)
 class Errors {
   Errors({this.code, this.status, this.time, this.detail});
+
   int? code;
   String? status;
   int? time;
@@ -146,6 +158,7 @@ class Errors {
 @JsonSerializable(explicitToJson: true)
 class Version {
   Version({required this.version, this.revision});
+
   late String version;
   String? revision;
 
@@ -157,6 +170,7 @@ class Version {
 @JsonSerializable(explicitToJson: true)
 class Validator {
   Validator({required this.type, this.jsonapi, this.meta});
+
   late String type;
   Data? data;
   Errors? errors;
