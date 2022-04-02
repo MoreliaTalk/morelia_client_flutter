@@ -11,9 +11,9 @@ class MoreliaRouter {
   get router {
     switch (currentPlatform) {
       case TypePlatformDevices.mobile:
-        return _mobileRouter;
+        return GoRouter(routes: [..._commonRoutes, ..._mobileRoutes]);
       case TypePlatformDevices.desktop:
-        return _desktopRouter;
+        return GoRouter(routes: [..._commonRoutes, ..._desktopRoutes]);
       default:
         return GoRouter(routes: [
           GoRoute(
@@ -24,23 +24,22 @@ class MoreliaRouter {
     }
   }
 
-  final _mobileRouter = GoRouter(routes: [
+  final List<GoRoute> _commonRoutes = [
+    GoRoute(
+        path: "/settings",
+        builder: (context, _) => const SettingsPage(),
+        routes: [])
+  ];
+
+  final _mobileRoutes = [
     GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
     GoRoute(
         path: "/messages/:uuid",
         builder: (context, state) =>
-            CommunicationPage(uuid: state.params['uuid']!)),
-    GoRoute(
-        path: "/settings",
-        builder: (context, _) => const SettingsPage(),
-        routes: [])
-  ]);
+            CommunicationPage(uuid: state.params['uuid']!))
+  ];
 
-  final _desktopRouter = GoRouter(routes: [
+  final _desktopRoutes = [
     GoRoute(path: "/", builder: (context, state) => const DesktopMainPage()),
-    GoRoute(
-        path: "/settings",
-        builder: (context, _) => const SettingsPage(),
-        routes: [])
-  ]);
+  ];
 }
