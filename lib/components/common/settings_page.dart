@@ -3,11 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart';
 
-GoRoute settingsRoute = GoRoute(
-    path: "/settings",
-    builder: (context, _) => const SettingsPage(),
-    routes: []);
-
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
