@@ -13,8 +13,8 @@ void main() {
 
     Message foundedWidget = tester.firstWidget(widgetFinder);
     Text foundedText = tester.firstWidget(find.text("Hello!"));
-    assert(
-        foundedText.data == foundedWidget.messageText && foundedText.data == "Hello!");
+    assert(foundedText.data == foundedWidget.messageText &&
+        foundedText.data == "Hello!");
   });
 
   testWidgets('Test widget "Message"(type "my") create',
@@ -32,8 +32,8 @@ void main() {
 
   testWidgets('Test widget "Message"(type "otherUser") create',
       (WidgetTester tester) async {
-    Message messageWidget =
-        const Message(messageText: "Hello!", messageType: TypesMessages.otherUser);
+    Message messageWidget = const Message(
+        messageText: "Hello!", messageType: TypesMessages.otherUser);
     await tester.pumpWidget(MaterialApp(home: messageWidget));
 
     var widgetFinder = find.byWidget(messageWidget);
