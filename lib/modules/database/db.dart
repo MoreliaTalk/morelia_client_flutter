@@ -15,12 +15,13 @@
 
 import 'dart:core';
 import 'dart:io';
-import './models.dart';
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
-import './platform_const.dart';
 
+import 'package:isar/isar.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+
+import '../platform_const.dart';
+import 'models.dart';
 
 class DatabaseReadError implements Exception {
   final String message;
@@ -113,7 +114,7 @@ class DatabaseHandler {
   }
 
   Future<void> addUser(String uuid, String login, String hashPassword,
-      [String? username,
+      {String? username,
       bool isBot = false,
       bool isAuth = true,
       String? authId,
@@ -122,7 +123,7 @@ class DatabaseHandler {
       String? avatar,
       String? bio,
       String? salt,
-      String? key]) async {
+      String? key}) async {
     final conn = await dbConnect;
 
     final newUser = UserConfig()
@@ -146,7 +147,7 @@ class DatabaseHandler {
   }
 
   Future<void> updateUser(String uuid, String login, String hashPassword,
-      [String? username,
+      {String? username,
       bool isBot = false,
       bool isAuth = true,
       String? authId,
@@ -155,7 +156,7 @@ class DatabaseHandler {
       String? avatar,
       String? bio,
       String? salt,
-      String? key]) async {
+      String? key}) async {
     final conn = await dbConnect;
     final user = await conn.userConfigs.where().uuidEqualTo(uuid).findFirst();
 
