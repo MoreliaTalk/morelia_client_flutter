@@ -114,21 +114,24 @@ class DatabaseHandler {
 
   Future<void> addUser(String uuid, String login, String hashPassword,
       [String? username,
+      bool isBot = false,
+      bool isAuth = true,
       String? authId,
       int? tokenTTL,
       String? email,
       String? avatar,
       String? bio,
       String? salt,
-      String? key,
-      bool isBot = false]) async {
+      String? key]) async {
     final conn = await dbConnect;
+
     final newUser = UserConfig()
       ..uuid = uuid
       ..login = login
       ..hashPassword = hashPassword
       ..username = username
       ..isBot = isBot
+      ..isAuth = isAuth
       ..authId = authId
       ..tokenTTL = tokenTTL
       ..email = email
@@ -136,6 +139,7 @@ class DatabaseHandler {
       ..bio = bio
       ..salt = salt
       ..key = key;
+
     await conn.writeTxn((conn) async {
       await conn.userConfigs.put(newUser);
     });
@@ -144,6 +148,7 @@ class DatabaseHandler {
   Future<void> updateUser(String uuid, String login, String hashPassword,
       [String? username,
       bool isBot = false,
+      bool isAuth = true,
       String? authId,
       int? tokenTTL,
       String? email,
@@ -162,6 +167,7 @@ class DatabaseHandler {
         ..hashPassword = hashPassword
         ..username = username
         ..isBot = isBot
+        ..isAuth = isAuth
         ..authId = authId
         ..tokenTTL = tokenTTL
         ..email = email
@@ -169,6 +175,7 @@ class DatabaseHandler {
         ..bio = bio
         ..salt = salt
         ..key = key;
+
       await conn.writeTxn((conn) async {
         await conn.userConfigs.put(updateUser);
       });

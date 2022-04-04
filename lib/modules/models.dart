@@ -45,6 +45,7 @@ class UserConfig {
   late String? avatar;
   late String? salt;
   late String? key;
+  late bool? isAuth;
 
   final toMessages = IsarLinks<Message>();
   final toFlows = IsarLinks<Flow>();

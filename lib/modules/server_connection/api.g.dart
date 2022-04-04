@@ -144,17 +144,17 @@ Map<String, dynamic> _$VersionToJson(Version instance) => <String, dynamic>{
 
 Validator _$ValidatorFromJson(Map<String, dynamic> json) => Validator(
       type: json['type'] as String,
+      data: json['data'] == null
+          ? null
+          : Data.fromJson(json['data'] as Map<String, dynamic>),
+      errors: json['errors'] == null
+          ? null
+          : Errors.fromJson(json['errors'] as Map<String, dynamic>),
       jsonapi: json['jsonapi'] == null
           ? null
           : Version.fromJson(json['jsonapi'] as Map<String, dynamic>),
       meta: json['meta'],
-    )
-      ..data = json['data'] == null
-          ? null
-          : Data.fromJson(json['data'] as Map<String, dynamic>)
-      ..errors = json['errors'] == null
-          ? null
-          : Errors.fromJson(json['errors'] as Map<String, dynamic>);
+    );
 
 Map<String, dynamic> _$ValidatorToJson(Validator instance) => <String, dynamic>{
       'type': instance.type,

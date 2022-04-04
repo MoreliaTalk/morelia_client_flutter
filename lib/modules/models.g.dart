@@ -17,7 +17,7 @@ extension GetUserConfigCollection on Isar {
 final UserConfigSchema = CollectionSchema(
   name: 'UserConfig',
   schema:
-      '{"name":"UserConfig","idName":"id","properties":[{"name":"authId","type":"String"},{"name":"avatar","type":"String"},{"name":"bio","type":"String"},{"name":"email","type":"String"},{"name":"hashPassword","type":"String"},{"name":"isBot","type":"Bool"},{"name":"key","type":"String"},{"name":"login","type":"String"},{"name":"salt","type":"String"},{"name":"tokenTTL","type":"Long"},{"name":"username","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"bio","unique":false,"properties":[{"name":"bio","type":"Hash","caseSensitive":true}]},{"name":"email","unique":false,"properties":[{"name":"email","type":"Hash","caseSensitive":true}]},{"name":"login","unique":false,"properties":[{"name":"login","type":"Hash","caseSensitive":true}]},{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"toFlows","target":"Flow"},{"name":"toMessages","target":"Message"}]}',
+      '{"name":"UserConfig","idName":"id","properties":[{"name":"authId","type":"String"},{"name":"avatar","type":"String"},{"name":"bio","type":"String"},{"name":"email","type":"String"},{"name":"hashPassword","type":"String"},{"name":"isAuth","type":"Bool"},{"name":"isBot","type":"Bool"},{"name":"key","type":"String"},{"name":"login","type":"String"},{"name":"salt","type":"String"},{"name":"tokenTTL","type":"Long"},{"name":"username","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"bio","unique":false,"properties":[{"name":"bio","type":"Hash","caseSensitive":true}]},{"name":"email","unique":false,"properties":[{"name":"email","type":"Hash","caseSensitive":true}]},{"name":"login","unique":false,"properties":[{"name":"login","type":"Hash","caseSensitive":true}]},{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"toFlows","target":"Flow"},{"name":"toMessages","target":"Message"}]}',
   nativeAdapter: const _UserConfigNativeAdapter(),
   webAdapter: const _UserConfigWebAdapter(),
   idName: 'id',
@@ -27,13 +27,14 @@ final UserConfigSchema = CollectionSchema(
     'bio': 2,
     'email': 3,
     'hashPassword': 4,
-    'isBot': 5,
-    'key': 6,
-    'login': 7,
-    'salt': 8,
-    'tokenTTL': 9,
-    'username': 10,
-    'uuid': 11
+    'isAuth': 5,
+    'isBot': 6,
+    'key': 7,
+    'login': 8,
+    'salt': 9,
+    'tokenTTL': 10,
+    'username': 11,
+    'uuid': 12
   },
   listProperties: {},
   indexIds: {'bio': 0, 'email': 1, 'login': 2, 'username': 3, 'uuid': 4},
@@ -81,6 +82,7 @@ class _UserConfigWebAdapter extends IsarWebTypeAdapter<UserConfig> {
     IsarNative.jsObjectSet(jsObj, 'email', object.email);
     IsarNative.jsObjectSet(jsObj, 'hashPassword', object.hashPassword);
     IsarNative.jsObjectSet(jsObj, 'id', object.id);
+    IsarNative.jsObjectSet(jsObj, 'isAuth', object.isAuth);
     IsarNative.jsObjectSet(jsObj, 'isBot', object.isBot);
     IsarNative.jsObjectSet(jsObj, 'key', object.key);
     IsarNative.jsObjectSet(jsObj, 'login', object.login);
@@ -100,6 +102,7 @@ class _UserConfigWebAdapter extends IsarWebTypeAdapter<UserConfig> {
     object.email = IsarNative.jsObjectGet(jsObj, 'email');
     object.hashPassword = IsarNative.jsObjectGet(jsObj, 'hashPassword') ?? '';
     object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
+    object.isAuth = IsarNative.jsObjectGet(jsObj, 'isAuth');
     object.isBot = IsarNative.jsObjectGet(jsObj, 'isBot') ?? false;
     object.key = IsarNative.jsObjectGet(jsObj, 'key');
     object.login = IsarNative.jsObjectGet(jsObj, 'login') ?? '';
@@ -128,6 +131,8 @@ class _UserConfigWebAdapter extends IsarWebTypeAdapter<UserConfig> {
       case 'id':
         return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
             as P;
+      case 'isAuth':
+        return (IsarNative.jsObjectGet(jsObj, 'isAuth')) as P;
       case 'isBot':
         return (IsarNative.jsObjectGet(jsObj, 'isBot') ?? false) as P;
       case 'key':
@@ -205,33 +210,35 @@ class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
     final value4 = object.hashPassword;
     final _hashPassword = IsarBinaryWriter.utf8Encoder.convert(value4);
     dynamicSize += (_hashPassword.length) as int;
-    final value5 = object.isBot;
-    final _isBot = value5;
-    final value6 = object.key;
+    final value5 = object.isAuth;
+    final _isAuth = value5;
+    final value6 = object.isBot;
+    final _isBot = value6;
+    final value7 = object.key;
     IsarUint8List? _key;
-    if (value6 != null) {
-      _key = IsarBinaryWriter.utf8Encoder.convert(value6);
+    if (value7 != null) {
+      _key = IsarBinaryWriter.utf8Encoder.convert(value7);
     }
     dynamicSize += (_key?.length ?? 0) as int;
-    final value7 = object.login;
-    final _login = IsarBinaryWriter.utf8Encoder.convert(value7);
+    final value8 = object.login;
+    final _login = IsarBinaryWriter.utf8Encoder.convert(value8);
     dynamicSize += (_login.length) as int;
-    final value8 = object.salt;
+    final value9 = object.salt;
     IsarUint8List? _salt;
-    if (value8 != null) {
-      _salt = IsarBinaryWriter.utf8Encoder.convert(value8);
+    if (value9 != null) {
+      _salt = IsarBinaryWriter.utf8Encoder.convert(value9);
     }
     dynamicSize += (_salt?.length ?? 0) as int;
-    final value9 = object.tokenTTL;
-    final _tokenTTL = value9;
-    final value10 = object.username;
+    final value10 = object.tokenTTL;
+    final _tokenTTL = value10;
+    final value11 = object.username;
     IsarUint8List? _username;
-    if (value10 != null) {
-      _username = IsarBinaryWriter.utf8Encoder.convert(value10);
+    if (value11 != null) {
+      _username = IsarBinaryWriter.utf8Encoder.convert(value11);
     }
     dynamicSize += (_username?.length ?? 0) as int;
-    final value11 = object.uuid;
-    final _uuid = IsarBinaryWriter.utf8Encoder.convert(value11);
+    final value12 = object.uuid;
+    final _uuid = IsarBinaryWriter.utf8Encoder.convert(value12);
     dynamicSize += (_uuid.length) as int;
     final size = staticSize + dynamicSize;
 
@@ -244,13 +251,14 @@ class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
     writer.writeBytes(offsets[2], _bio);
     writer.writeBytes(offsets[3], _email);
     writer.writeBytes(offsets[4], _hashPassword);
-    writer.writeBool(offsets[5], _isBot);
-    writer.writeBytes(offsets[6], _key);
-    writer.writeBytes(offsets[7], _login);
-    writer.writeBytes(offsets[8], _salt);
-    writer.writeLong(offsets[9], _tokenTTL);
-    writer.writeBytes(offsets[10], _username);
-    writer.writeBytes(offsets[11], _uuid);
+    writer.writeBool(offsets[5], _isAuth);
+    writer.writeBool(offsets[6], _isBot);
+    writer.writeBytes(offsets[7], _key);
+    writer.writeBytes(offsets[8], _login);
+    writer.writeBytes(offsets[9], _salt);
+    writer.writeLong(offsets[10], _tokenTTL);
+    writer.writeBytes(offsets[11], _username);
+    writer.writeBytes(offsets[12], _uuid);
   }
 
   @override
@@ -263,13 +271,14 @@ class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
     object.email = reader.readStringOrNull(offsets[3]);
     object.hashPassword = reader.readString(offsets[4]);
     object.id = id;
-    object.isBot = reader.readBool(offsets[5]);
-    object.key = reader.readStringOrNull(offsets[6]);
-    object.login = reader.readString(offsets[7]);
-    object.salt = reader.readStringOrNull(offsets[8]);
-    object.tokenTTL = reader.readLongOrNull(offsets[9]);
-    object.username = reader.readStringOrNull(offsets[10]);
-    object.uuid = reader.readString(offsets[11]);
+    object.isAuth = reader.readBoolOrNull(offsets[5]);
+    object.isBot = reader.readBool(offsets[6]);
+    object.key = reader.readStringOrNull(offsets[7]);
+    object.login = reader.readString(offsets[8]);
+    object.salt = reader.readStringOrNull(offsets[9]);
+    object.tokenTTL = reader.readLongOrNull(offsets[10]);
+    object.username = reader.readStringOrNull(offsets[11]);
+    object.uuid = reader.readString(offsets[12]);
     attachLinks(collection.isar, id, object);
     return object;
   }
@@ -291,18 +300,20 @@ class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
       case 4:
         return (reader.readString(offset)) as P;
       case 5:
-        return (reader.readBool(offset)) as P;
+        return (reader.readBoolOrNull(offset)) as P;
       case 6:
-        return (reader.readStringOrNull(offset)) as P;
+        return (reader.readBool(offset)) as P;
       case 7:
-        return (reader.readString(offset)) as P;
+        return (reader.readStringOrNull(offset)) as P;
       case 8:
-        return (reader.readStringOrNull(offset)) as P;
+        return (reader.readString(offset)) as P;
       case 9:
-        return (reader.readLongOrNull(offset)) as P;
-      case 10:
         return (reader.readStringOrNull(offset)) as P;
+      case 10:
+        return (reader.readLongOrNull(offset)) as P;
       case 11:
+        return (reader.readStringOrNull(offset)) as P;
+      case 12:
         return (reader.readString(offset)) as P;
       default:
         throw 'Illegal propertyIndex';
@@ -1302,6 +1313,23 @@ extension UserConfigQueryFilter
     ));
   }
 
+  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> isAuthIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'isAuth',
+      value: null,
+    ));
+  }
+
+  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> isAuthEqualTo(
+      bool? value) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.eq,
+      property: 'isAuth',
+      value: value,
+    ));
+  }
+
   QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> isBotEqualTo(
       bool value) {
     return addFilterConditionInternal(FilterCondition(
@@ -1981,6 +2009,14 @@ extension UserConfigQueryWhereSortBy
     return addSortByInternal('id', Sort.desc);
   }
 
+  QueryBuilder<UserConfig, UserConfig, QAfterSortBy> sortByIsAuth() {
+    return addSortByInternal('isAuth', Sort.asc);
+  }
+
+  QueryBuilder<UserConfig, UserConfig, QAfterSortBy> sortByIsAuthDesc() {
+    return addSortByInternal('isAuth', Sort.desc);
+  }
+
   QueryBuilder<UserConfig, UserConfig, QAfterSortBy> sortByIsBot() {
     return addSortByInternal('isBot', Sort.asc);
   }
@@ -2088,6 +2124,14 @@ extension UserConfigQueryWhereSortThenBy
     return addSortByInternal('id', Sort.desc);
   }
 
+  QueryBuilder<UserConfig, UserConfig, QAfterSortBy> thenByIsAuth() {
+    return addSortByInternal('isAuth', Sort.asc);
+  }
+
+  QueryBuilder<UserConfig, UserConfig, QAfterSortBy> thenByIsAuthDesc() {
+    return addSortByInternal('isAuth', Sort.desc);
+  }
+
   QueryBuilder<UserConfig, UserConfig, QAfterSortBy> thenByIsBot() {
     return addSortByInternal('isBot', Sort.asc);
   }
@@ -2176,6 +2220,10 @@ extension UserConfigQueryWhereDistinct
     return addDistinctByInternal('id');
   }
 
+  QueryBuilder<UserConfig, UserConfig, QDistinct> distinctByIsAuth() {
+    return addDistinctByInternal('isAuth');
+  }
+
   QueryBuilder<UserConfig, UserConfig, QDistinct> distinctByIsBot() {
     return addDistinctByInternal('isBot');
   }
@@ -2234,6 +2282,10 @@ extension UserConfigQueryProperty
 
   QueryBuilder<UserConfig, int, QQueryOperations> idProperty() {
     return addPropertyNameInternal('id');
+  }
+
+  QueryBuilder<UserConfig, bool?, QQueryOperations> isAuthProperty() {
+    return addPropertyNameInternal('isAuth');
   }
 
   QueryBuilder<UserConfig, bool, QQueryOperations> isBotProperty() {
