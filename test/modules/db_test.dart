@@ -1,8 +1,29 @@
+import 'dart:io';
+
 import "package:flutter_test/flutter_test.dart";
+import 'package:isar/isar.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
-  final db = DatabaseHandler(testing: true);
+  final dartToolDir = path.join(Directory.current.path, 'test/fixtures');
+  const String libWin = 'isar_windows_x64.dll';
+  const String libMac = 'libisar_macos_x64.dylib';
+  const String libLinux = 'libisar_linux_x64.so';
+  const String libAndroid = 'libisar_android_arm64.so';
+
+  try {
+    Isar.initializeLibraries(libraries: {
+      'windows': path.join(dartToolDir, libWin),
+      'macos': path.join(dartToolDir, libMac),
+      'linux': path.join(dartToolDir, libLinux),
+      'android': path.join(dartToolDir, libAndroid)
+    });
+  } catch (e) {
+    throw 'libisar* auxiliary libraries are not in "test/fixtures" directory.';
+  }
+
+  final db = DatabaseHandler();
 
   group("Test DatabaseHandler - UserConfig table:", () {
     db.addUser("uuid_1", "login1", "hashPassword1");

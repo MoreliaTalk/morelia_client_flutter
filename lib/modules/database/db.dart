@@ -17,10 +17,8 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:isar/isar.dart';
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-import '../platform_const.dart';
 import 'models.dart';
 
 class DatabaseReadError implements Exception {
@@ -52,23 +50,7 @@ class DatabaseHandler {
     dbConnect = _connect();
   }
 
-  factory DatabaseHandler({bool testing = false}) {
-    const String libWin = 'libisar_windows_x64.dll';
-    const String libMac = 'libisar_macos_x64.dylib';
-    const String libLinux = 'libisar_linux_x64.so';
-
-    if (testing == true && currentPlatform == TypePlatformDevices.desktop) {
-      final dartToolDir = path.join(Directory.current.path, '.dart_tool');
-      try {
-        Isar.initializeLibraries(libraries: {
-          'windows': path.join(dartToolDir, libWin),
-          'macos': path.join(dartToolDir, libMac),
-          'linux': path.join(dartToolDir, libLinux)
-        });
-      } catch (e) {
-        throw 'InitializeLibraries error';
-      }
-    }
+  factory DatabaseHandler() {
     if (_singleConnect._check == 'blank') {
       _singleConnect = DatabaseHandler.connect('dbConnected');
     } else {
