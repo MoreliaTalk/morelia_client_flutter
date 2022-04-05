@@ -45,7 +45,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   isar_generator: ^2.2.1
-  build_runner: any
   flutter_riverpod: ^1.0.3
 
   # The "flutter_lints" package below contains a set of recommended lints to
