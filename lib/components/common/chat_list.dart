@@ -19,6 +19,9 @@ class ChatItem extends ConsumerWidget {
     return ListTile(
       onTap: () => onClick(uuid),
       leading: CircleAvatar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        radius: 22,
         child: Text(avatarSymbols),
       ),
       title: Text(title),
