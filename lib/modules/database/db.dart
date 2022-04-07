@@ -84,7 +84,7 @@ class DatabaseHandler {
     return await conn.userConfigs.filter().loginEqualTo(login).findAll();
   }
 
-  Future<List<UserConfig?>> getUserByLoginAndPassword(
+  Future<UserConfig?> getUserByLoginAndPassword(
       String login, String hashPassword) async {
     final conn = await dbConnect;
     return await conn.userConfigs
@@ -92,7 +92,7 @@ class DatabaseHandler {
         .loginEqualTo(login)
         .filter()
         .hashPasswordEqualTo(hashPassword)
-        .findAll();
+        .findFirst();
   }
 
   Future<void> addUser(String uuid, String login, String hashPassword,
