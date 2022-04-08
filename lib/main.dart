@@ -8,11 +8,9 @@ import 'package:morelia_client_flutter/modules/theme_manager.dart'
     show currentTheme;
 
 late DatabaseHandler DBHandler;
-late Isar db_connection;
 
 void main() async {
   DBHandler = DatabaseHandler.connect("");
-  db_connection = await DBHandler.dbConnect;
 
   runApp(const ProviderScope(child: MoreliaApp()));
 }

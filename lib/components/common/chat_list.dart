@@ -51,27 +51,31 @@ class ChatList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: db_connection.flows.watchLazy(),
+        stream: DBHandler.dbConnect.flows.watchLazy(),
         builder: (context, _) {
           return FutureBuilder<List<models.Flow?>>(
               future: DBHandler.getAllFlow(),
               builder: (context, snapshot) => Scaffold(
-                    body: Container(
-                        child: (ListView.builder(
+                    body: Container(child: () {
+                      if (snapshot.data != null) {
+                        return ListView.builder(
                             controller: ScrollController(),
                             itemCount: snapshot.data?.length,
                             itemBuilder: (context, index) {
-                              if (snapshot.data != null) {
-                                return ChatItem(snapshot.data![index]?.title as String, snapshot.data![index]?.uuid as String);
-                              } else {
-                                return const Center(child: Text("Chats not found"));
-                              }
-                            }))),
+                              return ChatItem(
+                                  snapshot.data![index]?.title as String,
+                                  snapshot.data![index]?.uuid as String);
+                            });
+                      } else {
+                        return const Center(child: Text("Chats not found"));
+                      }
+                    }()),
                     floatingActionButton: FloatingActionButton(
                       child: const Icon(Icons.add),
                       onPressed: () async {
                         var faker = Faker();
-                        DBHandler.addFlow(faker.guid.guid(), [], title: faker.person.name());
+                        DBHandler.addFlow(faker.guid.guid(), [],
+                            title: faker.person.name());
                       },
                     ),
                   ));

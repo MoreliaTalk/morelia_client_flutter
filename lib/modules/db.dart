@@ -40,14 +40,24 @@ class DatabaseConnectedError implements Exception {
 }
 
 class DatabaseHandler {
-  late Future<Isar> dbConnect;
+  late Isar dbConnect;
   late Future<Directory> dir;
-  late String _check;
+  String _check = "";
 
   static DatabaseHandler _singleConnect = DatabaseHandler.connect('blank');
 
   DatabaseHandler.connect(this._check) {
-    dbConnect = _connect();
+    _connect();
+  }
+
+  _connect() async {
+    final dir = await getApplicationSupportDirectory();
+    dbConnect = Isar.openSync(schemas: [
+      UserConfigSchema,
+      FlowSchema,
+      MessageSchema,
+      ApplicationSettingSchema
+    ], directory: dir.path);
   }
 
   factory DatabaseHandler({bool testing = false}) {
@@ -73,16 +83,6 @@ class DatabaseHandler {
       throw const DatabaseConnectedError('Class already created');
     }
     return _singleConnect;
-  }
-
-  Future<Isar> _connect() async {
-    final dir = await getApplicationSupportDirectory();
-    return await Isar.open(schemas: [
-      UserConfigSchema,
-      FlowSchema,
-      MessageSchema,
-      ApplicationSettingSchema
-    ], directory: dir.path);
   }
 
   Future<List<UserConfig?>> getAllUser() async {
