@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
+import 'package:morelia_client_flutter/modules/db.dart';
 import 'package:morelia_client_flutter/modules/router.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart'
     show currentTheme;
 
-void main() {
+late DatabaseHandler DBHandler;
+late Isar db_connection;
+
+void main() async {
+  DBHandler = DatabaseHandler.connect("");
+  db_connection = await DBHandler.dbConnect;
+
   runApp(const ProviderScope(child: MoreliaApp()));
 }
 

@@ -13,7 +13,6 @@ class DesktopMainPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var chats = ref.watch(chatListStateProvider.notifier);
     Future.delayed(
         Duration.zero,
         () => ref.watch(onClickItemsFunction.notifier).state = (String uuid) =>

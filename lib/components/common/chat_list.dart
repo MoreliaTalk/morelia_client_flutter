@@ -1,6 +1,13 @@
 import 'package:faker/faker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
+import 'package:morelia_client_flutter/main.dart';
+import 'package:morelia_client_flutter/modules/db.dart';
+import 'package:path_provider/path_provider.dart';
+import '../../modules/models.dart' as models;
 
 class ChatItem extends ConsumerWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
@@ -35,45 +42,39 @@ class ChatItem extends ConsumerWidget {
   }
 }
 
-class ChatListStateNotifier extends StateNotifier<List<ChatItem>> {
-  ChatListStateNotifier() : super([]);
-
-  addChat(String title, String lastMessage) {
-    state = [...state, ChatItem(title, lastMessage)];
-  }
-}
-
-final chatListStateProvider =
-    StateNotifierProvider<ChatListStateNotifier, List<ChatItem>>(
-        (ref) => ChatListStateNotifier());
-
 final onClickItemsFunction =
     StateProvider<Function(String uuid)>((ref) => (String uuid) {});
 
-class ChatList extends ConsumerWidget {
+class ChatList extends StatelessWidget {
   const ChatList({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    List<ChatItem> chats = ref.watch(chatListStateProvider);
-    return Scaffold(
-      body: Container(
-          child: (ListView.builder(
-              controller: ScrollController(),
-              itemCount: chats.length,
-              itemBuilder: (context, index) {
-                return chats[index];
-              }))),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          var faker = Faker();
-          ref.watch(chatListStateProvider.notifier).addChat(
-                faker.person.name(),
-                faker.lorem.sentence(),
-              );
-        },
-      ),
-    );
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+        stream: db_connection.flows.watchLazy(),
+        builder: (context, _) {
+          return FutureBuilder<List<models.Flow?>>(
+              future: DBHandler.getAllFlow(),
+              builder: (context, snapshot) => Scaffold(
+                    body: Container(
+                        child: (ListView.builder(
+                            controller: ScrollController(),
+                            itemCount: snapshot.data?.length,
+                            itemBuilder: (context, index) {
+                              if (snapshot.data != null) {
+                                return ChatItem(snapshot.data![index]?.title as String, snapshot.data![index]?.uuid as String);
+                              } else {
+                                return const Center(child: Text("Chats not found"));
+                              }
+                            }))),
+                    floatingActionButton: FloatingActionButton(
+                      child: const Icon(Icons.add),
+                      onPressed: () async {
+                        var faker = Faker();
+                        DBHandler.addFlow(faker.guid.guid(), [], title: faker.person.name());
+                      },
+                    ),
+                  ));
+        });
   }
 }
