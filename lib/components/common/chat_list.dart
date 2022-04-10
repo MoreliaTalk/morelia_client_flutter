@@ -57,35 +57,33 @@ class ChatList extends StatelessWidget {
               future: DBHandler.getAllFlow(),
               builder: (context, flowsSnapshot) => Scaffold(
                     body: Container(child: () {
-                      if (flowsSnapshot.hasData) {
-                        if (flowsSnapshot.data != null) {
-                          return ListView.builder(
-                              controller: ScrollController(),
-                              itemCount: flowsSnapshot.data?.length,
-                              itemBuilder: (context, index) {
-                                return FutureBuilder<models.Message?>(
-                                    future: DBHandler.getLastMessageFromFlow(
-                                        flowsSnapshot.data![index]?.uuid),
-                                    builder: (context, messageSnapshot) {
-                                      var lastMessageText;
+                      if (flowsSnapshot.data != null) {
+                        return ListView.builder(
+                            controller: ScrollController(),
+                            itemCount: flowsSnapshot.data?.length,
+                            itemBuilder: (context, index) {
+                              return FutureBuilder<models.Message?>(
+                                  future: DBHandler.getLastMessageFromFlow(
+                                      flowsSnapshot.data![index]?.uuid),
+                                  builder: (context, messageSnapshot) {
+                                    var lastMessageText;
 
-                                      if (messageSnapshot.data != null) {
-                                        lastMessageText =
-                                            messageSnapshot.data?.text;
-                                      } else {
-                                        lastMessageText =
-                                        "There are no messages here yet";
-                                      }
+                                    if (messageSnapshot.data != null) {
+                                      lastMessageText =
+                                          messageSnapshot.data?.text;
+                                    } else {
+                                      lastMessageText =
+                                          "There are no messages here yet";
+                                    }
 
-                                      return ChatItem(
-                                          flowsSnapshot.data![index]?.title
-                                          as String,
-                                          lastMessageText);
-                                    });
-                              });
-                        } else {
-                          return const Center(child: Text("Chats not found"));
-                        }
+                                    return ChatItem(
+                                        flowsSnapshot.data![index]?.title
+                                            as String,
+                                        lastMessageText);
+                                  });
+                            });
+                      } else {
+                        return const Center(child: Text("Chats not found"));
                       }
                     }()),
                     floatingActionButton: FloatingActionButton(
