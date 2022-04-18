@@ -13,12 +13,40 @@
 // You should have received a copy of the GNU General Public License
 // along with Morelia Flutter. If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:cryptography/cryptography.dart';
 
-
-// Temporary Solution
-Future<List<int>> hashBlake2b(List<int> numbers) async {
+Future<Map<String, String>> hashPassword(String password) async {
   final algorithm = Blake2b();
-  final hash = await algorithm.hash(numbers);
-  return hash.bytes;
+  const decoder = Utf8Decoder(allowMalformed: true);
+  String input;
+  final salt = genString(16);
+  final key = genString(8);
+
+  input = password + salt + key;
+
+  final hash = await algorithm.hash(input.runes.toList());
+  final Map<String, String> result;
+
+  result = {
+    "hashPassword": decoder.convert(hash.bytes),
+    "salt": salt,
+    "key": key
+  };
+
+  return result;
+}
+
+String genString(int stringLength) {
+  const _dictionary =
+      "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890";
+  const maxNumber = _dictionary.length;
+  Random _rnd = Random();
+  var result;
+
+  result = String.fromCharCodes(Iterable.generate(stringLength,
+      (index) => _dictionary.codeUnitAt(_rnd.nextInt(maxNumber))));
+  return result;
 }
