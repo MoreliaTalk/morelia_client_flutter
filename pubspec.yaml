@@ -41,6 +41,7 @@ dependencies:
   web_socket_channel: ^2.1.0
   json_annotation: ^4.4.0
   cryptography: ^2.0.5
+  cryptography_flutter: ^2.0.2
 
 dev_dependencies:
   flutter_test:
