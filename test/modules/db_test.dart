@@ -52,7 +52,7 @@ void main() {
     test('Get user by login and password', () async {
       var result =
           await db.getUserByLoginAndPassword("login1", "hashPassword1");
-      expect(result[0]?.uuid, "uuid_1");
+      expect(result?.uuid, "uuid_1");
     });
   });
 
