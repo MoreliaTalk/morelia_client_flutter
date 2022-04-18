@@ -13,19 +13,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Morelia Flutter. If not, see <https://www.gnu.org/licenses/>.
 
-import 'package:flutter/material.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
 import 'package:morelia_client_flutter/modules/database/models.dart';
 import 'package:morelia_client_flutter/modules/hash.dart';
+import 'package:morelia_client_flutter/modules/server_connection/api.dart';
+import 'package:morelia_client_flutter/modules/server_connection/server_ws.dart';
 
+/// Used to register or login user.
+///
+/// [_checkUser] returned Map with status and uuid
+/// [logIn] returned Map with status, uuid and detail
+///
 class UserHandler {
+  /// Connected to Isar database
   late DatabaseHandler database;
-  late Map<String, dynamic> result = {"status": false, "uuid": null, "detail": null};
+  late ServerConnection connection;
 
-  UserHandler(this.database);
+  /// Map object contains information about user who registered or login.
+  late Map<String, dynamic> result = {
+    "status": false,
+    "uuid": null,
+    "detail": null
+  };
+
+  UserHandler(this.database, this.connection);
 
   Future<Map<String, dynamic>> _checkUser(String login, String password) async {
-    final UserConfig? checkUser = await database.getUserByLoginAndPassword(login, password);
+    final UserConfig? checkUser =
+        await database.getUserByLoginAndPassword(login, password);
     if (checkUser != null) {
       result['status'] = true;
       result['uuid'] = checkUser.uuid;
@@ -48,19 +63,40 @@ class UserHandler {
     }
   }
 
-  Future<Map<String, dynamic>> registerUser(String login, String password, {String? username}) async {
-    final List<int> codeUuid = [1,2,3];
+  Future<Map<String, dynamic>> registerUser(String login, String password,
+      {String? username}) async {
+    final Validator response;
+
+    connection.connect();
+
     final Map<String, dynamic> user = await _checkUser(login, password);
+
     // Temporary Solution
-    final List<int> uuid = await hashBlake2b(codeUuid);
+    final Map<String, String> hash = await hashPassword(password);
 
     if (user["status"] == false) {
-      await database.addUser(uuid.toString(), login, password);
+      try {
+        response = await connection.register_user(
+            login: login, password: password, username: username);
+      } catch (e) {
+        connection.disconnect(code: 1001);
+        throw "";
+      }
+      connection.disconnect(code: 1000);
+      await database.addUser(
+          response.data.user[0].uuid, login, hash["hashPassword"]!,
+          isBot: false,
+          isAuth: true,
+          authId: response.data.user[0].auth_id,
+          tokenTTL: response.data.user[0].token_ttl,
+          salt: hash["salt"]!,
+          key: hash["key"]!);
       result["status"] = true;
       result["detail"] = "User registered complete";
       return result;
     } else {
-      result["detail"] = "Wrong login or password, maybe this user already registered";
+      result["detail"] =
+          "Wrong login or password, maybe this user already registered";
       return result;
     }
   }
