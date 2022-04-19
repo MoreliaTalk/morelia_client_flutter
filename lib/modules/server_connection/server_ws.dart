@@ -17,13 +17,13 @@ class ServerConnection {
   }
 
   void disconnect({int? code}) {
-    // Examples of ```code```:
-    // 1000 - the default, normal closure,
-    // 1001 – the party is going away, e.g. server or client is shutting down,
-    // 1006 – no way to set such code manually,
-    //        indicates that the connection was lost (no close frame).
-    // 1009 – the message is too big to process,
-    // 1011 – unexpected error on server,
+    /// Examples of ```code```:
+    /// 1000 - the default, normal closure,
+    /// 1001 – the party is going away, e.g. server or client is shutting down,
+    /// 1006 – no way to set such code manually,
+    ///        indicates that the connection was lost (no close frame).
+    /// 1009 – the message is too big to process,
+    /// 1011 – unexpected error on server,
 
     _channel.sink.close(code ?? 1000);
   }
