@@ -21,12 +21,14 @@ import 'package:morelia_client_flutter/modules/server_connection/server_ws.dart'
 
 /// Used to register or login user.
 ///
-/// [_checkUser] returned Map with status and uuid
-/// [logIn] returned Map with status, uuid and detail
-///
+/// [_checkUser] returned Map with status and uuid.
+/// [logIn] returned Map with status, uuid and detail.
+/// [registerUser] returned Map with status, uuid, and detail.
 class UserHandler {
   /// Connected to Isar database
   late DatabaseHandler database;
+
+  /// Connect to the server
   late ServerConnection connection;
 
   /// Map object contains information about user who registered or login.
@@ -78,17 +80,17 @@ class UserHandler {
       try {
         response = await connection.register_user(
             login: login, password: password, username: username);
-      } catch (e) {
+      } on Exception catch (e) {
         connection.disconnect(code: 1001);
-        throw "";
+        throw "Server not response, $e";
       }
       connection.disconnect(code: 1000);
       await database.addUser(
-          response.data.user[0].uuid, login, hash["hashPassword"]!,
+          response.data!.user![0].uuid!, login, hash["hashPassword"]!,
           isBot: false,
           isAuth: true,
-          authId: response.data.user[0].auth_id,
-          tokenTTL: response.data.user[0].token_ttl,
+          authId: response.data!.user![0].auth_id,
+          tokenTTL: response.data!.user![0].token_ttl,
           salt: hash["salt"]!,
           key: hash["key"]!);
       result["status"] = true;
