@@ -6,54 +6,48 @@ import 'package:morelia_client_flutter/modules/database/db.dart';
 import 'package:morelia_client_flutter/modules/database/db_initialize.dart';
 import 'package:morelia_client_flutter/modules/server_connection/server_ws.dart';
 
-void main() {
+void main() async {
   dbInitialize();
-
-  late DatabaseHandler? db;
+  final database = DatabaseHandler();
   late ServerConnection? conn;
   late HttpServer server;
+  const uuid = "uuid1";
+  const correctLogin = "login1";
+  const correctPassword = "password1";
+  await database.addUser(uuid, correctLogin, correctPassword);
 
-  setUp(() async {
-    const uuid = "uuid1";
-    const login = "login1";
-    const password = "password1";
-
-    db = DatabaseHandler();
-    server = await HttpServer.bind("localhost", 0);
-    conn = ServerConnection("ws://localhost:" + server.port.toString());
-
-    await db!.addUser(uuid, login, password);
-  });
   group("Test UserHandler class: ", () {
+    setUp(() async {
+      server = await HttpServer.bind("localhost", 0);
+      conn = ServerConnection("ws://localhost:" + server.port.toString());
+    });
+    tearDown(() async {
+      conn = null;
+      await server.close(force: true);
+    });
     test("logIn function with wrong login and password", () async {
       const wrongLogin = "login2";
       const wrongPassword = "password2";
-      final user = UserHandler(db!, conn!);
+      final user = UserHandler(database, conn!);
 
       var result = await user.logIn(wrongLogin, wrongPassword);
 
       expect(result["status"], isFalse);
       expect(result["uuid"], null);
       expect(result["detail"], "Wrong login or password");
-    }, skip: true, tags: "reg_user");
+    }, skip: false, tags: "reg_user");
 
     test("logIn function with correct login and password", () async {
-      const correctLogin = "login1";
-      const correctPassword = "password1";
-      final user = UserHandler(db!, conn!);
+      final user = UserHandler(database, conn!);
 
       var result = await user.logIn(correctLogin, correctPassword);
 
       expect(result["status"], isTrue);
       expect(result["uuid"], "uuid1");
       expect(result["detail"], "LogIn completed");
-    }, skip: true, tags: "reg_user");
+    }, skip: false, tags: "reg_user");
 
     test("registerUser function", () async {}, skip: true, tags: "reg_user");
-  });
-  tearDown(() async {
-    db = null;
-    conn = null;
-    await server.close(force: true);
+    dbClean();
   });
 }
