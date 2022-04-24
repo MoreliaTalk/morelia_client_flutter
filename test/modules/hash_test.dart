@@ -5,14 +5,14 @@ void main() {
   group("Test Hash module: ", () {
     test("hashPassword function", () async {
       const testPassword = "test_password";
-      var hash = await hashPassword(testPassword);
-      var hash2 = await hashPassword(testPassword);
-      expect(hash["hashPassword"], isNot(hash2["hashPassword"]));
-      expect(hash["hashPassword"], isA<String>());
-      expect(hash["salt"], isA<String>());
-      expect(hash["salt"]?.length, 16);
-      expect(hash["key"], isA<String>());
-      expect(hash["key"]?.length, 8);
+      var password = await hashPassword(testPassword);
+      var password2 = await hashPassword(testPassword);
+      expect(password.hash, isNot(password2.hash));
+      expect(password.hash, isA<String>());
+      expect(password.salt, isA<String>());
+      expect(password.salt?.length, 16);
+      expect(password.key, isA<String>());
+      expect(password.key?.length, 8);
     }, skip: false, tags: "functions");
     test("genString function", () {
       var testGen = genString(0);
