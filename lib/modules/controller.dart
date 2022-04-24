@@ -19,87 +19,100 @@ import 'package:morelia_client_flutter/modules/hash.dart';
 import 'package:morelia_client_flutter/modules/server_connection/api.dart';
 import 'package:morelia_client_flutter/modules/server_connection/server_ws.dart';
 
-/// Used to register or login user.
+/// Object contains information about user response.
+class UserHandlerResponse {
+  bool inDatabase;
+  String? uuid;
+  String? detail;
+
+  UserHandlerResponse({this.inDatabase = false, this.uuid, this.detail});
+}
+
+/// Register or login user.
 ///
-/// [_checkUser] returned Map with status and uuid.
-/// [logIn] returned Map with status, uuid and detail.
-/// [registerUser] returned Map with status, uuid, and detail.
+/// [checkUser] returned object contains status and uuid.
+/// [logIn] returned object with status, uuid and detail.
+/// [registerUser] returned object with status, uuid and detail.
 class UserHandler {
-  /// Connected to Isar database
+  // Connected to Isar database
   late DatabaseHandler database;
 
-  /// Connect to the server
   late ServerConnection connection;
-
-  /// Map object contains information about user who registered or login.
-  late Map<String, dynamic> result = {
-    "status": false,
-    "uuid": null,
-    "detail": null
-  };
 
   UserHandler(this.database, this.connection);
 
-  Future<Map<String, dynamic>> _checkUser(String login, String password) async {
-    final UserConfig? checkUser =
+  /// Returned object with status and uuid.
+  ///
+  /// If user contains in local database, [checkUser] response [UserHandlerResponse]
+  /// with ```status=true``` and ```user``` contains UUID.
+  /// If user not available in local database, ```status=false```,
+  /// rest fields is null.
+  Future<UserHandlerResponse> checkUser(String login, String password) async {
+    final UserConfig? _checkUser =
         await database.getUserByLoginAndPassword(login, password);
-    if (checkUser != null) {
-      result['status'] = true;
-      result['uuid'] = checkUser.uuid;
-      return result;
+    if (_checkUser != null) {
+      return UserHandlerResponse(inDatabase: true, uuid: _checkUser.uuid);
     } else {
-      return result;
+      return UserHandlerResponse();
     }
   }
 
-  Future<Map<String, dynamic>> logIn(String login, String password) async {
-    final Map<String, dynamic> user = await _checkUser(login, password);
+  /// Checks user with [login] and [password].
+  /// If user already contains id database switch isAuth to true
+  /// and return [UserHandlerResponse].
+  Future<UserHandlerResponse> logIn(String login, String password) async {
+    final user = await checkUser(login, password);
 
-    if (user["status"] == true) {
-      await database.updateUser(user["uuid"], login, password, isAuth: true);
-      result["detail"] = "LogIn completed";
-      return result;
+    if (user.inDatabase == true) {
+      // if user contains database, isAuth change to true (default isAuth is false).
+      await database.updateUser(user.uuid!, login, password, isAuth: true);
+      user.detail = "LogIn completed";
     } else {
-      result["detail"] = "Wrong login or password";
-      return result;
+      user.detail = "Wrong login or password";
     }
+    return user;
   }
 
-  Future<Map<String, dynamic>> registerUser(String login, String password,
+  /// Registration new user.
+  /// Check user in local database with [login], [password], added new user,
+  /// if not contains in local database. [username] is optional.
+  /// Return [UserHandlerResponse].
+  Future<UserHandlerResponse> registerUser(String login, String password,
       {String? username}) async {
     final Validator response;
 
+    // Connect to the server
     connection.connect();
 
-    final Map<String, dynamic> user = await _checkUser(login, password);
+    final user = await checkUser(login, password);
 
-    // Temporary Solution
-    final Map<String, String> hash = await hashPassword(password);
+    final _password = await hashPassword(password);
 
-    if (user["status"] == false) {
+    if (user.inDatabase == false) {
       try {
         response = await connection.register_user(
             login: login, password: password, username: username);
       } on Exception catch (e) {
+        // send shutting down code
         connection.disconnect(code: 1001);
-        throw "Server not response, $e";
+        throw "Server not response, with error=$e";
       }
+      // send normal closure code
       connection.disconnect(code: 1000);
       await database.addUser(
-          response.data!.user![0].uuid!, login, hash["hashPassword"]!,
+          response.data!.user![0].uuid!, login, _password.hash,
           isBot: false,
           isAuth: true,
           authId: response.data!.user![0].auth_id,
           tokenTTL: response.data!.user![0].token_ttl,
-          salt: hash["salt"]!,
-          key: hash["key"]!);
-      result["status"] = true;
-      result["detail"] = "User registered complete";
-      return result;
+          salt: _password.salt,
+          key: _password.key);
+      user.inDatabase = true;
+      user.detail = "User registered complete";
     } else {
-      result["detail"] =
+      user.detail =
           "Wrong login or password, maybe this user already registered";
-      return result;
     }
+    return user;
   }
 }
