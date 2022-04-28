@@ -34,10 +34,10 @@ class UserHandlerResponse {
 /// [logIn] returned object with status, uuid and detail.
 /// [registerUser] returned object with status, uuid and detail.
 class UserHandler {
-  // Connected to Isar database
   late DatabaseHandler database;
-
   late ServerConnection connection;
+  static const _normalClosure = 1000;
+  static const _faultShutdown = 1001;
 
   UserHandler(this.database, this.connection);
 
@@ -62,43 +62,58 @@ class UserHandler {
   /// and return [UserHandlerResponse].
   Future<UserHandlerResponse> logIn(String login, String password) async {
     final user = await checkUser(login, password);
+    final Validator response;
 
     if (user.inDatabase == true) {
       // if user contains database, isAuth change to true (default isAuth is false).
       await database.updateUser(user.uuid!, login, password, isAuth: true);
       user.detail = "LogIn completed";
     } else {
-      user.detail = "Wrong login or password";
+      try {
+        connection.connect();
+        response =
+            await connection.authentication(login: login, password: password);
+      } on Exception catch (error) {
+        connection.disconnect(code: _normalClosure);
+        throw "Authentication on server was unsuccessful: $error";
+      }
+      if (response.errors!.code == 200) {
+        await database.updateUser(
+            response.data!.user![0].uuid!, login, password,
+            isAuth: true);
+        user.inDatabase = true;
+        user.uuid = response.data!.user![0].uuid!;
+        user.detail = "LogIn completed";
+      } else {
+        user.detail = "Wrong login or password";
+      }
     }
     return user;
   }
 
   /// Registration new user.
-  /// Check user in local database with [login], [password], added new user,
-  /// if not contains in local database. [username] is optional.
+  /// Check user in local database with [login], [password] and added new user
+  /// if not contains in local database. Write [username] is optional.
   /// Return [UserHandlerResponse].
   Future<UserHandlerResponse> registerUser(String login, String password,
       {String? username}) async {
     final Validator response;
-
-    // Connect to the server
-    connection.connect();
 
     final user = await checkUser(login, password);
 
     final _password = await hashPassword(password);
 
     if (user.inDatabase == false) {
+      // connect to the server
+      connection.connect();
       try {
         response = await connection.register_user(
             login: login, password: password, username: username);
-      } on Exception catch (e) {
-        // send shutting down code
-        connection.disconnect(code: 1001);
-        throw "Server not response, with error=$e";
+      } on Exception catch (error) {
+        connection.disconnect(code: _faultShutdown);
+        throw "Server not response: $error";
       }
-      // send normal closure code
-      connection.disconnect(code: 1000);
+      connection.disconnect(code: _normalClosure);
       await database.addUser(
           response.data!.user![0].uuid!, login, _password.hash,
           isBot: false,
