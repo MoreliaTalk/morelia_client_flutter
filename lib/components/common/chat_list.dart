@@ -76,19 +76,21 @@ class ChatList extends ConsumerWidget {
             itemCount: chats.length,
             itemBuilder: (context, index) {
               return ChatItem(chats[index]?.title as String, "Hello");
-            }));
-  }
-}
-
-/*
+            }),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () async {
             var faker = Faker();
             final uuid = faker.guid.guid();
-            DBHandler.addFlow(uuid, [], title: faker.person.name());
-            DBHandler.addMessage(
+            var dbHandlerInstance = DatabaseHandler.connect("");
+            await dbHandlerInstance.addFlow(uuid, [], title: faker.person.name());
+            await dbHandlerInstance.addMessage(
                 uuid, faker.guid.guid(), faker.guid.guid(), 123,
                 text: "Hello!");
           },
-        ),*/
+        ));
+  }
+}
+
+/*
+        f,*/

@@ -21,6 +21,17 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import './platform_const.dart';
 
+final databaseConnection = Future.delayed(Duration.zero, () async {
+  final dir = await getApplicationSupportDirectory();
+
+  return await Isar.open(schemas: [
+    UserConfigSchema,
+    FlowSchema,
+    MessageSchema,
+    ApplicationSettingSchema
+  ], directory: dir.path);
+});
+
 class DatabaseReadError implements Exception {
   final String message;
 
@@ -47,7 +58,7 @@ class DatabaseHandler {
   static DatabaseHandler _singleConnect = DatabaseHandler.connect('blank');
 
   DatabaseHandler.connect(this._check) {
-    dbConnect = _connect();
+    dbConnect = databaseConnection;
   }
 
   factory DatabaseHandler({bool testing = false}) {
@@ -73,16 +84,6 @@ class DatabaseHandler {
       throw const DatabaseConnectedError('Class already created');
     }
     return _singleConnect;
-  }
-
-  Future<Isar> _connect() async {
-    final dir = await getApplicationSupportDirectory();
-    return await Isar.open(schemas: [
-      UserConfigSchema,
-      FlowSchema,
-      MessageSchema,
-      ApplicationSettingSchema
-    ], directory: dir.path);
   }
 
   Future<List<UserConfig?>> getAllUser() async {
