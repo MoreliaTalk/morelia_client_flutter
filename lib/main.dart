@@ -6,11 +6,7 @@ import 'package:morelia_client_flutter/modules/router.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart'
     show currentTheme;
 
-late DatabaseHandler DBHandler;
-
 void main() async {
-  DBHandler = DatabaseHandler.connect("");
-
   runApp(const ProviderScope(child: MoreliaApp()));
 }
 

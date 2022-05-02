@@ -21,7 +21,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import './platform_const.dart';
 
-
 class DatabaseReadError implements Exception {
   final String message;
 
@@ -114,14 +113,14 @@ class DatabaseHandler {
 
   Future<void> addUser(String uuid, String login, String hashPassword,
       [String? username,
-        String? authId,
-        int? tokenTTL,
-        String? email,
-        String? avatar,
-        String? bio,
-        String? salt,
-        String? key,
-        bool isBot = false]) async {
+      String? authId,
+      int? tokenTTL,
+      String? email,
+      String? avatar,
+      String? bio,
+      String? salt,
+      String? key,
+      bool isBot = false]) async {
     final conn = await dbConnect;
     final newUser = UserConfig()
       ..uuid = uuid
@@ -143,14 +142,14 @@ class DatabaseHandler {
 
   Future<void> updateUser(String uuid, String login, String hashPassword,
       [String? username,
-        bool isBot = false,
-        String? authId,
-        int? tokenTTL,
-        String? email,
-        String? avatar,
-        String? bio,
-        String? salt,
-        String? key]) async {
+      bool isBot = false,
+      String? authId,
+      int? tokenTTL,
+      String? email,
+      String? avatar,
+      String? bio,
+      String? salt,
+      String? key]) async {
     final conn = await dbConnect;
     final user = await conn.userConfigs.where().uuidEqualTo(uuid).findFirst();
 
@@ -276,13 +275,13 @@ class DatabaseHandler {
   Future<void> addMessage(
       String flowUuid, String userUuid, String messageUuid, int time,
       {String? text,
-        String? filePicture,
-        String? fileVideo,
-        String? fileAudio,
-        String? fileDocument,
-        String? emoji,
-        int? editedTime,
-        bool editedStatus = false}) async {
+      String? filePicture,
+      String? fileVideo,
+      String? fileAudio,
+      String? fileDocument,
+      String? emoji,
+      int? editedTime,
+      bool editedStatus = false}) async {
     final conn = await dbConnect;
     final newMessage = Message()
       ..uuid = messageUuid
@@ -302,14 +301,14 @@ class DatabaseHandler {
 
   Future<void> updateMessage(String uuid,
       {int? time,
-        String? text,
-        String? filePicture,
-        String? fileVideo,
-        String? fileAudio,
-        String? fileDocument,
-        String? emoji,
-        int? editedTime,
-        bool editedStatus = false}) async {
+      String? text,
+      String? filePicture,
+      String? fileVideo,
+      String? fileAudio,
+      String? fileDocument,
+      String? emoji,
+      int? editedTime,
+      bool editedStatus = false}) async {
     final conn = await dbConnect;
     final message = await conn.messages.where().uuidEqualTo(uuid).findFirst();
 
@@ -396,10 +395,10 @@ class DatabaseHandler {
 
   Future<void> addFlow(String uuid, List<String> usersUuid,
       {String? title,
-        String? info,
-        String? flowType,
-        int? timeCreated,
-        String? owner}) async {
+      String? info,
+      String? flowType,
+      int? timeCreated,
+      String? owner}) async {
     final conn = await dbConnect;
     final newFlow = Flow()
       ..uuid = uuid
@@ -416,10 +415,10 @@ class DatabaseHandler {
 
   Future<void> updateFlow(String uuid,
       {String? title,
-        String? info,
-        String? flowType,
-        int? timeCreated,
-        String? owner}) async {
+      String? info,
+      String? flowType,
+      int? timeCreated,
+      String? owner}) async {
     final conn = await dbConnect;
     final flow = await conn.flows.where().uuidEqualTo(uuid).findFirst();
 

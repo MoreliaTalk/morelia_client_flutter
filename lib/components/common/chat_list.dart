@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:morelia_client_flutter/main.dart';
+import 'package:morelia_client_flutter/modules/db.dart';
 
 import '../../modules/models.dart' as models;
 
@@ -42,59 +43,52 @@ class ChatItem extends ConsumerWidget {
 final onClickItemsFunction =
     StateProvider<Function(String uuid)>((ref) => (String uuid) {});
 
-class ChatList extends StatelessWidget {
+class ChatsStateNotifier extends StateNotifier<List<models.Flow?>> {
+  ChatsStateNotifier() : super([]) {
+    var dbHandlerInstance = DatabaseHandler.connect("");
+
+    Future.delayed(Duration.zero, () async {
+      state = await dbHandlerInstance.getAllFlow();
+      (await dbHandlerInstance.dbConnect)
+          .flows
+          .watchLazy()
+          .listen((event) async {
+        state = await dbHandlerInstance.getAllFlow();
+      });
+    });
+  }
+}
+
+final chatsStateProvider =
+    StateNotifierProvider<ChatsStateNotifier, List<models.Flow?>>(
+        (ref) => ChatsStateNotifier());
+
+class ChatList extends ConsumerWidget {
   const ChatList({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: DBHandler.dbConnect.flows.watchLazy(),
-        builder: (context, _) {
-          return FutureBuilder<List<models.Flow?>>(
-              future: DBHandler.getAllFlow(),
-              builder: (context, flowsSnapshot) => Scaffold(
-                    body: Container(child: () {
-                      if (flowsSnapshot.data != null) {
-                        return ListView.builder(
-                            controller: ScrollController(),
-                            itemCount: flowsSnapshot.data?.length,
-                            itemBuilder: (context, index) {
-                              return FutureBuilder<models.Message?>(
-                                  future: DBHandler.getLastMessageFromFlow(
-                                      flowsSnapshot.data![index]?.uuid),
-                                  builder: (context, messageSnapshot) {
-                                    var lastMessageText;
+  Widget build(BuildContext context, WidgetRef ref) {
+    var chats = ref.watch(chatsStateProvider);
 
-                                    if (messageSnapshot.data != null) {
-                                      lastMessageText =
-                                          messageSnapshot.data?.text;
-                                    } else {
-                                      lastMessageText =
-                                          "There are no messages here yet";
-                                    }
-
-                                    return ChatItem(
-                                        flowsSnapshot.data![index]?.title
-                                            as String,
-                                        lastMessageText);
-                                  });
-                            });
-                      } else {
-                        return const Center(child: Text("Chats not found"));
-                      }
-                    }()),
-                    floatingActionButton: FloatingActionButton(
-                      child: const Icon(Icons.add),
-                      onPressed: () async {
-                        var faker = Faker();
-                        final uuid = faker.guid.guid();
-                        DBHandler.addFlow(uuid, [], title: faker.person.name());
-                        DBHandler.addMessage(
-                            uuid, faker.guid.guid(), faker.guid.guid(), 123,
-                            text: "Hello!");
-                      },
-                    ),
-                  ));
-        });
+    return Scaffold(
+        body: ListView.builder(
+            controller: ScrollController(),
+            itemCount: chats.length,
+            itemBuilder: (context, index) {
+              return ChatItem(chats[index]?.title as String, "Hello");
+            }));
   }
 }
+
+/*
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () async {
+            var faker = Faker();
+            final uuid = faker.guid.guid();
+            DBHandler.addFlow(uuid, [], title: faker.person.name());
+            DBHandler.addMessage(
+                uuid, faker.guid.guid(), faker.guid.guid(), 123,
+                text: "Hello!");
+          },
+        ),*/
