@@ -15,11 +15,11 @@
 
 import 'dart:core';
 import 'dart:io';
-import './models.dart';
+import 'models.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import './platform_const.dart';
+import '../platform_const.dart';
 
 final databaseConnection = Future.delayed(Duration.zero, () async {
   final dir = await getApplicationSupportDirectory();

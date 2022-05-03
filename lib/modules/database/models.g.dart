@@ -17,7 +17,7 @@ extension GetUserConfigCollection on Isar {
 final UserConfigSchema = CollectionSchema(
   name: 'UserConfig',
   schema:
-      '{"name":"UserConfig","idName":"id","properties":[{"name":"authId","type":"String"},{"name":"avatar","type":"String"},{"name":"bio","type":"String"},{"name":"email","type":"String"},{"name":"hashPassword","type":"String"},{"name":"isBot","type":"Bool"},{"name":"key","type":"String"},{"name":"login","type":"String"},{"name":"salt","type":"String"},{"name":"tokenTTL","type":"Long"},{"name":"username","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"bio","unique":false,"properties":[{"name":"bio","type":"Hash","caseSensitive":true}]},{"name":"email","unique":false,"properties":[{"name":"email","type":"Hash","caseSensitive":true}]},{"name":"login","unique":false,"properties":[{"name":"login","type":"Hash","caseSensitive":true}]},{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"toFlows","target":"Flow"},{"name":"toMessages","target":"Message"}]}',
+      '{"name":"UserConfig","idName":"id","properties":[{"name":"authId","type":"String"},{"name":"avatar","type":"String"},{"name":"bio","type":"String"},{"name":"email","type":"String"},{"name":"hashPassword","type":"String"},{"name":"isBot","type":"Bool"},{"name":"key","type":"String"},{"name":"login","type":"String"},{"name":"salt","type":"String"},{"name":"tokenTTL","type":"Long"},{"name":"username","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"bio","unique":false,"properties":[{"name":"bio","type":"Hash","caseSensitive":true}]},{"name":"email","unique":false,"properties":[{"name":"email","type":"Hash","caseSensitive":true}]},{"name":"login","unique":false,"properties":[{"name":"login","type":"Hash","caseSensitive":true}]},{"name":"username","unique":false,"properties":[{"name":"username","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"userLinkedFlows","target":"Flow"}]}',
   nativeAdapter: const _UserConfigNativeAdapter(),
   webAdapter: const _UserConfigWebAdapter(),
   idName: 'id',
@@ -54,8 +54,8 @@ final UserConfigSchema = CollectionSchema(
       NativeIndexType.stringHash,
     ]
   },
-  linkIds: {'toFlows': 0, 'toMessages': 1},
-  backlinkIds: {},
+  linkIds: {'userLinkedFlows': 0},
+  backlinkIds: {'userLinkedMessages': 0},
   linkedCollections: ['Flow', 'Message'],
   getId: (obj) {
     if (obj.id == Isar.autoIncrement) {
@@ -65,7 +65,7 @@ final UserConfigSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [obj.toFlows, obj.toMessages],
+  getLinks: (obj) => [obj.userLinkedFlows, obj.userLinkedMessages],
   version: 2,
 );
 
@@ -149,19 +149,19 @@ class _UserConfigWebAdapter extends IsarWebTypeAdapter<UserConfig> {
 
   @override
   void attachLinks(Isar isar, int id, UserConfig object) {
-    object.toFlows.attach(
+    object.userLinkedFlows.attach(
       id,
       isar.userConfigs,
       isar.getCollection<Flow>('Flow'),
-      'toFlows',
+      'userLinkedFlows',
       false,
     );
-    object.toMessages.attach(
+    object.userLinkedMessages.attach(
       id,
       isar.userConfigs,
       isar.getCollection<Message>('Message'),
-      'toMessages',
-      false,
+      'userLinkedMessages',
+      true,
     );
   }
 }
@@ -311,19 +311,19 @@ class _UserConfigNativeAdapter extends IsarNativeTypeAdapter<UserConfig> {
 
   @override
   void attachLinks(Isar isar, int id, UserConfig object) {
-    object.toFlows.attach(
+    object.userLinkedFlows.attach(
       id,
       isar.userConfigs,
       isar.getCollection<Flow>('Flow'),
-      'toFlows',
+      'userLinkedFlows',
       false,
     );
-    object.toMessages.attach(
+    object.userLinkedMessages.attach(
       id,
       isar.userConfigs,
       isar.getCollection<Message>('Message'),
-      'toMessages',
-      false,
+      'userLinkedMessages',
+      true,
     );
   }
 }
@@ -1912,21 +1912,21 @@ extension UserConfigQueryFilter
 
 extension UserConfigQueryLinks
     on QueryBuilder<UserConfig, UserConfig, QFilterCondition> {
-  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> toFlows(
+  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> userLinkedFlows(
       FilterQuery<Flow> q) {
     return linkInternal(
       isar.flows,
       q,
-      'toFlows',
+      'userLinkedFlows',
     );
   }
 
-  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition> toMessages(
-      FilterQuery<Message> q) {
+  QueryBuilder<UserConfig, UserConfig, QAfterFilterCondition>
+      userLinkedMessages(FilterQuery<Message> q) {
     return linkInternal(
       isar.messages,
       q,
-      'toMessages',
+      'userLinkedMessages',
     );
   }
 }
@@ -2276,7 +2276,7 @@ extension GetFlowCollection on Isar {
 final FlowSchema = CollectionSchema(
   name: 'Flow',
   schema:
-      '{"name":"Flow","idName":"id","properties":[{"name":"flowType","type":"String"},{"name":"info","type":"String"},{"name":"owner","type":"String"},{"name":"timeCreated","type":"Long"},{"name":"title","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"info","unique":false,"properties":[{"name":"info","type":"Hash","caseSensitive":true}]},{"name":"title","unique":false,"properties":[{"name":"title","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"toMessages","target":"Message"},{"name":"toUsers","target":"UserConfig"}]}',
+      '{"name":"Flow","idName":"id","properties":[{"name":"flowType","type":"String"},{"name":"info","type":"String"},{"name":"owner","type":"String"},{"name":"timeCreated","type":"Long"},{"name":"title","type":"String"},{"name":"uuid","type":"String"}],"indexes":[{"name":"info","unique":false,"properties":[{"name":"info","type":"Hash","caseSensitive":true}]},{"name":"title","unique":false,"properties":[{"name":"title","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[]}',
   nativeAdapter: const _FlowNativeAdapter(),
   webAdapter: const _FlowWebAdapter(),
   idName: 'id',
@@ -2301,8 +2301,8 @@ final FlowSchema = CollectionSchema(
       NativeIndexType.stringHash,
     ]
   },
-  linkIds: {'toMessages': 0, 'toUsers': 1},
-  backlinkIds: {},
+  linkIds: {},
+  backlinkIds: {'flowLinkedMessages': 0, 'flowLinkedUser': 1},
   linkedCollections: ['Message', 'UserConfig'],
   getId: (obj) {
     if (obj.id == Isar.autoIncrement) {
@@ -2312,7 +2312,7 @@ final FlowSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [obj.toMessages, obj.toUsers],
+  getLinks: (obj) => [obj.flowLinkedMessages, obj.flowLinkedUser],
   version: 2,
 );
 
@@ -2372,19 +2372,19 @@ class _FlowWebAdapter extends IsarWebTypeAdapter<Flow> {
 
   @override
   void attachLinks(Isar isar, int id, Flow object) {
-    object.toMessages.attach(
+    object.flowLinkedMessages.attach(
       id,
       isar.flows,
       isar.getCollection<Message>('Message'),
-      'toMessages',
-      false,
+      'flowLinkedMessages',
+      true,
     );
-    object.toUsers.attach(
+    object.flowLinkedUser.attach(
       id,
       isar.flows,
       isar.getCollection<UserConfig>('UserConfig'),
-      'toUsers',
-      false,
+      'flowLinkedUser',
+      true,
     );
   }
 }
@@ -2479,19 +2479,19 @@ class _FlowNativeAdapter extends IsarNativeTypeAdapter<Flow> {
 
   @override
   void attachLinks(Isar isar, int id, Flow object) {
-    object.toMessages.attach(
+    object.flowLinkedMessages.attach(
       id,
       isar.flows,
       isar.getCollection<Message>('Message'),
-      'toMessages',
-      false,
+      'flowLinkedMessages',
+      true,
     );
-    object.toUsers.attach(
+    object.flowLinkedUser.attach(
       id,
       isar.flows,
       isar.getCollection<UserConfig>('UserConfig'),
-      'toUsers',
-      false,
+      'flowLinkedUser',
+      true,
     );
   }
 }
@@ -3407,21 +3407,21 @@ extension FlowQueryFilter on QueryBuilder<Flow, Flow, QFilterCondition> {
 }
 
 extension FlowQueryLinks on QueryBuilder<Flow, Flow, QFilterCondition> {
-  QueryBuilder<Flow, Flow, QAfterFilterCondition> toMessages(
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> flowLinkedMessages(
       FilterQuery<Message> q) {
     return linkInternal(
       isar.messages,
       q,
-      'toMessages',
+      'flowLinkedMessages',
     );
   }
 
-  QueryBuilder<Flow, Flow, QAfterFilterCondition> toUsers(
+  QueryBuilder<Flow, Flow, QAfterFilterCondition> flowLinkedUser(
       FilterQuery<UserConfig> q) {
     return linkInternal(
       isar.userConfigs,
       q,
-      'toUsers',
+      'flowLinkedUser',
     );
   }
 }
@@ -3618,7 +3618,7 @@ extension GetMessageCollection on Isar {
 final MessageSchema = CollectionSchema(
   name: 'Message',
   schema:
-      '{"name":"Message","idName":"id","properties":[{"name":"editedStatus","type":"Bool"},{"name":"editedTime","type":"Long"},{"name":"emoji","type":"String"},{"name":"fileAudio","type":"String"},{"name":"fileDocument","type":"String"},{"name":"filePicture","type":"String"},{"name":"fileVideo","type":"String"},{"name":"text","type":"String"},{"name":"time","type":"Long"},{"name":"uuid","type":"String"}],"indexes":[{"name":"text","unique":false,"properties":[{"name":"text","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[]}',
+      '{"name":"Message","idName":"id","properties":[{"name":"editedStatus","type":"Bool"},{"name":"editedTime","type":"Long"},{"name":"emoji","type":"String"},{"name":"fileAudio","type":"String"},{"name":"fileDocument","type":"String"},{"name":"filePicture","type":"String"},{"name":"fileVideo","type":"String"},{"name":"text","type":"String"},{"name":"time","type":"Long"},{"name":"uuid","type":"String"}],"indexes":[{"name":"text","unique":false,"properties":[{"name":"text","type":"Hash","caseSensitive":true}]},{"name":"uuid","unique":true,"properties":[{"name":"uuid","type":"Hash","caseSensitive":true}]}],"links":[{"name":"messageLinkedFlow","target":"Flow"},{"name":"messageLinkedUser","target":"UserConfig"}]}',
   nativeAdapter: const _MessageNativeAdapter(),
   webAdapter: const _MessageWebAdapter(),
   idName: 'id',
@@ -3644,8 +3644,8 @@ final MessageSchema = CollectionSchema(
       NativeIndexType.stringHash,
     ]
   },
-  linkIds: {},
-  backlinkIds: {'toFlow': 0, 'toUser': 1},
+  linkIds: {'messageLinkedFlow': 0, 'messageLinkedUser': 1},
+  backlinkIds: {},
   linkedCollections: ['Flow', 'UserConfig'],
   getId: (obj) {
     if (obj.id == Isar.autoIncrement) {
@@ -3655,7 +3655,7 @@ final MessageSchema = CollectionSchema(
     }
   },
   setId: (obj, id) => obj.id = id,
-  getLinks: (obj) => [obj.toFlow, obj.toUser],
+  getLinks: (obj) => [obj.messageLinkedFlow, obj.messageLinkedUser],
   version: 2,
 );
 
@@ -3732,19 +3732,19 @@ class _MessageWebAdapter extends IsarWebTypeAdapter<Message> {
 
   @override
   void attachLinks(Isar isar, int id, Message object) {
-    object.toFlow.attach(
+    object.messageLinkedFlow.attach(
       id,
       isar.messages,
       isar.getCollection<Flow>('Flow'),
-      'toFlow',
-      true,
+      'messageLinkedFlow',
+      false,
     );
-    object.toUser.attach(
+    object.messageLinkedUser.attach(
       id,
       isar.messages,
       isar.getCollection<UserConfig>('UserConfig'),
-      'toUser',
-      true,
+      'messageLinkedUser',
+      false,
     );
   }
 }
@@ -3871,19 +3871,19 @@ class _MessageNativeAdapter extends IsarNativeTypeAdapter<Message> {
 
   @override
   void attachLinks(Isar isar, int id, Message object) {
-    object.toFlow.attach(
+    object.messageLinkedFlow.attach(
       id,
       isar.messages,
       isar.getCollection<Flow>('Flow'),
-      'toFlow',
-      true,
+      'messageLinkedFlow',
+      false,
     );
-    object.toUser.attach(
+    object.messageLinkedUser.attach(
       id,
       isar.messages,
       isar.getCollection<UserConfig>('UserConfig'),
-      'toUser',
-      true,
+      'messageLinkedUser',
+      false,
     );
   }
 }
@@ -5043,21 +5043,21 @@ extension MessageQueryFilter
 
 extension MessageQueryLinks
     on QueryBuilder<Message, Message, QFilterCondition> {
-  QueryBuilder<Message, Message, QAfterFilterCondition> toFlow(
+  QueryBuilder<Message, Message, QAfterFilterCondition> messageLinkedFlow(
       FilterQuery<Flow> q) {
     return linkInternal(
       isar.flows,
       q,
-      'toFlow',
+      'messageLinkedFlow',
     );
   }
 
-  QueryBuilder<Message, Message, QAfterFilterCondition> toUser(
+  QueryBuilder<Message, Message, QAfterFilterCondition> messageLinkedUser(
       FilterQuery<UserConfig> q) {
     return linkInternal(
       isar.userConfigs,
       q,
-      'toUser',
+      'messageLinkedUser',
     );
   }
 }

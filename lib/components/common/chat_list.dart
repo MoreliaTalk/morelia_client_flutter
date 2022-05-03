@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:morelia_client_flutter/main.dart';
-import 'package:morelia_client_flutter/modules/db.dart';
+import 'package:morelia_client_flutter/modules/database/db.dart';
 
-import '../../modules/models.dart' as models;
+import '../../modules/database/models.dart' as models;
 
 class ChatItem extends ConsumerWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);

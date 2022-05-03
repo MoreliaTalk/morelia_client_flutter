@@ -1,5 +1,5 @@
 import "package:flutter_test/flutter_test.dart";
-import 'package:morelia_client_flutter/modules/db.dart';
+import 'package:morelia_client_flutter/modules/database/db.dart';
 
 void main() {
   final db = DatabaseHandler(testing: true);
