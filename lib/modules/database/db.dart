@@ -23,6 +23,7 @@ import '../platform_const.dart';
 
 final databaseConnection = Future.delayed(Duration.zero, () async {
   final dir = await getApplicationSupportDirectory();
+  print(dir);
 
   return await Isar.open(schemas: [
     UserConfigSchema,
