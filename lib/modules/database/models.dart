@@ -49,6 +49,7 @@ class UserConfig {
   @Backlink(to: 'messageLinkedUser')
   final userLinkedMessages = IsarLinks<Message>();
 
+  @Backlink(to: 'flowLinkedUsers')
   final userLinkedFlows = IsarLinks<Flow>();
 }
 
@@ -73,8 +74,7 @@ class Flow {
   @Backlink(to: 'messageLinkedFlow')
   final flowLinkedMessages = IsarLinks<Message>();
 
-  @Backlink(to: 'userLinkedFlows')
-  final flowLinkedUser = IsarLinks<UserConfig>();
+  final flowLinkedUsers = IsarLinks<UserConfig>();
 }
 
 @Collection()

@@ -242,7 +242,7 @@ class DatabaseHandler {
         .filter()
         .timeGreaterThan(time)
         .and()
-        .toFlow((q) => q.uuidEqualTo(flowUuid))
+        .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
         .sortByTime()
         .findAll();
   }
@@ -255,7 +255,7 @@ class DatabaseHandler {
         .filter()
         .timeLessThan(time)
         .and()
-        .toFlow((q) => q.uuidEqualTo(flowUuid))
+        .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
         .sortByTime()
         .findAll();
   }
@@ -268,7 +268,7 @@ class DatabaseHandler {
         .filter()
         .timeEqualTo(time)
         .and()
-        .toFlow((q) => q.uuidEqualTo(flowUuid))
+        .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
         .sortById()
         .findAll();
   }
@@ -284,7 +284,7 @@ class DatabaseHandler {
       int? editedTime,
       bool editedStatus = false}) async {
     final conn = await dbConnect;
-    final newMessage = Message()
+    Message newMessage = Message()
       ..uuid = messageUuid
       ..text = text
       ..time = time
@@ -295,9 +295,25 @@ class DatabaseHandler {
       ..emoji = emoji
       ..editedTime = editedTime
       ..editedStatus = editedStatus;
+
     await conn.writeTxn((conn) async {
       await conn.messages.put(newMessage);
     });
+
+    await newMessage.messageLinkedFlow.load();
+    newMessage.messageLinkedFlow.value = (await getFlowByUuid(flowUuid))!;
+    await conn.writeTxn((conn) async {
+      await newMessage.messageLinkedFlow.save();
+    });
+
+    await newMessage.messageLinkedUser.load();
+    newMessage.messageLinkedUser.value = (await getUserByUuid(userUuid))!;
+    await conn.writeTxn((conn) async {
+      await newMessage.messageLinkedUser.save();
+    });
+
+    newMessage.messageLinkedFlow.load();
+
   }
 
   Future<void> updateMessage(String uuid,
@@ -394,12 +410,11 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<void> addFlow(String uuid, List<String> usersUuid,
+  Future<void> addFlow(String uuid, String owner, List<String> usersUuid,
       {String? title,
       String? info,
       String? flowType,
-      int? timeCreated,
-      String? owner}) async {
+      int? timeCreated}) async {
     final conn = await dbConnect;
     final newFlow = Flow()
       ..uuid = uuid
@@ -411,6 +426,17 @@ class DatabaseHandler {
 
     await conn.writeTxn((conn) async {
       await conn.flows.put(newFlow);
+    });
+
+    await newFlow.flowLinkedUsers.load();
+
+    newFlow.flowLinkedUsers.add((await getUserByUuid(owner))!);
+    for (var userUuid in usersUuid){
+      newFlow.flowLinkedUsers.add((await getUserByUuid(userUuid))!);
+    }
+
+    await conn.writeTxn((conn) async {
+      await newFlow.flowLinkedUsers.save();
     });
   }
 
