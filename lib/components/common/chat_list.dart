@@ -81,17 +81,15 @@ class ChatList extends ConsumerWidget {
           child: const Icon(Icons.add),
           onPressed: () async {
             var faker = Faker();
-            final uuid = faker.guid.guid();
+            final flowUuid = faker.guid.guid();
+            final userUuid = faker.guid.guid();
             var dbHandlerInstance = DatabaseHandler.connect("");
-            await dbHandlerInstance.addUser(uuid, "login", "hashPassword");
-            await dbHandlerInstance.addFlow(uuid, uuid, [uuid], title: faker.person.firstName());
+            await dbHandlerInstance.addUser(userUuid, "login", "hashPassword");
+            await dbHandlerInstance.addFlow(flowUuid, userUuid, [userUuid], title: faker.person.name());
             await dbHandlerInstance.addMessage(
-                uuid, faker.guid.guid(), faker.guid.guid(), 123,
+                flowUuid, userUuid, faker.guid.guid(), 123,
                 text: "Hello!");
           },
         ));
   }
 }
-
-/*
-        f,*/

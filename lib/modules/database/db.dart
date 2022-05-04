@@ -366,7 +366,7 @@ class DatabaseHandler {
 
   Future<List<Flow?>> getAllFlow() async {
     final conn = await dbConnect;
-    return await conn.flows.where().sortByUuid().findAll();
+    return await conn.flows.where().sortByTimeCreated().findAll();
   }
 
   Future<Flow?> getFlowByUuid(String uuid) async {
