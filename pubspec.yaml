@@ -27,8 +27,8 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  isar: ^2.2.1
-  isar_flutter_libs: ^2.2.1
+  isar: ^2.5.0
+  isar_flutter_libs: ^2.5.0
   flutter:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.
@@ -44,7 +44,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  isar_generator: ^2.2.1
+  isar_generator: ^2.5.0
   flutter_riverpod: ^1.0.3
 
   # The "flutter_lints" package below contains a set of recommended lints to

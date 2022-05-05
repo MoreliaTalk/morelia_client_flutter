@@ -70,9 +70,10 @@ class DatabaseHandler {
       final dartToolDir = path.join(Directory.current.path, '.dart_tool');
       try {
         Isar.initializeLibraries(libraries: {
-          'windows': path.join(dartToolDir, libWin),
-          'macos': path.join(dartToolDir, libMac),
-          'linux': path.join(dartToolDir, libLinux)
+          IsarAbi.windowsX64: path.join(dartToolDir, libWin),
+          IsarAbi.macosX64: path.join(dartToolDir, libMac),
+          IsarAbi.macosArm64: path.join(dartToolDir, libMac),
+          IsarAbi.linuxX64: path.join(dartToolDir, libLinux)
         });
       } catch (e) {
         throw 'InitializeLibraries error';
@@ -313,7 +314,6 @@ class DatabaseHandler {
     });
 
     newMessage.messageLinkedFlow.load();
-
   }
 
   Future<void> updateMessage(String uuid,
@@ -411,10 +411,7 @@ class DatabaseHandler {
   }
 
   Future<void> addFlow(String uuid, String owner, List<String> usersUuid,
-      {String? title,
-      String? info,
-      String? flowType,
-      int? timeCreated}) async {
+      {String? title, String? info, String? flowType, int? timeCreated}) async {
     final conn = await dbConnect;
     final newFlow = Flow()
       ..uuid = uuid
@@ -431,7 +428,7 @@ class DatabaseHandler {
     await newFlow.flowLinkedUsers.load();
 
     newFlow.flowLinkedUsers.add((await getUserByUuid(owner))!);
-    for (var userUuid in usersUuid){
+    for (var userUuid in usersUuid) {
       newFlow.flowLinkedUsers.add((await getUserByUuid(userUuid))!);
     }
 

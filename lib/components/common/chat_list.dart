@@ -43,24 +43,45 @@ class ChatItem extends ConsumerWidget {
 final onClickItemsFunction =
     StateProvider<Function(String uuid)>((ref) => (String uuid) {});
 
-class ChatsStateNotifier extends StateNotifier<List<models.Flow?>> {
+class ChatStateItem {
+  ChatStateItem({required this.flow, required this.lastMessage});
+
+  final models.Flow flow;
+  final String lastMessage;
+}
+
+class ChatsStateNotifier extends StateNotifier<List<ChatStateItem?>> {
   ChatsStateNotifier() : super([]) {
     var dbHandlerInstance = DatabaseHandler.connect("");
 
     Future.delayed(Duration.zero, () async {
-      state = await dbHandlerInstance.getAllFlow();
+      loadChats();
       (await dbHandlerInstance.dbConnect)
           .flows
           .watchLazy()
           .listen((event) async {
-        state = await dbHandlerInstance.getAllFlow();
+        loadChats();
       });
     });
+  }
+
+  Future<void> loadChats() async {
+    var dbData = await DatabaseHandler.connect("").getAllFlow();
+    List<ChatStateItem?> newState = [];
+
+    for (var flow in dbData) {
+      await flow!.flowLinkedMessages.load();
+      newState.add(ChatStateItem(
+          flow: flow,
+          lastMessage: flow.flowLinkedMessages.last.text as String));
+    }
+
+    state = newState;
   }
 }
 
 final chatsStateProvider =
-    StateNotifierProvider<ChatsStateNotifier, List<models.Flow?>>(
+    StateNotifierProvider<ChatsStateNotifier, List<ChatStateItem?>>(
         (ref) => ChatsStateNotifier());
 
 class ChatList extends ConsumerWidget {
@@ -75,7 +96,8 @@ class ChatList extends ConsumerWidget {
             controller: ScrollController(),
             itemCount: chats.length,
             itemBuilder: (context, index) {
-              return ChatItem(chats[index]?.title as String, "Hello");
+              var chat = chats[index];
+              return ChatItem(chat?.flow.title as String, chat?.lastMessage as String);
             }),
         floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.add),
@@ -85,7 +107,8 @@ class ChatList extends ConsumerWidget {
             final userUuid = faker.guid.guid();
             var dbHandlerInstance = DatabaseHandler.connect("");
             await dbHandlerInstance.addUser(userUuid, "login", "hashPassword");
-            await dbHandlerInstance.addFlow(flowUuid, userUuid, [userUuid], title: faker.person.name());
+            await dbHandlerInstance.addFlow(flowUuid, userUuid, [userUuid],
+                title: faker.person.name());
             await dbHandlerInstance.addMessage(
                 flowUuid, userUuid, faker.guid.guid(), 123,
                 text: "Hello!");
