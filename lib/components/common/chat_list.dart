@@ -73,7 +73,7 @@ class ChatsStateNotifier extends StateNotifier<List<ChatStateItem?>> {
       await flow!.flowLinkedMessages.load();
       newState.add(ChatStateItem(
           flow: flow,
-          lastMessage: flow.flowLinkedMessages.last.text as String));
+          lastMessage: (flow.flowLinkedMessages.isNotEmpty ? flow.flowLinkedMessages.last.text : "no messages") as String));
     }
 
     state = newState;
