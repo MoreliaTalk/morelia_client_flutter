@@ -71,13 +71,11 @@ class ChatsStateNotifier extends StateNotifier<List<ChatStateItem?>> {
 
     for (var flow in dbData) {
       await flow!.flowLinkedMessages.load();
-      newState.add(
-        ChatStateItem(
-            flow: flow,
-            lastMessage: (flow.flowLinkedMessages.isNotEmpty
-                ? flow.flowLinkedMessages.last.text
-                : "no messages") as String),
-      );
+      newState.add(ChatStateItem(
+          flow: flow,
+          lastMessage: (flow.flowLinkedMessages.isNotEmpty
+              ? flow.flowLinkedMessages.last.text
+              : "no messages") as String));
     }
     state = newState;
   }
