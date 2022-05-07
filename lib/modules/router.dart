@@ -49,7 +49,7 @@ class MoreliaRouter {
   get router {
     return GoRouter(
       routes: _routes,
-      navigatorBuilder: (_, __, child) => ThemeStateWidget(child: child)
+      navigatorBuilder: (_, __, child) => ThemeWidget(child: child)
     );
   }
 }
