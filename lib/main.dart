@@ -18,7 +18,6 @@ class MoreliaApp extends ConsumerWidget {
     GoRouter _router = MoreliaRouter().router;
 
     return MaterialApp.router(
-      theme: ref.watch(currentTheme),
       routeInformationParser: _router.routeInformationParser,
       routerDelegate: _router.routerDelegate,
     );

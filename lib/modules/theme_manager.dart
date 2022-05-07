@@ -5,3 +5,18 @@ final lightTheme = ThemeData.light();
 final darkTheme = ThemeData.dark();
 
 final currentTheme = StateProvider<ThemeData>((ref) => darkTheme);
+
+class ThemeStateWidget extends ConsumerWidget {
+  const ThemeStateWidget({Key? key, required this.child}) : super(key: key);
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Theme(
+      data: ref.watch(currentTheme),
+      child: child
+    );
+  }
+
+}
