@@ -13,10 +13,6 @@ class ThemeStateWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Theme(
-      data: ref.watch(currentTheme),
-      child: child
-    );
+    return Theme(data: ref.watch(currentTheme), child: child);
   }
-
 }

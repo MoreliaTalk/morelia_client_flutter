@@ -9,42 +9,42 @@ import '../components/desktop/main_page.dart';
 import '../components/mobile/chats_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MoreliaRouter {
-  get _routes {
-    List<GoRoute> routes = [
-      GoRoute(
-          path: "/settings",
-          builder: (context, _) => const SettingsPage(),
-          routes: [])
-    ];
+final mobileRoutes = [
+  GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
+  GoRoute(
+      path: "/messages/:uuid",
+      builder: (context, state) =>
+          CommunicationPage(uuid: state.params['uuid']!)),
+  GoRoute(
+      path: "/settings",
+      builder: (context, _) => const SettingsPage(),
+      routes: [])
+];
 
+final desktopRoutes = [
+  GoRoute(path: "/", builder: (context, state) => const DesktopMainPage()),
+  GoRoute(
+      path: "/settings",
+      builder: (context, _) => const SettingsPage(),
+      routes: [])
+];
+
+class MoreliaRouter {
+  get _routes => () {
     switch (currentPlatform) {
       case TypePlatformDevices.mobile:
-        routes.addAll([
-          GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
-          GoRoute(
-              path: "/messages/:uuid",
-              builder: (context, state) =>
-                  CommunicationPage(uuid: state.params['uuid']!))
-        ]);
-        break;
+        return mobileRoutes;
       case TypePlatformDevices.desktop:
-        routes.addAll([
-          GoRoute(
-              path: "/", builder: (context, state) => const DesktopMainPage())
-        ]);
-        break;
+        return desktopRoutes;
       default:
-        routes = [
+        return [
           GoRoute(
               path: "/",
               builder: (context, _) =>
-                  const Text("Your platform is not supported"))
+              const Text("Your platform is not supported"))
         ];
-        break;
     }
-    return routes;
-  }
+  };
 
   get router {
     return GoRouter(
