@@ -410,7 +410,7 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<void> addFlow(String uuid, String owner, List<String> usersUuid,
+  Future<void> addFlow(String uuid, String owner, List<String>? usersUuid,
       {String? title, String? info, String? flowType, int? timeCreated}) async {
     final conn = await dbConnect;
     final newFlow = Flow()
@@ -424,12 +424,14 @@ class DatabaseHandler {
     await conn.writeTxn((conn) async {
       await conn.flows.put(newFlow);
     });
-
     await newFlow.flowLinkedUsers.load();
 
     newFlow.flowLinkedUsers.add((await getUserByUuid(owner))!);
-    for (var userUuid in usersUuid) {
-      newFlow.flowLinkedUsers.add((await getUserByUuid(userUuid))!);
+
+    if (usersUuid != null) {
+      for (var userUuid in usersUuid) {
+        newFlow.flowLinkedUsers.add((await getUserByUuid(userUuid))!);
+      }
     }
 
     await conn.writeTxn((conn) async {

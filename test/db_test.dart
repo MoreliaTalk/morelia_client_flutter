@@ -36,7 +36,7 @@ void main() {
   });
 
   group("Test DatabaseHandler - Message table:", () {
-    db.addFlow("fuuid_1", ["uuid_1", "uuid_2", "uuid_3"],
+    db.addFlow("fuuid_1", "uuid_1", ["uuid_1", "uuid_2", "uuid_3"],
         title: "test", timeCreated: 987654321);
 
     db.addMessage("fuuid_1", "uuuid_1", "muuid_1", 1, text: "text_1");
@@ -87,13 +87,13 @@ void main() {
     }, skip: "Not working. Requires IsarLink.");
   });
   group("Test DatabaseHandler - Flow table:", () {
-    db.addFlow("fuuid_2", ["uuid_1", "uuid_2", "uuid_3"],
+    db.addFlow("fuuid_2", "uuid_1", ["uuid_1", "uuid_2", "uuid_3"],
         title: "test_2", timeCreated: 123456);
 
-    db.addFlow("fuuid_3", ["uuid_1", "uuid_2", "uuid_3"],
+    db.addFlow("fuuid_3", "uuid_1", ["uuid_1", "uuid_2", "uuid_3"],
         title: "test_3", timeCreated: 12345);
 
-    db.addFlow("fuuid_4", ["uuid_1", "uuid_2", "uuid_3"],
+    db.addFlow("fuuid_4", "uuid_1", ["uuid_1", "uuid_2", "uuid_3"],
         title: "test_4", timeCreated: 1234);
 
     test("Add flow and get all flow", () async {
