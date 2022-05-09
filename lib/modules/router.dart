@@ -30,7 +30,7 @@ final desktopRoutes = [
 ];
 
 class MoreliaRouter {
-  get _routes => () {
+  get _routes {
     switch (currentPlatform) {
       case TypePlatformDevices.mobile:
         return mobileRoutes;
@@ -44,7 +44,7 @@ class MoreliaRouter {
               const Text("Your platform is not supported"))
         ];
     }
-  };
+  }
 
   get router {
     return GoRouter(
