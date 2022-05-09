@@ -7,7 +7,6 @@ import '../components/common/communication_page.dart';
 import '../components/common/settings_page.dart';
 import '../components/desktop/main_page.dart';
 import '../components/mobile/chats_page.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final mobileRoutes = [
   GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),

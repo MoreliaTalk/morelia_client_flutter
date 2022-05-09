@@ -15,11 +15,13 @@
 
 import 'dart:core';
 import 'dart:io';
-import 'models.dart';
+
 import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+
 import '../platform_const.dart';
+import 'models.dart';
 
 class DatabaseReadError implements Exception {
   final String message;
