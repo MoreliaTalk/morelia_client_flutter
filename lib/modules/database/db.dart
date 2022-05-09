@@ -21,17 +21,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import '../platform_const.dart';
 
-final databaseConnection = Future.delayed(Duration.zero, () async {
-  final dir = await getApplicationSupportDirectory();
-
-  return await Isar.open(schemas: [
-    UserConfigSchema,
-    FlowSchema,
-    MessageSchema,
-    ApplicationSettingSchema
-  ], directory: dir.path);
-});
-
 class DatabaseReadError implements Exception {
   final String message;
 
@@ -58,8 +47,23 @@ class DatabaseHandler {
   static DatabaseHandler _singleConnect = DatabaseHandler.connect('blank');
 
   DatabaseHandler.connect(this._check) {
-    dbConnect = databaseConnection;
+    dbConnect = _connect();
   }
+
+  Future<Isar> _connect() async {
+    final dir = await getApplicationSupportDirectory();
+
+    try {
+      return await Isar.open(schemas: [
+        UserConfigSchema,
+        FlowSchema,
+        MessageSchema,
+        ApplicationSettingSchema
+      ], directory: dir.path);
+    } on IsarError {
+      return Isar.getInstance()!;
+    }
+}
 
   factory DatabaseHandler({bool testing = false}) {
     const String libWin = 'libisar_windows_x64.dll';
