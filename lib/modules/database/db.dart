@@ -16,6 +16,7 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -43,7 +44,6 @@ class DatabaseConnectedError implements Exception {
 
 class DatabaseHandler {
   late Future<Isar> dbConnect;
-  late Future<Directory> dir;
   late String _check;
 
   static DatabaseHandler _singleConnect = DatabaseHandler.connect('blank');
@@ -53,7 +53,11 @@ class DatabaseHandler {
   }
 
   Future<Isar> _connect() async {
-    final dir = await getApplicationSupportDirectory();
+    Directory? dir;
+
+    if (!kIsWeb) {
+      dir = await getApplicationSupportDirectory();
+    }
 
     try {
       return await Isar.open(schemas: [
@@ -61,7 +65,7 @@ class DatabaseHandler {
         FlowSchema,
         MessageSchema,
         ApplicationSettingSchema
-      ], directory: dir.path);
+      ], directory: dir?.path);
     } on IsarError {
       return Isar.getInstance()!;
     }
@@ -80,7 +84,6 @@ class DatabaseHandler {
           IsarAbi.macosX64: path.join(dartToolDir, libMac),
           IsarAbi.macosArm64: path.join(dartToolDir, libMac),
           IsarAbi.linuxX64: path.join(dartToolDir, libLinux),
-          IsarAbi.linuxArm: path.join(dartToolDir, libLinux),
           IsarAbi.linuxArm64: path.join(dartToolDir, libLinux)
         });
       } catch (e) {
