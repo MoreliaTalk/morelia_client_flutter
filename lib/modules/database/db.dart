@@ -77,7 +77,9 @@ class DatabaseHandler {
           IsarAbi.windowsX64: path.join(dartToolDir, libWin),
           IsarAbi.macosX64: path.join(dartToolDir, libMac),
           IsarAbi.macosArm64: path.join(dartToolDir, libMac),
-          IsarAbi.linuxX64: path.join(dartToolDir, libLinux)
+          IsarAbi.linuxX64: path.join(dartToolDir, libLinux),
+          IsarAbi.linuxArm: path.join(dartToolDir, libLinux),
+          IsarAbi.linuxArm64: path.join(dartToolDir, libLinux)
         });
       } catch (e) {
         throw 'InitializeLibraries error';
