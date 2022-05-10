@@ -163,6 +163,7 @@ void main() async {
       var result = await db.getFlowByTitle("FlowTest");
       expect(result[0]?.uuid, "flow_uuid");
     });
+
     test("Get flow by More Time", () async {
       await db.addUser("user_uuid", "login", "hashPassword");
       await db.addFlow("flow_uuid", "user_uuid", ["user_uuid"],
@@ -171,6 +172,7 @@ void main() async {
       var result = await db.getFlowByMoreTime(123455);
       expect(result[0]?.title, "FlowTest");
     });
+
     test("Get flow by Less Time", () async {
       await db.addUser("user_uuid", "login", "hashPassword");
       await db.addFlow("flow_uuid", "user_uuid", ["user_uuid"],
@@ -179,6 +181,7 @@ void main() async {
       var result = await db.getFlowByLessTime(123457);
       expect(result[0]?.title, "FlowTest");
     });
+
     test("Get flow by Exact Time", () async {
       await db.addUser("user_uuid", "login", "hashPassword");
       await db.addFlow("flow_uuid", "user_uuid", ["user_uuid"],
@@ -187,6 +190,7 @@ void main() async {
       var result = await db.getFlowByExactTime(123456);
       expect(result[0]?.title, "FlowTest");
     });
+
     test("Update flow", () async {
       await db.addUser("user_uuid", "login", "hashPassword");
       await db.addFlow("flow_uuid", "user_uuid", ["user_uuid"],
@@ -197,6 +201,7 @@ void main() async {
       expect(result?.title, "newTitle");
     });
   });
+
   group("Test DatabaseHandler - ApplicationSetting table:", () {
     test("Add and get settings", () async {
       await db.addSettings("127.0.0.1", "443");
