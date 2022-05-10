@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:isar/isar.dart';
-import 'package:morelia_client_flutter/modules/database/models.dart';
-import 'package:path/path.dart' as path;
 
 import "package:flutter_test/flutter_test.dart";
+import 'package:isar/isar.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
+import 'package:path/path.dart' as path;
 
 void main() async {
   late DatabaseHandler db;
