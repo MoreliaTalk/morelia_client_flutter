@@ -87,50 +87,50 @@ void main() async {
     });
 
     test('Add message and get all message', () async {
-      final result = await db.getAllMessage();
+      final result = await db.getAllMessages();
       expect(result[0]?.uuid, "message_uuid");
       expect(result[0]?.time, 123);
     });
 
     test('Update message and get message by UUID', () async {
       await db.updateMessage("message_uuid", time: 1234, text: "new_text");
-      var result = await db.getMessageByUuid("message_uuid");
+      var result = await db.getMessagesByUuid("message_uuid");
       expect(result?.text, "new_text");
     });
 
     test('Get message by Text', () async {
-      var result = await db.getMessageByText("text");
+      var result = await db.getMessagesByText("text");
       expect(result[0]?.time, 123);
     });
 
     test('Get message by exact time', () async {
-      var result = await db.getMessageByExactTime(123);
+      var result = await db.getMessagesByExactTime(123);
       expect(result[0]?.uuid, "message_uuid");
     });
 
     test('Get message by less time', () async {
-      var result = await db.getMessageByLessTime(124);
+      var result = await db.getMessagesByLessTime(124);
       expect(result[0]?.uuid, "message_uuid");
     });
     test('Get message by more time', () async {
-      var result = await db.getMessageByMoreTime(122);
+      var result = await db.getMessagesByMoreTime(122);
       expect(result[0]?.uuid, "message_uuid");
     });
 
     test('Get message by more time and flow', () async {
-      var result = await db.getMessageByMoreTimeAndFlow(122, "flow_uuid");
+      var result = await db.getMessagesByMoreTimeAndFlow(122, "flow_uuid");
       expect(result[0]?.uuid, "message_uuid");
-    }, skip: "Not working. Requires IsarLink.");
+    });
 
     test('Get message by less time and flow', () async {
-      var result = await db.getMessageByLessTimeAndFlow(124, "flow_uuid");
+      var result = await db.getMessagesByLessTimeAndFlow(124, "flow_uuid");
       expect(result[0]?.uuid, "message_uuid");
-    }, skip: "Not working. Requires IsarLink.");
+    });
 
     test('Get message by exact time and flow', () async {
-      var result = await db.getMessageByExactTimeAndFlow(123456, "fuuid_6");
+      var result = await db.getMessagesByExactTimeAndFlow(123, "flow_uuid");
       expect(result[0]?.uuid, "message_uuid");
-    }, skip: "Not working. Requires IsarLink.");
+    });
   });
 
   group("Test DatabaseHandler - Flow table:", () {

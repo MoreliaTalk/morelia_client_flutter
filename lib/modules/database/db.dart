@@ -174,17 +174,17 @@ class DatabaseHandler {
     });
   }
 
-  Future<List<Message?>> getAllMessage() async {
+  Future<List<Message?>> getAllMessages() async {
     final conn = await dbConnect;
     return await conn.messages.where().sortByTime().findAll();
   }
 
-  Future<Message?> getMessageByUuid(String uuid) async {
+  Future<Message?> getMessagesByUuid(String uuid) async {
     final conn = await dbConnect;
     return await conn.messages.filter().uuidEqualTo(uuid).findFirst();
   }
 
-  Future<List<Message?>> getMessageByText(String text) async {
+  Future<List<Message?>> getMessagesByText(String text) async {
     final conn = await dbConnect;
     return await conn.messages
         .where(sort: Sort.asc)
@@ -194,12 +194,12 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByExactTime(int time) async {
+  Future<List<Message?>> getMessagesByExactTime(int time) async {
     final conn = await dbConnect;
     return await conn.messages.filter().timeEqualTo(time).findAll();
   }
 
-  Future<List<Message?>> getMessageByLessTime(int time) async {
+  Future<List<Message?>> getMessagesByLessTime(int time) async {
     final conn = await dbConnect;
     return await conn.messages
         .filter()
@@ -208,7 +208,7 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByMoreTime(int time) async {
+  Future<List<Message?>> getMessagesByMoreTime(int time) async {
     final conn = await dbConnect;
     return await conn.messages
         .filter()
@@ -217,42 +217,40 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByMoreTimeAndFlow(
+  Future<List<Message?>> getMessagesByMoreTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
+
     return await conn.messages
         .where(sort: Sort.asc)
         .filter()
         .timeGreaterThan(time)
-        .and()
         .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
         .sortByTime()
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByLessTimeAndFlow(
+  Future<List<Message?>> getMessagesByLessTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
     return await conn.messages
         .where(sort: Sort.asc)
         .filter()
         .timeLessThan(time)
-        .and()
         .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
         .sortByTime()
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByExactTimeAndFlow(
+  Future<List<Message?>> getMessagesByExactTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
+
     return await conn.messages
         .where(sort: Sort.asc)
         .filter()
         .timeEqualTo(time)
-        .and()
         .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
-        .sortById()
         .findAll();
   }
 
@@ -390,7 +388,7 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<void> addFlow(String uuid, String owner, List<String>? usersUuid,
+  Future<void> addFlow(String uuid, String owner, List<String> usersUuid,
       {String? title, String? info, String? flowType, int? timeCreated}) async {
     final conn = await dbConnect;
     final newFlow = Flow()
@@ -406,12 +404,8 @@ class DatabaseHandler {
     });
     await newFlow.flowLinkedUsers.load();
 
-    newFlow.flowLinkedUsers.add((await getUserByUuid(owner))!);
-
-    if (usersUuid != null) {
-      for (var userUuid in usersUuid) {
-        newFlow.flowLinkedUsers.add((await getUserByUuid(userUuid))!);
-      }
+    for (var userUuid in usersUuid) {
+      newFlow.flowLinkedUsers.add((await getUserByUuid(userUuid))!);
     }
 
     await conn.writeTxn((conn) async {
