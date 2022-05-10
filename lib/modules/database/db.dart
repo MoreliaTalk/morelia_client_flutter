@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Morelia Flutter. If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
 
@@ -44,11 +45,8 @@ class DatabaseConnectedError implements Exception {
 
 class DatabaseHandler {
   late Future<Isar> dbConnect;
-  late String _check;
 
-  static DatabaseHandler _singleConnect = DatabaseHandler.connect('blank');
-
-  DatabaseHandler.connect(this._check) {
+  DatabaseHandler.connect() {
     dbConnect = _connect();
   }
 
@@ -69,33 +67,6 @@ class DatabaseHandler {
     } on IsarError {
       return Isar.getInstance()!;
     }
-}
-
-  factory DatabaseHandler({bool testing = false}) {
-    const String libWin = 'libisar_windows_x64.dll';
-    const String libMac = 'libisar_macos_x64.dylib';
-    const String libLinux = 'libisar_linux_x64.so';
-
-    if (testing == true && currentPlatform == TypePlatformDevices.desktop) {
-      final dartToolDir = path.join(Directory.current.path, '.dart_tool');
-      try {
-        Isar.initializeLibraries(libraries: {
-          IsarAbi.windowsX64: path.join(dartToolDir, libWin),
-          IsarAbi.macosX64: path.join(dartToolDir, libMac),
-          IsarAbi.macosArm64: path.join(dartToolDir, libMac),
-          IsarAbi.linuxX64: path.join(dartToolDir, libLinux),
-          IsarAbi.linuxArm64: path.join(dartToolDir, libLinux)
-        });
-      } catch (e) {
-        throw 'InitializeLibraries error';
-      }
-    }
-    if (_singleConnect._check == 'blank') {
-      _singleConnect = DatabaseHandler.connect('dbConnected');
-    } else {
-      throw const DatabaseConnectedError('Class already created');
-    }
-    return _singleConnect;
   }
 
   Future<List<UserConfig?>> getAllUser() async {
@@ -313,18 +284,16 @@ class DatabaseHandler {
     });
 
     await newMessage.messageLinkedFlow.load();
-    newMessage.messageLinkedFlow.value = (await getFlowByUuid(flowUuid))!;
+    newMessage.messageLinkedFlow.value = (await getFlowByUuid(flowUuid));
     await conn.writeTxn((conn) async {
       await newMessage.messageLinkedFlow.save();
     });
 
     await newMessage.messageLinkedUser.load();
-    newMessage.messageLinkedUser.value = (await getUserByUuid(userUuid))!;
+    newMessage.messageLinkedUser.value = (await getUserByUuid(userUuid));
     await conn.writeTxn((conn) async {
       await newMessage.messageLinkedUser.save();
     });
-
-    newMessage.messageLinkedFlow.load();
   }
 
   Future<void> updateMessage(String uuid,

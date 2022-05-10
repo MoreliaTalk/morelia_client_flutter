@@ -40,15 +40,14 @@ class MoreliaRouter {
           GoRoute(
               path: "/",
               builder: (context, _) =>
-              const Text("Your platform is not supported"))
+                  const Text("Your platform is not supported"))
         ];
     }
   }
 
   get router {
     return GoRouter(
-      routes: _routes,
-      navigatorBuilder: (_, __, child) => ThemeWidget(child: child)
-    );
+        routes: _routes,
+        navigatorBuilder: (_, __, child) => ThemeWidget(child: child));
   }
 }
