@@ -72,8 +72,7 @@ void main() async {
     test('Get user by login and password', () async {
       await db.addUser("uuid", "login", "hashPassword");
 
-      var result =
-          await db.getUserByLoginAndPassword("login", "hashPassword");
+      var result = await db.getUserByLoginAndPassword("login", "hashPassword");
       expect(result[0]?.uuid, "uuid");
     });
   });
@@ -81,8 +80,10 @@ void main() async {
   group("Test DatabaseHandler - Message table:", () {
     setUp(() async {
       await db.addUser("user_uuid", "login", "hashPassword");
-      await db.addFlow("flow_uuid", "user_uuid", [ "user_uuid" ], title: "FlowTest", timeCreated: 987);
-      await db.addMessage("flow_uuid", "user_uuid", "message_uuid", 123, text: "text");
+      await db.addFlow("flow_uuid", "user_uuid", ["user_uuid"],
+          title: "FlowTest", timeCreated: 987);
+      await db.addMessage("flow_uuid", "user_uuid", "message_uuid", 123,
+          text: "text");
     });
 
     test('Add message and get all message', () async {
