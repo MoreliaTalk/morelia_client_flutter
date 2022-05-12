@@ -169,7 +169,8 @@ class Version {
 
 @JsonSerializable(explicitToJson: true)
 class Validator {
-  Validator({required this.type, this.data, this.errors, this.jsonapi, this.meta});
+  Validator(
+      {required this.type, this.data, this.errors, this.jsonapi, this.meta});
 
   late String type;
   Data? data;

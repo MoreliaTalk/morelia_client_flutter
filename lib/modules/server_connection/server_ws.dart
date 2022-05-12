@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'api.dart' as api;
 import 'package:web_socket_channel/web_socket_channel.dart';
+
+import 'api.dart' as api;
 
 class ServerConnection {
   final String _url;

@@ -15,12 +15,12 @@
 
 import 'dart:core';
 import 'dart:io';
-import './models.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
-import './platform_const.dart';
 
+import 'models.dart';
 
 class DatabaseReadError implements Exception {
   final String message;
@@ -42,48 +42,28 @@ class DatabaseConnectedError implements Exception {
 
 class DatabaseHandler {
   late Future<Isar> dbConnect;
-  late Future<Directory> dir;
-  late String _check;
 
-  static DatabaseHandler _singleConnect = DatabaseHandler.connect('blank');
-
-  DatabaseHandler.connect(this._check) {
+  DatabaseHandler.connect() {
     dbConnect = _connect();
   }
 
-  factory DatabaseHandler({bool testing = false}) {
-    const String libWin = 'libisar_windows_x64.dll';
-    const String libMac = 'libisar_macos_x64.dylib';
-    const String libLinux = 'libisar_linux_x64.so';
-
-    if (testing == true && currentPlatform == TypePlatformDevices.desktop) {
-      final dartToolDir = path.join(Directory.current.path, '.dart_tool');
-      try {
-        Isar.initializeLibraries(libraries: {
-          'windows': path.join(dartToolDir, libWin),
-          'macos': path.join(dartToolDir, libMac),
-          'linux': path.join(dartToolDir, libLinux)
-        });
-      } catch (e) {
-        throw 'InitializeLibraries error';
-      }
-    }
-    if (_singleConnect._check == 'blank') {
-      _singleConnect = DatabaseHandler.connect('dbConnected');
-    } else {
-      throw const DatabaseConnectedError('Class already created');
-    }
-    return _singleConnect;
-  }
-
   Future<Isar> _connect() async {
-    final dir = await getApplicationSupportDirectory();
-    return await Isar.open(schemas: [
-      UserConfigSchema,
-      FlowSchema,
-      MessageSchema,
-      ApplicationSettingSchema
-    ], directory: dir.path);
+    Directory? dir;
+
+    if (!kIsWeb) {
+      dir = await getApplicationSupportDirectory();
+    }
+
+    try {
+      return await Isar.open(schemas: [
+        UserConfigSchema,
+        FlowSchema,
+        MessageSchema,
+        ApplicationSettingSchema
+      ], directory: dir?.path);
+    } on IsarError {
+      return Isar.getInstance()!;
+    }
   }
 
   Future<List<UserConfig?>> getAllUser() async {
@@ -191,17 +171,17 @@ class DatabaseHandler {
     });
   }
 
-  Future<List<Message?>> getAllMessage() async {
+  Future<List<Message?>> getAllMessages() async {
     final conn = await dbConnect;
     return await conn.messages.where().sortByTime().findAll();
   }
 
-  Future<Message?> getMessageByUuid(String uuid) async {
+  Future<Message?> getMessagesByUuid(String uuid) async {
     final conn = await dbConnect;
     return await conn.messages.filter().uuidEqualTo(uuid).findFirst();
   }
 
-  Future<List<Message?>> getMessageByText(String text) async {
+  Future<List<Message?>> getMessagesByText(String text) async {
     final conn = await dbConnect;
     return await conn.messages
         .where(sort: Sort.asc)
@@ -211,12 +191,12 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByExactTime(int time) async {
+  Future<List<Message?>> getMessagesByExactTime(int time) async {
     final conn = await dbConnect;
     return await conn.messages.filter().timeEqualTo(time).findAll();
   }
 
-  Future<List<Message?>> getMessageByLessTime(int time) async {
+  Future<List<Message?>> getMessagesByLessTime(int time) async {
     final conn = await dbConnect;
     return await conn.messages
         .filter()
@@ -225,7 +205,7 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByMoreTime(int time) async {
+  Future<List<Message?>> getMessagesByMoreTime(int time) async {
     final conn = await dbConnect;
     return await conn.messages
         .filter()
@@ -234,42 +214,40 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByMoreTimeAndFlow(
+  Future<List<Message?>> getMessagesByMoreTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
+
     return await conn.messages
         .where(sort: Sort.asc)
         .filter()
         .timeGreaterThan(time)
-        .and()
-        .toFlow((q) => q.uuidEqualTo(flowUuid))
+        .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
         .sortByTime()
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByLessTimeAndFlow(
+  Future<List<Message?>> getMessagesByLessTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
     return await conn.messages
         .where(sort: Sort.asc)
         .filter()
         .timeLessThan(time)
-        .and()
-        .toFlow((q) => q.uuidEqualTo(flowUuid))
+        .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
         .sortByTime()
         .findAll();
   }
 
-  Future<List<Message?>> getMessageByExactTimeAndFlow(
+  Future<List<Message?>> getMessagesByExactTimeAndFlow(
       int time, String flowUuid) async {
     final conn = await dbConnect;
+
     return await conn.messages
         .where(sort: Sort.asc)
         .filter()
         .timeEqualTo(time)
-        .and()
-        .toFlow((q) => q.uuidEqualTo(flowUuid))
-        .sortById()
+        .messageLinkedFlow((q) => q.uuidEqualTo(flowUuid))
         .findAll();
   }
 
@@ -284,7 +262,7 @@ class DatabaseHandler {
       int? editedTime,
       bool editedStatus = false}) async {
     final conn = await dbConnect;
-    final newMessage = Message()
+    Message newMessage = Message()
       ..uuid = messageUuid
       ..text = text
       ..time = time
@@ -295,8 +273,21 @@ class DatabaseHandler {
       ..emoji = emoji
       ..editedTime = editedTime
       ..editedStatus = editedStatus;
+
     await conn.writeTxn((conn) async {
       await conn.messages.put(newMessage);
+    });
+
+    await newMessage.messageLinkedFlow.load();
+    newMessage.messageLinkedFlow.value = (await getFlowByUuid(flowUuid));
+    await conn.writeTxn((conn) async {
+      await newMessage.messageLinkedFlow.save();
+    });
+
+    await newMessage.messageLinkedUser.load();
+    newMessage.messageLinkedUser.value = (await getUserByUuid(userUuid));
+    await conn.writeTxn((conn) async {
+      await newMessage.messageLinkedUser.save();
     });
   }
 
@@ -350,7 +341,7 @@ class DatabaseHandler {
 
   Future<List<Flow?>> getAllFlow() async {
     final conn = await dbConnect;
-    return await conn.flows.where().sortByUuid().findAll();
+    return await conn.flows.where().sortByTimeCreated().findAll();
   }
 
   Future<Flow?> getFlowByUuid(String uuid) async {
@@ -394,12 +385,8 @@ class DatabaseHandler {
         .findAll();
   }
 
-  Future<void> addFlow(String uuid, List<String> usersUuid,
-      {String? title,
-      String? info,
-      String? flowType,
-      int? timeCreated,
-      String? owner}) async {
+  Future<void> addFlow(String uuid, String owner, List<String> usersUuid,
+      {String? title, String? info, String? flowType, int? timeCreated}) async {
     final conn = await dbConnect;
     final newFlow = Flow()
       ..uuid = uuid
@@ -411,6 +398,15 @@ class DatabaseHandler {
 
     await conn.writeTxn((conn) async {
       await conn.flows.put(newFlow);
+    });
+    await newFlow.flowLinkedUsers.load();
+
+    for (var userUuid in usersUuid) {
+      newFlow.flowLinkedUsers.add((await getUserByUuid(userUuid))!);
+    }
+
+    await conn.writeTxn((conn) async {
+      await newFlow.flowLinkedUsers.save();
     });
   }
 

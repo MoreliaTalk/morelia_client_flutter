@@ -46,8 +46,11 @@ class UserConfig {
   late String? salt;
   late String? key;
 
-  final toMessages = IsarLinks<Message>();
-  final toFlows = IsarLinks<Flow>();
+  @Backlink(to: 'messageLinkedUser')
+  final userLinkedMessages = IsarLinks<Message>();
+
+  @Backlink(to: 'flowLinkedUsers')
+  final userLinkedFlows = IsarLinks<Flow>();
 }
 
 @Collection()
@@ -68,8 +71,10 @@ class Flow {
   late int? timeCreated;
   late String? owner;
 
-  final toMessages = IsarLinks<Message>();
-  final toUsers = IsarLinks<UserConfig>();
+  @Backlink(to: 'messageLinkedFlow')
+  final flowLinkedMessages = IsarLinks<Message>();
+
+  final flowLinkedUsers = IsarLinks<UserConfig>();
 }
 
 @Collection()
@@ -92,11 +97,8 @@ class Message {
   late int? editedTime;
   late bool editedStatus;
 
-  @Backlink(to: 'toMessages')
-  final toUser = IsarLink<UserConfig>();
-
-  @Backlink(to: 'toMessages')
-  final toFlow = IsarLink<Flow>();
+  final messageLinkedUser = IsarLink<UserConfig>();
+  final messageLinkedFlow = IsarLink<Flow>();
 }
 
 @Collection()

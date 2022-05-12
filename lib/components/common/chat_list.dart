@@ -1,6 +1,9 @@
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:morelia_client_flutter/modules/database/db.dart';
+
+import '../../modules/database/models.dart' as models;
 
 class ChatItem extends ConsumerWidget {
   const ChatItem(this.title, this.lastMessage, {Key? key}) : super(key: key);
@@ -19,6 +22,9 @@ class ChatItem extends ConsumerWidget {
     return ListTile(
       onTap: () => onClick(uuid),
       leading: CircleAvatar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        radius: 22,
         child: Text(avatarSymbols),
       ),
       title: Text(title),
@@ -32,45 +38,81 @@ class ChatItem extends ConsumerWidget {
   }
 }
 
-class ChatListStateNotifier extends StateNotifier<List<ChatItem>> {
-  ChatListStateNotifier() : super([]);
+final onClickItemsFunction =
+    StateProvider<Function(String uuid)>((ref) => (String uuid) {});
 
-  addChat(String title, String lastMessage) {
-    state = [...state, ChatItem(title, lastMessage)];
+class ChatStateItem {
+  ChatStateItem({required this.flow, required this.lastMessage});
+
+  final models.Flow flow;
+  final String lastMessage;
+}
+
+class ChatsStateNotifier extends StateNotifier<List<ChatStateItem?>> {
+  ChatsStateNotifier() : super([]) {
+    var dbHandlerInstance = DatabaseHandler.connect();
+
+    Future.delayed(Duration.zero, () async {
+      loadChats();
+      (await dbHandlerInstance.dbConnect)
+          .flows
+          .watchLazy()
+          .listen((event) async {
+        loadChats();
+      });
+    });
+  }
+
+  Future<void> loadChats() async {
+    var dbData = await DatabaseHandler.connect().getAllFlow();
+    List<ChatStateItem?> newState = [];
+
+    for (var flow in dbData) {
+      await flow!.flowLinkedMessages.load();
+      newState.add(ChatStateItem(
+          flow: flow,
+          lastMessage: (flow.flowLinkedMessages.isNotEmpty
+              ? flow.flowLinkedMessages.last.text
+              : "no messages") as String));
+    }
+    state = newState;
   }
 }
 
-final chatListStateProvider =
-    StateNotifierProvider<ChatListStateNotifier, List<ChatItem>>(
-        (ref) => ChatListStateNotifier());
-
-final onClickItemsFunction =
-    StateProvider<Function(String uuid)>((ref) => (String uuid) {});
+final chatsStateProvider =
+    StateNotifierProvider<ChatsStateNotifier, List<ChatStateItem?>>(
+        (ref) => ChatsStateNotifier());
 
 class ChatList extends ConsumerWidget {
   const ChatList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<ChatItem> chats = ref.watch(chatListStateProvider);
+    var chats = ref.watch(chatsStateProvider);
+
     return Scaffold(
-      body: Container(
-          child: (ListView.builder(
-              controller: ScrollController(),
-              itemCount: chats.length,
-              itemBuilder: (context, index) {
-                return chats[index];
-              }))),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          var faker = Faker();
-          ref.watch(chatListStateProvider.notifier).addChat(
-                faker.person.name(),
-                faker.lorem.sentence(),
-              );
-        },
-      ),
-    );
+        body: ListView.builder(
+            controller: ScrollController(),
+            itemCount: chats.length,
+            itemBuilder: (context, index) {
+              var chat = chats[index];
+              return ChatItem(
+                  chat?.flow.title as String, chat?.lastMessage as String);
+            }),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () async {
+            var faker = Faker();
+            final flowUuid = faker.guid.guid();
+            final userUuid = faker.guid.guid();
+            var dbHandlerInstance = DatabaseHandler.connect();
+            await dbHandlerInstance.addUser(userUuid, "login", "hashPassword");
+            await dbHandlerInstance.addFlow(flowUuid, userUuid, [userUuid],
+                title: faker.person.name());
+            await dbHandlerInstance.addMessage(
+                flowUuid, userUuid, faker.guid.guid(), 123,
+                text: "Hello!");
+          },
+        ));
   }
 }
