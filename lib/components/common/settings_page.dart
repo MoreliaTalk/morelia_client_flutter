@@ -12,8 +12,9 @@ class SettingsPage extends ConsumerWidget {
       appBar: AppBar(title: const Text("Settings")),
       body: ListView(children: [
         ListTile(
-          leading: Icon(Icons.palette),
+          leading: const Icon(Icons.palette),
           title: const Text("Color theme"),
+          iconColor: Theme.of(context).colorScheme.primary,
           onTap: () {}
         )
       ]),
