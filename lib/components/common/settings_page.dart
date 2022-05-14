@@ -9,13 +9,25 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var theme = ref.watch(currentTheme.notifier);
     return Scaffold(
       appBar: AppBar(title: const Text("Settings")),
-      body: AdaptiveMenu(items: [
-          AdaptiveMenuItem(widget: ListTile(leading: const Icon(Icons.palette),
-              title: const Text("Color theme"),
-              iconColor: Theme.of(context).colorScheme.primary), subPage: Text("hello"))
+      body: AdaptiveMenu(
+        mode: () {
+          if (currentPlatform == TypePlatformDevices.desktop) {
+            return AdaptiveMenuMode.split;
+          } else {
+            return AdaptiveMenuMode.fullscreen;
+          }
+        }(),
+        menuFlexWidth: 1,
+        subPageFlexWidth: 6,
+        items: [
+        AdaptiveMenuItem(
+            widget: ListTile(
+                leading: const Icon(Icons.palette),
+                title: const Text("Color theme"),
+                iconColor: Theme.of(context).colorScheme.primary),
+            subPage: const Text("hello"))
       ]),
     );
   }
