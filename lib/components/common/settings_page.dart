@@ -16,8 +16,7 @@ class SettingsPage extends ConsumerWidget {
           AdaptiveMenuItem(widget: ListTile(leading: const Icon(Icons.palette),
               title: const Text("Color theme"),
               iconColor: Theme.of(context).colorScheme.primary), subPage: Text("hello"))
-
-      ], platform: TypePlatformDevices.desktop,),
+      ]),
     );
   }
 }

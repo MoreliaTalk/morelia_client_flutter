@@ -3,17 +3,18 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:morelia_client_flutter/modules/platform_const.dart';
 
 class AdaptiveMenu extends HookWidget {
-  const AdaptiveMenu({Key? key, required this.items, required this.platform}) : super(key: key);
+  const AdaptiveMenu({Key? key, required this.items}) : super(key: key);
 
   final List<AdaptiveMenuItem> items;
-  final TypePlatformDevices platform;
 
   @override
   Widget build(BuildContext context) {
-    if (platform == TypePlatformDevices.desktop) {
-      var currentSubPage = useState<Widget>(Container());
+    var currentSubPage = useState<Widget>(Container());
 
-      return Row(children: [
+    late Widget newWidget;
+
+    if (currentPlatform == TypePlatformDevices.desktop) {
+      newWidget = Row(children: [
         Expanded(child: ListView.builder(
           itemCount: items.length,
           itemBuilder: (BuildContext context, int index) {
@@ -21,11 +22,20 @@ class AdaptiveMenu extends HookWidget {
               currentSubPage.value = items[index].subPage;
             },);
           })),
-          Expanded(flex: 6, child: currentSubPage.value)
+          Expanded(flex: 5, child: currentSubPage.value)
       ]
       );
+    } else if (currentPlatform == TypePlatformDevices.mobile) {
+      newWidget = ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (BuildContext context, int index) {
+            return InkWell(child: items[index].widget, onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => items[index].subPage));
+            });
+          });
     }
-    return Container();
+
+    return newWidget;
   }
 }
 
