@@ -5176,9 +5176,9 @@ extension GetApplicationSettingCollection on Isar {
 const ApplicationSettingSchema = CollectionSchema(
   name: 'ApplicationSetting',
   schema:
-      '{"name":"ApplicationSetting","idName":"id","properties":[{"name":"port","type":"String"},{"name":"server","type":"String"}],"indexes":[],"links":[]}',
+      '{"name":"ApplicationSetting","idName":"id","properties":[],"indexes":[],"links":[]}',
   idName: 'id',
-  propertyIds: {'port': 0, 'server': 1},
+  propertyIds: {},
   listProperties: {},
   indexIds: {},
   indexValueTypes: {},
@@ -5221,20 +5221,12 @@ void _applicationSettingSerializeNative(
     List<int> offsets,
     AdapterAlloc alloc) {
   var dynamicSize = 0;
-  final value0 = object.port;
-  final _port = IsarBinaryWriter.utf8Encoder.convert(value0);
-  dynamicSize += (_port.length) as int;
-  final value1 = object.server;
-  final _server = IsarBinaryWriter.utf8Encoder.convert(value1);
-  dynamicSize += (_server.length) as int;
   final size = staticSize + dynamicSize;
 
   rawObj.buffer = alloc(size);
   rawObj.buffer_length = size;
   final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
   final writer = IsarBinaryWriter(buffer, staticSize);
-  writer.writeBytes(offsets[0], _port);
-  writer.writeBytes(offsets[1], _server);
 }
 
 ApplicationSetting _applicationSettingDeserializeNative(
@@ -5244,8 +5236,6 @@ ApplicationSetting _applicationSettingDeserializeNative(
     List<int> offsets) {
   final object = ApplicationSetting();
   object.id = id;
-  object.port = reader.readString(offsets[0]);
-  object.server = reader.readString(offsets[1]);
   return object;
 }
 
@@ -5254,10 +5244,6 @@ P _applicationSettingDeserializePropNative<P>(
   switch (propertyIndex) {
     case -1:
       return id as P;
-    case 0:
-      return (reader.readString(offset)) as P;
-    case 1:
-      return (reader.readString(offset)) as P;
     default:
       throw 'Illegal propertyIndex';
   }
@@ -5267,8 +5253,6 @@ dynamic _applicationSettingSerializeWeb(
     IsarCollection<ApplicationSetting> collection, ApplicationSetting object) {
   final jsObj = IsarNative.newJsObject();
   IsarNative.jsObjectSet(jsObj, 'id', object.id);
-  IsarNative.jsObjectSet(jsObj, 'port', object.port);
-  IsarNative.jsObjectSet(jsObj, 'server', object.server);
   return jsObj;
 }
 
@@ -5276,8 +5260,6 @@ ApplicationSetting _applicationSettingDeserializeWeb(
     IsarCollection<ApplicationSetting> collection, dynamic jsObj) {
   final object = ApplicationSetting();
   object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
-  object.port = IsarNative.jsObjectGet(jsObj, 'port') ?? '';
-  object.server = IsarNative.jsObjectGet(jsObj, 'server') ?? '';
   return object;
 }
 
@@ -5286,10 +5268,6 @@ P _applicationSettingDeserializePropWeb<P>(Object jsObj, String propertyName) {
     case 'id':
       return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
           as P;
-    case 'port':
-      return (IsarNative.jsObjectGet(jsObj, 'port') ?? '') as P;
-    case 'server':
-      return (IsarNative.jsObjectGet(jsObj, 'server') ?? '') as P;
     default:
       throw 'Illegal propertyName';
   }
@@ -5416,220 +5394,6 @@ extension ApplicationSettingQueryFilter
       includeUpper: includeUpper,
     ));
   }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      portEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'port',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      portGreaterThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'port',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      portLessThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'port',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      portBetween(
-    String lower,
-    String upper, {
-    bool caseSensitive = true,
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'port',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      portStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.startsWith,
-      property: 'port',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      portEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.endsWith,
-      property: 'port',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      portContains(String value, {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.contains,
-      property: 'port',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      portMatches(String pattern, {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.matches,
-      property: 'port',
-      value: pattern,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      serverEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.eq,
-      property: 'server',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      serverGreaterThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.gt,
-      include: include,
-      property: 'server',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      serverLessThan(
-    String value, {
-    bool caseSensitive = true,
-    bool include = false,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.lt,
-      include: include,
-      property: 'server',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      serverBetween(
-    String lower,
-    String upper, {
-    bool caseSensitive = true,
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition.between(
-      property: 'server',
-      lower: lower,
-      includeLower: includeLower,
-      upper: upper,
-      includeUpper: includeUpper,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      serverStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.startsWith,
-      property: 'server',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      serverEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.endsWith,
-      property: 'server',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      serverContains(String value, {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.contains,
-      property: 'server',
-      value: value,
-      caseSensitive: caseSensitive,
-    ));
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
-      serverMatches(String pattern, {bool caseSensitive = true}) {
-    return addFilterConditionInternal(FilterCondition(
-      type: ConditionType.matches,
-      property: 'server',
-      value: pattern,
-      caseSensitive: caseSensitive,
-    ));
-  }
 }
 
 extension ApplicationSettingQueryLinks
@@ -5646,26 +5410,6 @@ extension ApplicationSettingQueryWhereSortBy
       sortByIdDesc() {
     return addSortByInternal('id', Sort.desc);
   }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
-      sortByPort() {
-    return addSortByInternal('port', Sort.asc);
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
-      sortByPortDesc() {
-    return addSortByInternal('port', Sort.desc);
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
-      sortByServer() {
-    return addSortByInternal('server', Sort.asc);
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
-      sortByServerDesc() {
-    return addSortByInternal('server', Sort.desc);
-  }
 }
 
 extension ApplicationSettingQueryWhereSortThenBy
@@ -5679,26 +5423,6 @@ extension ApplicationSettingQueryWhereSortThenBy
       thenByIdDesc() {
     return addSortByInternal('id', Sort.desc);
   }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
-      thenByPort() {
-    return addSortByInternal('port', Sort.asc);
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
-      thenByPortDesc() {
-    return addSortByInternal('port', Sort.desc);
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
-      thenByServer() {
-    return addSortByInternal('server', Sort.asc);
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
-      thenByServerDesc() {
-    return addSortByInternal('server', Sort.desc);
-  }
 }
 
 extension ApplicationSettingQueryWhereDistinct
@@ -5707,29 +5431,11 @@ extension ApplicationSettingQueryWhereDistinct
       distinctById() {
     return addDistinctByInternal('id');
   }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct>
-      distinctByPort({bool caseSensitive = true}) {
-    return addDistinctByInternal('port', caseSensitive: caseSensitive);
-  }
-
-  QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct>
-      distinctByServer({bool caseSensitive = true}) {
-    return addDistinctByInternal('server', caseSensitive: caseSensitive);
-  }
 }
 
 extension ApplicationSettingQueryProperty
     on QueryBuilder<ApplicationSetting, ApplicationSetting, QQueryProperty> {
   QueryBuilder<ApplicationSetting, int, QQueryOperations> idProperty() {
     return addPropertyNameInternal('id');
-  }
-
-  QueryBuilder<ApplicationSetting, String, QQueryOperations> portProperty() {
-    return addPropertyNameInternal('port');
-  }
-
-  QueryBuilder<ApplicationSetting, String, QQueryOperations> serverProperty() {
-    return addPropertyNameInternal('server');
   }
 }

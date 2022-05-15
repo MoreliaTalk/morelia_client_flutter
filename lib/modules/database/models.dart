@@ -14,6 +14,7 @@
 // along with Morelia Flutter. If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:isar/isar.dart';
+import 'package:morelia_client_flutter/modules/application_mode.dart';
 
 part 'models.g.dart';
 
@@ -106,6 +107,5 @@ class ApplicationSetting {
   @Id()
   int id = Isar.autoIncrement;
 
-  late String server;
-  late String port;
+  late TypeApplicationMode appMode;
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:morelia_client_flutter/modules/platform_const.dart';
+import 'package:morelia_client_flutter/modules/application_mode.dart';
 
 enum AdaptiveMenuMode { fullscreen, split }
 

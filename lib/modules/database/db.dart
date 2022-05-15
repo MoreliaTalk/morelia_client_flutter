@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
+import 'package:morelia_client_flutter/modules/application_mode.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'models.dart';
@@ -450,25 +451,49 @@ class DatabaseHandler {
     });
   }
 
-  Future<ApplicationSetting?> getSettings() async {
+  Future<ApplicationSetting> _getApplicationSettings() async {
     final conn = await dbConnect;
-    return await conn.applicationSettings.where(sort: Sort.asc).findFirst();
+    var settings = await conn.applicationSettings.where().findFirst();
+
+    if (settings == null) {
+      settings = ApplicationSetting();
+
+      await conn.writeTxn((conn) async {
+        await conn.applicationSettings.put(settings!);
+      });
+    }
+
+    return settings;
   }
 
-  Future<void> addSettings(String server, String port) async {
+  Future<TypeApplicationMode?> getApplicationMode(String key) async => (await _getApplicationSettings()).appMode;
+
+  Future<void> setApplicationMode(TypeApplicationMode mode) async {
+    var settings = await _getApplicationSettings();
+
     final conn = await dbConnect;
-    final newSetting = ApplicationSetting()
-      ..server = server
-      ..port = port;
-    await conn.writeTxn((conn) async {
-      await conn.applicationSettings.put(newSetting);
-    });
+
+    settings.appMode = mode;
+    await conn.applicationSettings.put(settings);
+  }
+  /*
+  Future<ApplicationSetting?> getSetting(String key) async {
+    final conn = await dbConnect;
+
+    return await conn.applicationSettings.filter().keyEqualTo(key).findFirst();
   }
 
-  Future<void> deleteOneApplicationSetting(int id) async {
+  Future<void> setSetting(String key, String value) async {
     final conn = await dbConnect;
+
+    var setting = await conn.applicationSettings.filter().keyEqualTo(key).findFirst();
+
+    setting ??= ApplicationSetting()..key = key;
+
+    setting.value = value;
+
     await conn.writeTxn((conn) async {
-      await conn.applicationSettings.delete(id);
+      await conn.applicationSettings.put(setting!);
     });
-  }
+  }*/
 }

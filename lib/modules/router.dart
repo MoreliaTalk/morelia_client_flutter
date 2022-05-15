@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:morelia_client_flutter/modules/platform_const.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:morelia_client_flutter/modules/application_mode.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart';
 
 import '../components/common/communication_page.dart';
@@ -30,10 +31,11 @@ final desktopRoutes = [
 
 class MoreliaRouter {
   get _routes {
-    switch (currentPlatform) {
-      case TypePlatformDevices.mobile:
+    var riverpodContainer = ProviderContainer();
+    switch (riverpodContainer.read(applicationMode.notifier).state) {
+      case TypeApplicationMode.mobile:
         return mobileRoutes;
-      case TypePlatformDevices.desktop:
+      case TypeApplicationMode.desktop:
         return desktopRoutes;
       default:
         return [
