@@ -1,22 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:morelia_client_flutter/modules/router.dart';
 
 void main() async {
-  runApp(const ProviderScope(child: MoreliaApp()));
+  runApp(const MoreliaApp());
 }
 
-class MoreliaApp extends ConsumerWidget {
+class MoreliaApp extends StatelessWidget {
   const MoreliaApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    GoRouter _router = MoreliaRouter().router;
-
-    return MaterialApp.router(
-      routeInformationParser: _router.routeInformationParser,
-      routerDelegate: _router.routerDelegate,
-    );
-  }
+  Widget build(BuildContext context) => ProviderScope(child: MoreliaRouter());
 }

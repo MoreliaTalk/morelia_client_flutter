@@ -9,47 +9,48 @@ import '../components/common/settings_page.dart';
 import '../components/desktop/main_page.dart';
 import '../components/mobile/chats_page.dart';
 
-final mobileRoutes = [
-  GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
-  GoRoute(
-      path: "/messages/:uuid",
-      builder: (context, state) =>
-          CommunicationPage(uuid: state.params['uuid']!)),
-  GoRoute(
-      path: "/settings",
-      builder: (context, _) => const SettingsPage(),
-      routes: [])
-];
+class MoreliaRouter extends ConsumerWidget {
+  final mobileRoutes = [
+    GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
+    GoRoute(
+        path: "/messages/:uuid",
+        builder: (context, state) =>
+            CommunicationPage(uuid: state.params['uuid']!)),
+    GoRoute(
+        path: "/settings",
+        builder: (context, _) => const SettingsPage(),
+        routes: [])
+  ];
 
-final desktopRoutes = [
-  GoRoute(path: "/", builder: (context, state) => const DesktopMainPage()),
-  GoRoute(
-      path: "/settings",
-      builder: (context, _) => const SettingsPage(),
-      routes: [])
-];
+  final desktopRoutes = [
+    GoRoute(path: "/", builder: (context, state) => const DesktopMainPage()),
+    GoRoute(
+        path: "/settings",
+        builder: (context, _) => const SettingsPage(),
+        routes: [])
+  ];
 
-class MoreliaRouter {
-  get _routes {
-    var riverpodContainer = ProviderContainer();
-    switch (riverpodContainer.read(applicationMode.notifier).state) {
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    late List<GoRoute> routes;
+
+    switch (ref.watch(applicationMode)) {
       case TypeApplicationMode.mobile:
-        return mobileRoutes;
+        routes = mobileRoutes;
+        break;
       case TypeApplicationMode.desktop:
-        return desktopRoutes;
-      default:
-        return [
-          GoRoute(
-              path: "/",
-              builder: (context, _) =>
-                  const Text("Your platform is not supported"))
-        ];
+        routes = desktopRoutes;
+        break;
     }
-  }
 
-  get router {
-    return GoRouter(
-        routes: _routes,
-        navigatorBuilder: (_, __, child) => ThemeWidget(child: child));
+    var router = GoRouter(
+          routes: routes,
+          navigatorBuilder: (_, __, child) => ThemeWidget(child: child));
+
+    return MaterialApp.router(
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+    );
   }
 }

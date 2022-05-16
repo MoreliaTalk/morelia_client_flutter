@@ -25,35 +25,35 @@ class AdaptiveMenu extends HookWidget {
     switch (mode) {
       case AdaptiveMenuMode.split:
         return Row(children: [
-        Expanded(
-            flex: menuFlexWidth,
-            child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return InkWell(
-                    child: items[index].widget,
-                    onTap: () {
-                      currentSubPage.value = items[index].subPage;
-                    },
-                  );
-                })),
-        Expanded(flex: subPageFlexWidth, child: currentSubPage.value)
-      ]);
+          Expanded(
+              flex: menuFlexWidth,
+              child: ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      child: items[index].widget,
+                      onTap: () {
+                        currentSubPage.value = items[index].subPage;
+                      },
+                    );
+                  })),
+          Expanded(flex: subPageFlexWidth, child: currentSubPage.value)
+        ]);
       case AdaptiveMenuMode.fullscreen:
         return ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (BuildContext context, int index) {
-            return InkWell(
-                child: items[index].widget,
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              items[index].subPage));
-                });
-          });
-      }
+            itemCount: items.length,
+            itemBuilder: (BuildContext context, int index) {
+              return InkWell(
+                  child: items[index].widget,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                items[index].subPage));
+                  });
+            });
+    }
   }
 }
 

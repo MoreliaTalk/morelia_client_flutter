@@ -4,10 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
 
-enum TypeApplicationMode {
-  mobile,
-  desktop
-}
+enum TypeApplicationMode { mobile, desktop }
 
 get realPlatformMode {
   TypeApplicationMode platform;
@@ -40,5 +37,6 @@ class ApplicationMode extends StateNotifier<TypeApplicationMode> {
   ApplicationMode() : super(realPlatformMode);
 }
 
-final applicationMode = StateNotifierProvider<ApplicationMode, TypeApplicationMode>((ref) => ApplicationMode());
-
+final applicationMode =
+    StateNotifierProvider<ApplicationMode, TypeApplicationMode>(
+        (ref) => ApplicationMode());
