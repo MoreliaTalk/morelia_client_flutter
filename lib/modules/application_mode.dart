@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
+import 'package:morelia_client_flutter/modules/database/models.dart';
 
 enum TypeApplicationMode { mobile, desktop }
 
@@ -34,7 +35,28 @@ get realPlatformMode {
 }
 
 class ApplicationMode extends StateNotifier<TypeApplicationMode> {
-  ApplicationMode() : super(realPlatformMode);
+  ApplicationMode() : super(realPlatformMode) {
+    Future.delayed(Duration.zero, () async {
+      _getFromDbAndUpdate();
+
+      var conn = await DatabaseHandler.connect().dbConnect;
+      conn.applicationSettings.watchLazy().listen((event) {
+        _getFromDbAndUpdate();
+      });
+    });
+  }
+
+  _getFromDbAndUpdate() async {
+    var db = DatabaseHandler.connect();
+
+    var modeInDb = await db.getApplicationMode();
+
+    if (modeInDb == null) {
+      state = realPlatformMode;
+    } else {
+      state = modeInDb;
+    }
+  }
 }
 
 final applicationMode =

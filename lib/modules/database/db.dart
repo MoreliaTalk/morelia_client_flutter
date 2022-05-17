@@ -466,7 +466,7 @@ class DatabaseHandler {
     return settings;
   }
 
-  Future<TypeApplicationMode?> getApplicationMode(String key) async =>
+  Future<TypeApplicationMode?> getApplicationMode() async =>
       (await _getApplicationSettings()).appMode;
 
   Future<void> setApplicationMode(TypeApplicationMode mode) async {
