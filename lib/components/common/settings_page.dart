@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:morelia_client_flutter/components/common/adaptive_menu.dart';
 import 'package:morelia_client_flutter/modules/application_mode.dart';
+import 'package:morelia_client_flutter/modules/database/db.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -22,8 +23,44 @@ class SettingsPage extends ConsumerWidget {
                     leading: const Icon(Icons.palette),
                     title: const Text("Color theme"),
                     iconColor: Theme.of(context).colorScheme.primary),
-                subPage: const Text("hello"))
+                subPage: const PersonalizePage(),
+                subPageText: const Text("Personalize"))
           ]),
     );
   }
+}
+
+class PersonalizePage extends ConsumerWidget {
+  const PersonalizePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: ListView(
+        children: [
+          ListTile(
+            leading: Icon(Icons.devices_rounded),
+            title: Text("Application platform mode"),
+            trailing: DropdownButton<TypeApplicationMode>(
+              items: const [
+                DropdownMenuItem(
+                  value: TypeApplicationMode.desktop,
+                  child: Text("Desktop"),
+                ),
+                DropdownMenuItem(
+                  value: TypeApplicationMode.mobile,
+                  child: Text("Mobile"),
+                )
+              ],
+              value: ref.watch(applicationMode),
+              onChanged: (TypeApplicationMode? value) async {
+                await ref.watch(applicationMode.notifier).setApplicationMode(value!);
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
 }

@@ -40,8 +40,8 @@ class ApplicationMode extends StateNotifier<TypeApplicationMode> {
       _getFromDbAndUpdate();
 
       var conn = await DatabaseHandler.connect().dbConnect;
-      conn.applicationSettings.watchLazy().listen((event) {
-        _getFromDbAndUpdate();
+      conn.applicationSettings.watchLazy().listen((event) async {
+        await _getFromDbAndUpdate();
       });
     });
   }
@@ -56,6 +56,11 @@ class ApplicationMode extends StateNotifier<TypeApplicationMode> {
     } else {
       state = modeInDb;
     }
+  }
+
+  setApplicationMode(TypeApplicationMode mode) async {
+    var db = DatabaseHandler.connect();
+    await db.setApplicationMode(mode);
   }
 }
 

@@ -470,31 +470,12 @@ class DatabaseHandler {
       (await _getApplicationSettings()).appMode;
 
   Future<void> setApplicationMode(TypeApplicationMode mode) async {
-    var settings = await _getApplicationSettings();
-
     final conn = await dbConnect;
 
-    settings.appMode = mode;
-    await conn.applicationSettings.put(settings);
-  }
-  /*
-  Future<ApplicationSetting?> getSetting(String key) async {
-    final conn = await dbConnect;
-
-    return await conn.applicationSettings.filter().keyEqualTo(key).findFirst();
-  }
-
-  Future<void> setSetting(String key, String value) async {
-    final conn = await dbConnect;
-
-    var setting = await conn.applicationSettings.filter().keyEqualTo(key).findFirst();
-
-    setting ??= ApplicationSetting()..key = key;
-
-    setting.value = value;
+    final settings = await _getApplicationSettings()..appMode = mode;
 
     await conn.writeTxn((conn) async {
-      await conn.applicationSettings.put(setting!);
+      await conn.applicationSettings.put(settings);
     });
-  }*/
+  }
 }

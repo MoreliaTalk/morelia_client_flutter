@@ -49,8 +49,9 @@ class AdaptiveMenu extends HookWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                items[index].subPage));
+                            builder: (BuildContext context) => Scaffold(
+                                appBar: AppBar(title: items[index].subPageText,),
+                                body: items[index].subPage)));
                   });
             });
     }
@@ -61,8 +62,10 @@ class AdaptiveMenuItem {
   AdaptiveMenuItem({
     required this.widget,
     required this.subPage,
+    required this.subPageText,
   });
 
   final Widget widget;
   final Widget subPage;
+  final Text subPageText;
 }
