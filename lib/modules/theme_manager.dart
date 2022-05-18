@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:morelia_client_flutter/modules/database/db.dart';
 
-final lightTheme = ThemeData.light();
-final darkTheme = ThemeData.dark();
+enum TypeTheme {
+  defaultLight,
+  defaultDark
+}
 
-final currentTheme = StateProvider<ThemeData>((ref) => darkTheme);
+final themesData = {
+  TypeTheme.defaultDark: ThemeData.dark(),
+  TypeTheme.defaultLight: ThemeData.light()
+};
+
+
+class ThemeStateNotifier extends StateNotifier<TypeTheme> {
+  ThemeStateNotifier() : super(TypeTheme.defaultDark) {
+    Future.delayed(Duration.zero, () async {
+      final db = DatabaseHandler.connect();
+    });
+  }
+}
+
+final currentTheme = StateProvider<ThemeData>((ref) => ThemeData.dark());
+
 
 class ThemeWidget extends ConsumerWidget {
   const ThemeWidget({Key? key, required this.child}) : super(key: key);

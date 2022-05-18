@@ -5176,9 +5176,9 @@ extension GetApplicationSettingCollection on Isar {
 const ApplicationSettingSchema = CollectionSchema(
   name: 'ApplicationSetting',
   schema:
-      '{"name":"ApplicationSetting","idName":"id","properties":[{"name":"appMode","type":"String"}],"indexes":[],"links":[]}',
+      '{"name":"ApplicationSetting","idName":"id","properties":[{"name":"appMode","type":"String"},{"name":"theme","type":"String"}],"indexes":[],"links":[]}',
   idName: 'id',
-  propertyIds: {'appMode': 0},
+  propertyIds: {'appMode': 0, 'theme': 1},
   listProperties: {},
   indexIds: {},
   indexValueTypes: {},
@@ -5227,6 +5227,12 @@ void _applicationSettingSerializeNative(
     _appMode = IsarBinaryWriter.utf8Encoder.convert(value0);
   }
   dynamicSize += (_appMode?.length ?? 0) as int;
+  final value1 = object.theme;
+  IsarUint8List? _theme;
+  if (value1 != null) {
+    _theme = IsarBinaryWriter.utf8Encoder.convert(value1);
+  }
+  dynamicSize += (_theme?.length ?? 0) as int;
   final size = staticSize + dynamicSize;
 
   rawObj.buffer = alloc(size);
@@ -5234,6 +5240,7 @@ void _applicationSettingSerializeNative(
   final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
   final writer = IsarBinaryWriter(buffer, staticSize);
   writer.writeBytes(offsets[0], _appMode);
+  writer.writeBytes(offsets[1], _theme);
 }
 
 ApplicationSetting _applicationSettingDeserializeNative(
@@ -5244,6 +5251,7 @@ ApplicationSetting _applicationSettingDeserializeNative(
   final object = ApplicationSetting();
   object.appMode = reader.readStringOrNull(offsets[0]);
   object.id = id;
+  object.theme = reader.readStringOrNull(offsets[1]);
   return object;
 }
 
@@ -5253,6 +5261,8 @@ P _applicationSettingDeserializePropNative<P>(
     case -1:
       return id as P;
     case 0:
+      return (reader.readStringOrNull(offset)) as P;
+    case 1:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw 'Illegal propertyIndex';
@@ -5264,6 +5274,7 @@ dynamic _applicationSettingSerializeWeb(
   final jsObj = IsarNative.newJsObject();
   IsarNative.jsObjectSet(jsObj, 'appMode', object.appMode);
   IsarNative.jsObjectSet(jsObj, 'id', object.id);
+  IsarNative.jsObjectSet(jsObj, 'theme', object.theme);
   return jsObj;
 }
 
@@ -5272,6 +5283,7 @@ ApplicationSetting _applicationSettingDeserializeWeb(
   final object = ApplicationSetting();
   object.appMode = IsarNative.jsObjectGet(jsObj, 'appMode');
   object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
+  object.theme = IsarNative.jsObjectGet(jsObj, 'theme');
   return object;
 }
 
@@ -5282,6 +5294,8 @@ P _applicationSettingDeserializePropWeb<P>(Object jsObj, String propertyName) {
     case 'id':
       return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
           as P;
+    case 'theme':
+      return (IsarNative.jsObjectGet(jsObj, 'theme')) as P;
     default:
       throw 'Illegal propertyName';
   }
@@ -5524,6 +5538,122 @@ extension ApplicationSettingQueryFilter
       includeUpper: includeUpper,
     ));
   }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'theme',
+      value: null,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.eq,
+      property: 'theme',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeGreaterThan(
+    String? value, {
+    bool caseSensitive = true,
+    bool include = false,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.gt,
+      include: include,
+      property: 'theme',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeLessThan(
+    String? value, {
+    bool caseSensitive = true,
+    bool include = false,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.lt,
+      include: include,
+      property: 'theme',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeBetween(
+    String? lower,
+    String? upper, {
+    bool caseSensitive = true,
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition.between(
+      property: 'theme',
+      lower: lower,
+      includeLower: includeLower,
+      upper: upper,
+      includeUpper: includeUpper,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.startsWith,
+      property: 'theme',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.endsWith,
+      property: 'theme',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeContains(String value, {bool caseSensitive = true}) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.contains,
+      property: 'theme',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      themeMatches(String pattern, {bool caseSensitive = true}) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.matches,
+      property: 'theme',
+      value: pattern,
+      caseSensitive: caseSensitive,
+    ));
+  }
 }
 
 extension ApplicationSettingQueryLinks
@@ -5550,6 +5680,16 @@ extension ApplicationSettingQueryWhereSortBy
       sortByIdDesc() {
     return addSortByInternal('id', Sort.desc);
   }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
+      sortByTheme() {
+    return addSortByInternal('theme', Sort.asc);
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
+      sortByThemeDesc() {
+    return addSortByInternal('theme', Sort.desc);
+  }
 }
 
 extension ApplicationSettingQueryWhereSortThenBy
@@ -5573,6 +5713,16 @@ extension ApplicationSettingQueryWhereSortThenBy
       thenByIdDesc() {
     return addSortByInternal('id', Sort.desc);
   }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
+      thenByTheme() {
+    return addSortByInternal('theme', Sort.asc);
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
+      thenByThemeDesc() {
+    return addSortByInternal('theme', Sort.desc);
+  }
 }
 
 extension ApplicationSettingQueryWhereDistinct
@@ -5586,6 +5736,11 @@ extension ApplicationSettingQueryWhereDistinct
       distinctById() {
     return addDistinctByInternal('id');
   }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct>
+      distinctByTheme({bool caseSensitive = true}) {
+    return addDistinctByInternal('theme', caseSensitive: caseSensitive);
+  }
 }
 
 extension ApplicationSettingQueryProperty
@@ -5597,5 +5752,9 @@ extension ApplicationSettingQueryProperty
 
   QueryBuilder<ApplicationSetting, int, QQueryOperations> idProperty() {
     return addPropertyNameInternal('id');
+  }
+
+  QueryBuilder<ApplicationSetting, String?, QQueryOperations> themeProperty() {
+    return addPropertyNameInternal('theme');
   }
 }
