@@ -16,12 +16,12 @@ class SettingsPage extends ConsumerWidget {
               ? AdaptiveMenuMode.split
               : AdaptiveMenuMode.fullscreen),
           menuFlexWidth: 1,
-          subPageFlexWidth: 6,
+          subPageFlexWidth: 5,
           items: [
             AdaptiveMenuItem(
                 widget: ListTile(
                     leading: const Icon(Icons.palette),
-                    title: const Text("Color theme"),
+                    title: const Text("Personalization"),
                     iconColor: Theme.of(context).colorScheme.primary),
                 subPage: const PersonalizePage(),
                 subPageText: const Text("Personalize"))
@@ -38,6 +38,22 @@ class PersonalizePage extends ConsumerWidget {
     return Scaffold(
       body: ListView(
         children: [
+          ListTile(
+            leading: Icon(Icons.palette_outlined),
+            title: Text("Color Theme"),
+            trailing: DropdownButton<String>(
+                items: const [
+                  DropdownMenuItem(
+                    value: "",
+                    child: Text("Light"),
+                  ),
+                  DropdownMenuItem(
+                    value: "",
+                    child: Text("Dark"),
+                  )
+                ], onChanged: (Object? value) {  },
+            ),
+          ),
           ListTile(
             leading: Icon(Icons.devices_rounded),
             title: Text("Application platform mode"),
@@ -58,7 +74,7 @@ class PersonalizePage extends ConsumerWidget {
                 await db.setApplicationMode(value!);
               },
             ),
-          )
+          ),
         ],
       ),
     );
