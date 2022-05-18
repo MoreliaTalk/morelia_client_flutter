@@ -5176,9 +5176,9 @@ extension GetApplicationSettingCollection on Isar {
 const ApplicationSettingSchema = CollectionSchema(
   name: 'ApplicationSetting',
   schema:
-      '{"name":"ApplicationSetting","idName":"id","properties":[],"indexes":[],"links":[]}',
+      '{"name":"ApplicationSetting","idName":"id","properties":[{"name":"appMode","type":"String"}],"indexes":[],"links":[]}',
   idName: 'id',
-  propertyIds: {},
+  propertyIds: {'appMode': 0},
   listProperties: {},
   indexIds: {},
   indexValueTypes: {},
@@ -5221,12 +5221,19 @@ void _applicationSettingSerializeNative(
     List<int> offsets,
     AdapterAlloc alloc) {
   var dynamicSize = 0;
+  final value0 = object.appMode;
+  IsarUint8List? _appMode;
+  if (value0 != null) {
+    _appMode = IsarBinaryWriter.utf8Encoder.convert(value0);
+  }
+  dynamicSize += (_appMode?.length ?? 0) as int;
   final size = staticSize + dynamicSize;
 
   rawObj.buffer = alloc(size);
   rawObj.buffer_length = size;
   final buffer = IsarNative.bufAsBytes(rawObj.buffer, size);
   final writer = IsarBinaryWriter(buffer, staticSize);
+  writer.writeBytes(offsets[0], _appMode);
 }
 
 ApplicationSetting _applicationSettingDeserializeNative(
@@ -5235,6 +5242,7 @@ ApplicationSetting _applicationSettingDeserializeNative(
     IsarBinaryReader reader,
     List<int> offsets) {
   final object = ApplicationSetting();
+  object.appMode = reader.readStringOrNull(offsets[0]);
   object.id = id;
   return object;
 }
@@ -5244,6 +5252,8 @@ P _applicationSettingDeserializePropNative<P>(
   switch (propertyIndex) {
     case -1:
       return id as P;
+    case 0:
+      return (reader.readStringOrNull(offset)) as P;
     default:
       throw 'Illegal propertyIndex';
   }
@@ -5252,6 +5262,7 @@ P _applicationSettingDeserializePropNative<P>(
 dynamic _applicationSettingSerializeWeb(
     IsarCollection<ApplicationSetting> collection, ApplicationSetting object) {
   final jsObj = IsarNative.newJsObject();
+  IsarNative.jsObjectSet(jsObj, 'appMode', object.appMode);
   IsarNative.jsObjectSet(jsObj, 'id', object.id);
   return jsObj;
 }
@@ -5259,12 +5270,15 @@ dynamic _applicationSettingSerializeWeb(
 ApplicationSetting _applicationSettingDeserializeWeb(
     IsarCollection<ApplicationSetting> collection, dynamic jsObj) {
   final object = ApplicationSetting();
+  object.appMode = IsarNative.jsObjectGet(jsObj, 'appMode');
   object.id = IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity;
   return object;
 }
 
 P _applicationSettingDeserializePropWeb<P>(Object jsObj, String propertyName) {
   switch (propertyName) {
+    case 'appMode':
+      return (IsarNative.jsObjectGet(jsObj, 'appMode')) as P;
     case 'id':
       return (IsarNative.jsObjectGet(jsObj, 'id') ?? double.negativeInfinity)
           as P;
@@ -5345,6 +5359,122 @@ extension ApplicationSettingQueryWhere
 extension ApplicationSettingQueryFilter
     on QueryBuilder<ApplicationSetting, ApplicationSetting, QFilterCondition> {
   QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeIsNull() {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.isNull,
+      property: 'appMode',
+      value: null,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.eq,
+      property: 'appMode',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeGreaterThan(
+    String? value, {
+    bool caseSensitive = true,
+    bool include = false,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.gt,
+      include: include,
+      property: 'appMode',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeLessThan(
+    String? value, {
+    bool caseSensitive = true,
+    bool include = false,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.lt,
+      include: include,
+      property: 'appMode',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeBetween(
+    String? lower,
+    String? upper, {
+    bool caseSensitive = true,
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition.between(
+      property: 'appMode',
+      lower: lower,
+      includeLower: includeLower,
+      upper: upper,
+      includeUpper: includeUpper,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.startsWith,
+      property: 'appMode',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.endsWith,
+      property: 'appMode',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeContains(String value, {bool caseSensitive = true}) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.contains,
+      property: 'appMode',
+      value: value,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
+      appModeMatches(String pattern, {bool caseSensitive = true}) {
+    return addFilterConditionInternal(FilterCondition(
+      type: ConditionType.matches,
+      property: 'appMode',
+      value: pattern,
+      caseSensitive: caseSensitive,
+    ));
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterFilterCondition>
       idEqualTo(int value) {
     return addFilterConditionInternal(FilterCondition(
       type: ConditionType.eq,
@@ -5402,6 +5532,16 @@ extension ApplicationSettingQueryLinks
 extension ApplicationSettingQueryWhereSortBy
     on QueryBuilder<ApplicationSetting, ApplicationSetting, QSortBy> {
   QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
+      sortByAppMode() {
+    return addSortByInternal('appMode', Sort.asc);
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
+      sortByAppModeDesc() {
+    return addSortByInternal('appMode', Sort.desc);
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       sortById() {
     return addSortByInternal('id', Sort.asc);
   }
@@ -5414,6 +5554,16 @@ extension ApplicationSettingQueryWhereSortBy
 
 extension ApplicationSettingQueryWhereSortThenBy
     on QueryBuilder<ApplicationSetting, ApplicationSetting, QSortThenBy> {
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
+      thenByAppMode() {
+    return addSortByInternal('appMode', Sort.asc);
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
+      thenByAppModeDesc() {
+    return addSortByInternal('appMode', Sort.desc);
+  }
+
   QueryBuilder<ApplicationSetting, ApplicationSetting, QAfterSortBy>
       thenById() {
     return addSortByInternal('id', Sort.asc);
@@ -5428,6 +5578,11 @@ extension ApplicationSettingQueryWhereSortThenBy
 extension ApplicationSettingQueryWhereDistinct
     on QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct> {
   QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct>
+      distinctByAppMode({bool caseSensitive = true}) {
+    return addDistinctByInternal('appMode', caseSensitive: caseSensitive);
+  }
+
+  QueryBuilder<ApplicationSetting, ApplicationSetting, QDistinct>
       distinctById() {
     return addDistinctByInternal('id');
   }
@@ -5435,6 +5590,11 @@ extension ApplicationSettingQueryWhereDistinct
 
 extension ApplicationSettingQueryProperty
     on QueryBuilder<ApplicationSetting, ApplicationSetting, QQueryProperty> {
+  QueryBuilder<ApplicationSetting, String?, QQueryOperations>
+      appModeProperty() {
+    return addPropertyNameInternal('appMode');
+  }
+
   QueryBuilder<ApplicationSetting, int, QQueryOperations> idProperty() {
     return addPropertyNameInternal('id');
   }

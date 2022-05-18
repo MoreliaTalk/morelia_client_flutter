@@ -466,13 +466,22 @@ class DatabaseHandler {
     return settings;
   }
 
-  Future<TypeApplicationMode?> getApplicationMode() async =>
-      (await _getApplicationSettings()).appMode;
+  Future<TypeApplicationMode?> getApplicationMode() async {
+    final mode = (await _getApplicationSettings()).appMode;
+
+    if (mode == TypeApplicationMode.desktop.name) {
+      return TypeApplicationMode.desktop;
+    } else if (mode == TypeApplicationMode.mobile.name) {
+      return TypeApplicationMode.mobile;
+    } else {
+      return null;
+    }
+  }
 
   Future<void> setApplicationMode(TypeApplicationMode mode) async {
     final conn = await dbConnect;
 
-    final settings = await _getApplicationSettings()..appMode = mode;
+    final settings = await _getApplicationSettings()..appMode = mode.name;
 
     await conn.writeTxn((conn) async {
       await conn.applicationSettings.put(settings);

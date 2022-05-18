@@ -107,5 +107,5 @@ class ApplicationSetting {
   @Id()
   int id = Isar.autoIncrement;
 
-  TypeApplicationMode? appMode;
+  late String? appMode;
 }
