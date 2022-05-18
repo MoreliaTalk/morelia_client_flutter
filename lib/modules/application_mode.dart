@@ -57,11 +57,6 @@ class ApplicationMode extends StateNotifier<TypeApplicationMode> {
       state = modeInDb;
     }
   }
-
-  setApplicationMode(TypeApplicationMode mode) async {
-    var db = DatabaseHandler.connect();
-    await db.setApplicationMode(mode);
-  }
 }
 
 final applicationMode =

@@ -54,7 +54,8 @@ class PersonalizePage extends ConsumerWidget {
               ],
               value: ref.watch(applicationMode),
               onChanged: (TypeApplicationMode? value) async {
-                await ref.watch(applicationMode.notifier).setApplicationMode(value!);
+                var db = DatabaseHandler.connect();
+                await db.setApplicationMode(value!);
               },
             ),
           )
