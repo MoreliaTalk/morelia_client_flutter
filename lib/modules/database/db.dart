@@ -469,13 +469,13 @@ class DatabaseHandler {
   Future<TypeApplicationMode?> getApplicationMode() async {
     final mode = (await _getApplicationSettings()).appMode;
 
-    if (mode == TypeApplicationMode.desktop.name) {
-      return TypeApplicationMode.desktop;
-    } else if (mode == TypeApplicationMode.mobile.name) {
-      return TypeApplicationMode.mobile;
-    } else {
-      return null;
+    for (var typeMode in TypeApplicationMode.values) {
+      if (mode == typeMode.name) {
+        return typeMode;
+      }
     }
+
+    return null;
   }
 
   Future<void> setApplicationMode(TypeApplicationMode mode) async {
