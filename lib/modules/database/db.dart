@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:morelia_client_flutter/modules/application_mode.dart';
+import 'package:morelia_client_flutter/modules/theme_manager.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'models.dart';
@@ -451,27 +452,21 @@ class DatabaseHandler {
     });
   }
 
-  Future<ApplicationSetting> _getApplicationSettings() async {
-    final conn = await dbConnect;
-    var settings = await conn.applicationSettings.where().findFirst();
-
-    if (settings == null) {
-      settings = ApplicationSetting();
-
-      await conn.writeTxn((conn) async {
-        await conn.applicationSettings.put(settings!);
-      });
-    }
-
-    return settings;
+  Future<ThemeTypes?> getTheme() async {
+    return null;
   }
 
-  Future<TypeApplicationMode?> getApplicationMode() async {
-    final mode = (await _getApplicationSettings()).appMode;
 
-    for (var typeMode in TypeApplicationMode.values) {
-      if (mode == typeMode.name) {
-        return typeMode;
+  Future<dynamic> getApplicationMode() async {
+    final conn = await dbConnect;
+
+    final dbData = await conn.applicationSettings.filter().keyEqualTo("appMode").findFirst();
+
+    if (dbData != null) {
+      for (var typeMode in TypeApplicationMode.values) {
+        if (dbData.value == typeMode.name) {
+          return typeMode;
+        }
       }
     }
 
@@ -481,10 +476,17 @@ class DatabaseHandler {
   Future<void> setApplicationMode(TypeApplicationMode mode) async {
     final conn = await dbConnect;
 
-    final settings = await _getApplicationSettings()..appMode = mode.name;
+    var dbData = await conn.applicationSettings.filter().keyEqualTo("appMode").findFirst();
+
+    if (dbData == null) {
+      dbData = ApplicationSetting();
+      dbData.key = "appMode";
+    }
+
+    dbData.value = mode.name;
 
     await conn.writeTxn((conn) async {
-      await conn.applicationSettings.put(settings);
+      await conn.applicationSettings.put(dbData!);
     });
   }
 }

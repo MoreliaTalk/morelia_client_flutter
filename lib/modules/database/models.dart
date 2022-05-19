@@ -30,22 +30,22 @@ class UserConfig {
   late String login;
 
   @Index(type: IndexType.hash)
-  late String? username;
+  String? username;
 
-  late String? authId;
-
-  @Index(type: IndexType.hash)
-  late String? email;
+  String? authId;
 
   @Index(type: IndexType.hash)
-  late String? bio;
+  String? email;
+
+  @Index(type: IndexType.hash)
+  String? bio;
 
   late String hashPassword;
   late bool isBot;
-  late int? tokenTTL;
-  late String? avatar;
-  late String? salt;
-  late String? key;
+  int? tokenTTL;
+  String? avatar;
+  String? salt;
+  String? key;
 
   @Backlink(to: 'messageLinkedUser')
   final userLinkedMessages = IsarLinks<Message>();
@@ -63,14 +63,14 @@ class Flow {
   late String uuid;
 
   @Index(type: IndexType.hash)
-  late String? title;
+  String? title;
 
   @Index(type: IndexType.hash)
-  late String? info;
+  String? info;
 
-  late String? flowType;
-  late int? timeCreated;
-  late String? owner;
+  String? flowType;
+  int? timeCreated;
+  String? owner;
 
   @Backlink(to: 'messageLinkedFlow')
   final flowLinkedMessages = IsarLinks<Message>();
@@ -87,15 +87,15 @@ class Message {
   late String uuid;
 
   @Index(type: IndexType.hash)
-  late String? text;
+  String? text;
 
-  late int? time;
-  late String? filePicture;
-  late String? fileVideo;
-  late String? fileAudio;
-  late String? fileDocument;
-  late String? emoji;
-  late int? editedTime;
+  int? time;
+  String? filePicture;
+  String? fileVideo;
+  String? fileAudio;
+  String? fileDocument;
+  String? emoji;
+  int? editedTime;
   late bool editedStatus;
 
   final messageLinkedUser = IsarLink<UserConfig>();
@@ -107,6 +107,7 @@ class ApplicationSetting {
   @Id()
   int id = Isar.autoIncrement;
 
-  late String? theme;
-  late String? appMode;
+  @Index(unique: true)
+  late String key;
+  String? value;
 }
