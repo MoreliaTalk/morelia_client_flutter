@@ -467,18 +467,31 @@ class DatabaseHandler {
     return dbSetting;
   }
 
+  Future<T?> matchStringAndEnumNames<T extends Enum>(String str, List<T> enumValues) async {
+    for (var val in enumValues) {
+      if (val.name == str) {
+        return val;
+      }
+    }
+
+    return null;
+  }
+
   Future<ThemeTypes?> getTheme() async {
+    final dbData = await _getSettingByKey("theme");
+
+    if (dbData.value != null) {
+    }
+
     return null;
   }
 
 
-  Future<dynamic> getApplicationMode() async {
+  Future<TypeApplicationMode?> getApplicationMode() async {
     final dbData = await _getSettingByKey("appMode");
 
-    for (var typeMode in TypeApplicationMode.values) {
-      if (dbData.value == typeMode.name) {
-        return typeMode;
-      }
+    if (dbData.value != null) {
+      return matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
     }
 
     return null;
