@@ -50,13 +50,11 @@ class ChatStateItem {
 
 class ChatsStateNotifier extends StateNotifier<List<ChatStateItem?>> {
   ChatsStateNotifier() : super([]) {
-    var dbHandlerInstance = DatabaseHandler.connect();
+    var dbHandler = DatabaseHandler();
 
     Future.delayed(Duration.zero, () async {
       loadChats();
-      (await dbHandlerInstance.dbConnect)
-          .flows
-          .watchLazy()
+      dbHandler.dbConnect.flows.watchLazy()
           .listen((event) async {
         loadChats();
       });
@@ -64,7 +62,7 @@ class ChatsStateNotifier extends StateNotifier<List<ChatStateItem?>> {
   }
 
   Future<void> loadChats() async {
-    var dbData = await DatabaseHandler.connect().getAllFlow();
+    var dbData = await DatabaseHandler().getAllFlow();
     List<ChatStateItem?> newState = [];
 
     for (var flow in dbData) {
@@ -105,7 +103,7 @@ class ChatList extends ConsumerWidget {
             var faker = Faker();
             final flowUuid = faker.guid.guid();
             final userUuid = faker.guid.guid();
-            var dbHandlerInstance = DatabaseHandler.connect();
+            var dbHandlerInstance = DatabaseHandler();
             await dbHandlerInstance.addUser(userUuid, "login", "hashPassword");
             await dbHandlerInstance.addFlow(flowUuid, userUuid, [userUuid],
                 title: faker.person.name());

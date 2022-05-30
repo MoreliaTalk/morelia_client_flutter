@@ -39,7 +39,7 @@ class ApplicationMode extends StateNotifier<TypeApplicationMode> {
     Future.delayed(Duration.zero, () async {
       _getFromDbAndUpdate();
 
-      var conn = await DatabaseHandler.connect().dbConnect;
+      var conn = DatabaseHandler().dbConnect;
       conn.applicationSettings.watchLazy().listen((event) async {
         await _getFromDbAndUpdate();
       });
@@ -47,7 +47,7 @@ class ApplicationMode extends StateNotifier<TypeApplicationMode> {
   }
 
   _getFromDbAndUpdate() async {
-    var db = DatabaseHandler.connect();
+    var db = DatabaseHandler();
 
     var modeInDb = await db.getApplicationMode();
 

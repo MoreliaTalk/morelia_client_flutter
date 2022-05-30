@@ -17,7 +17,7 @@ final themesData = {
 class ThemeStateNotifier extends StateNotifier<ThemeTypes> {
   ThemeStateNotifier() : super(ThemeTypes.defaultDark) {
     Future.delayed(Duration.zero, () async {
-      final db = DatabaseHandler.connect();
+      final db = DatabaseHandler();
       await loadAndSetTheme();
       (await db.dbConnect).applicationSettings.watchObject(1).listen((event) {
         loadAndSetTheme();
@@ -26,7 +26,7 @@ class ThemeStateNotifier extends StateNotifier<ThemeTypes> {
   }
 
   Future<void> loadAndSetTheme() async {
-    final db = DatabaseHandler.connect();
+    final db = DatabaseHandler();
     var newTheme = await db.getTheme();
 
     newTheme ??= ThemeTypes.defaultDark;
