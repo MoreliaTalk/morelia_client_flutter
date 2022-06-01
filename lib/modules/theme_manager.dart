@@ -3,16 +3,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
 import 'package:morelia_client_flutter/modules/database/models.dart';
 
-enum ThemeTypes {
-  defaultLight,
-  defaultDark
-}
+enum ThemeTypes { defaultLight, defaultDark }
 
 final themesData = {
   ThemeTypes.defaultDark: ThemeData.dark(),
   ThemeTypes.defaultLight: ThemeData.light()
 };
-
 
 class ThemeStateNotifier extends StateNotifier<ThemeTypes> {
   ThemeStateNotifier() : super(ThemeTypes.defaultDark) {
@@ -35,7 +31,6 @@ class ThemeStateNotifier extends StateNotifier<ThemeTypes> {
 }
 
 final currentTheme = StateProvider<ThemeData>((ref) => ThemeData.dark());
-
 
 class ThemeWidget extends ConsumerWidget {
   const ThemeWidget({Key? key, required this.child}) : super(key: key);

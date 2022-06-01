@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:morelia_client_flutter/components/common/adaptive_menu.dart';
 import 'package:morelia_client_flutter/modules/application_mode.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
+import 'package:morelia_client_flutter/modules/database/models.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -42,42 +44,76 @@ class PersonalizePage extends ConsumerWidget {
             leading: Icon(Icons.palette_outlined),
             title: Text("Color Theme"),
             trailing: DropdownButton<String>(
-                items: const [
-                  DropdownMenuItem(
-                    value: "",
-                    child: Text("Light"),
-                  ),
-                  DropdownMenuItem(
-                    value: "",
-                    child: Text("Dark"),
-                  )
-                ], onChanged: (Object? value) {  },
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.devices_rounded),
-            title: Text("Application platform mode"),
-            trailing: DropdownButton<TypeApplicationMode>(
               items: const [
                 DropdownMenuItem(
-                  value: TypeApplicationMode.desktop,
-                  child: Text("Desktop"),
+                  value: "",
+                  child: Text("Light"),
                 ),
                 DropdownMenuItem(
-                  value: TypeApplicationMode.mobile,
-                  child: Text("Mobile"),
+                  value: "",
+                  child: Text("Dark"),
                 )
               ],
-              value: ref.watch(applicationMode),
-              onChanged: (TypeApplicationMode? value) async {
-                var db = DatabaseHandler();
-                await db.setApplicationMode(value!);
-              },
+              onChanged: (Object? value) {},
             ),
           ),
+          const AppModeSettingsWidget()
         ],
       ),
     );
   }
+}
 
+class _AppModeSettingsState extends StateNotifier<TypeApplicationMode?> {
+  _AppModeSettingsState() : super(null) {
+    var db = DatabaseHandler();
+
+    Future.delayed(Duration.zero, () async {
+      state = await db.getApplicationMode();
+      db.dbConnect.applicationSettings.filter().keyEqualTo("appMode").watchLazy().listen((event) async {
+        state = await db.getApplicationMode();
+      });
+    });
+  }
+}
+
+final _appModeSettingsState = StateNotifierProvider<_AppModeSettingsState, TypeApplicationMode?>((ref) => _AppModeSettingsState());
+
+class AppModeSettingsWidget extends ConsumerWidget {
+  const AppModeSettingsWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var currentValue = ref.watch(_appModeSettingsState);
+
+    return ListTile(
+      leading: Icon(Icons.devices_rounded),
+      title: Text("Application platform mode"),
+      trailing: DropdownButton<TypeApplicationMode?>(
+        items: [
+          DropdownMenuItem(
+            value: null,
+            child: Text("Real (${realPlatformMode.name[0].toUpperCase() + realPlatformMode.name.substring(1)})"),
+          ),
+          const DropdownMenuItem(
+            value: TypeApplicationMode.desktop,
+            child: Text("Desktop"),
+          ),
+          const DropdownMenuItem(
+            value: TypeApplicationMode.mobile,
+            child: Text("Mobile"),
+          )
+        ],
+        value: currentValue,
+        onChanged: (TypeApplicationMode? value) async {
+          var db = DatabaseHandler();
+          if (value != null) {
+            await db.setApplicationMode(value);
+          } else {
+            await db.resetApplicationMode();
+          }
+        },
+      ),
+    );
+  }
 }

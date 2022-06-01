@@ -54,8 +54,7 @@ class ChatsStateNotifier extends StateNotifier<List<ChatStateItem?>> {
 
     Future.delayed(Duration.zero, () async {
       loadChats();
-      dbHandler.dbConnect.flows.watchLazy()
-          .listen((event) async {
+      dbHandler.dbConnect.flows.watchLazy().listen((event) async {
         loadChats();
       });
     });

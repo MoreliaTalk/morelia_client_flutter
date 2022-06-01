@@ -7,7 +7,7 @@ import 'package:morelia_client_flutter/modules/database/models.dart';
 
 enum TypeApplicationMode { mobile, desktop }
 
-get realPlatformMode {
+TypeApplicationMode get realPlatformMode {
   TypeApplicationMode platform;
   if (!kIsWeb) {
     if (Platform.isIOS || Platform.isAndroid || Platform.isFuchsia) {

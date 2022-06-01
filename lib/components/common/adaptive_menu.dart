@@ -50,7 +50,9 @@ class AdaptiveMenu extends HookWidget {
                         context,
                         MaterialPageRoute(
                             builder: (BuildContext context) => Scaffold(
-                                appBar: AppBar(title: items[index].subPageText,),
+                                appBar: AppBar(
+                                  title: items[index].subPageText,
+                                ),
                                 body: items[index].subPage)));
                   });
             });

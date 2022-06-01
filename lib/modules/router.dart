@@ -30,7 +30,6 @@ class MoreliaRouter extends ConsumerWidget {
         routes: [])
   ];
 
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     late List<GoRoute> routes;
@@ -45,8 +44,8 @@ class MoreliaRouter extends ConsumerWidget {
     }
 
     var router = GoRouter(
-          routes: routes,
-          navigatorBuilder: (_, __, child) => ThemeWidget(child: child));
+        routes: routes,
+        navigatorBuilder: (_, __, child) => ThemeWidget(child: child));
 
     return MaterialApp.router(
       routeInformationParser: router.routeInformationParser,
