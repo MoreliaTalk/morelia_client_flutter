@@ -57,7 +57,7 @@ class PersonalizePage extends ConsumerWidget {
               onChanged: (Object? value) {},
             ),
           ),
-          const AppModeSettingsWidget()
+          const _AppModeSettingsWidget()
         ],
       ),
     );
@@ -79,8 +79,8 @@ class _AppModeSettingsState extends StateNotifier<TypeApplicationMode?> {
 
 final _appModeSettingsState = StateNotifierProvider<_AppModeSettingsState, TypeApplicationMode?>((ref) => _AppModeSettingsState());
 
-class AppModeSettingsWidget extends ConsumerWidget {
-  const AppModeSettingsWidget({Key? key}) : super(key: key);
+class _AppModeSettingsWidget extends ConsumerWidget {
+  const _AppModeSettingsWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
