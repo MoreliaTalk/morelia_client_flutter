@@ -68,11 +68,8 @@ class _AppModeSettingsState extends StateNotifier<TypeApplicationMode?> {
   _AppModeSettingsState() : super(null) {
     var db = DatabaseHandler();
 
-    Future.delayed(Duration.zero, () async {
+    db.dbConnect.applicationSettings.filter().keyEqualTo("appMode").watchLazy().listen((event) async {
       state = await db.getApplicationMode();
-      db.dbConnect.applicationSettings.filter().keyEqualTo("appMode").watchLazy().listen((event) async {
-        state = await db.getApplicationMode();
-      });
     });
   }
 }
