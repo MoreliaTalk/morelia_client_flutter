@@ -4,6 +4,7 @@ import 'package:morelia_client_flutter/modules/database/db.dart';
 import 'package:morelia_client_flutter/modules/router.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await DatabaseHandler().connect();
   runApp(const MoreliaApp());
 }
