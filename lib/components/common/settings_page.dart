@@ -40,10 +40,7 @@ class PersonalizePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: ListView(
-        children: const [
-          _ThemeSettingsWidget(),
-          _AppModeSettingsWidget()
-        ],
+        children: const [_ThemeSettingsWidget(), _AppModeSettingsWidget()],
       ),
     );
   }
@@ -95,7 +92,8 @@ class _AppModeSettingsWidget extends ConsumerWidget {
         items: [
           DropdownMenuItem(
             value: null,
-            child: Text("Real (${realPlatformMode.name[0].toUpperCase() + realPlatformMode.name.substring(1)})"),
+            child: Text(
+                "Real (${realPlatformMode.name[0].toUpperCase() + realPlatformMode.name.substring(1)})"),
           ),
           const DropdownMenuItem(
             value: TypeApplicationMode.desktop,

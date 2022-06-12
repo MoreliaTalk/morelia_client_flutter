@@ -43,8 +43,7 @@ class DatabaseConnectedError implements Exception {
   String toString() => "DatabaseConnectedError: $message";
 }
 
-T? matchStringAndEnumNames<T extends Enum>(
-    String str, List<T> enumValues) {
+T? matchStringAndEnumNames<T extends Enum>(String str, List<T> enumValues) {
   for (var val in enumValues) {
     if (val.name == str) {
       return val;
@@ -460,7 +459,8 @@ class DatabaseHandler {
     return dbSetting;
   }
 
-  final themeState = StateNotifierProvider<_DbThemeState, ThemeTypes>((ref) => _DbThemeState());
+  final themeState = StateNotifierProvider<_DbThemeState, ThemeTypes>(
+      (ref) => _DbThemeState());
 
   Future<void> setTheme(ThemeTypes mode) async {
     var dbData = await _getSettingByKey("Theme")
@@ -471,7 +471,9 @@ class DatabaseHandler {
     });
   }
 
-  final appModeState = StateNotifierProvider<_DbAppModeState, TypeApplicationMode?>((ref) => _DbAppModeState());
+  final appModeState =
+      StateNotifierProvider<_DbAppModeState, TypeApplicationMode?>(
+          (ref) => _DbAppModeState());
 
   Future<void> setApplicationMode(TypeApplicationMode mode) async {
     var dbData = await _getSettingByKey("appMode")
@@ -483,7 +485,8 @@ class DatabaseHandler {
   }
 
   Future<void> resetApplicationMode() async {
-    var dbData = await _getSettingByKey("appMode")..value = null;
+    var dbData = await _getSettingByKey("appMode")
+      ..value = null;
 
     await dbConnect.writeTxn((conn) async {
       await dbConnect.applicationSettings.put(dbData);
@@ -495,11 +498,16 @@ class _DbAppModeState extends StateNotifier<TypeApplicationMode?> {
   _DbAppModeState() : super(null) {
     var db = DatabaseHandler();
 
-    db.dbConnect.applicationSettings.filter().keyEqualTo("appMode").watch(initialReturn: true).listen((event) async {
+    db.dbConnect.applicationSettings
+        .filter()
+        .keyEqualTo("appMode")
+        .watch(initialReturn: true)
+        .listen((event) async {
       var dbData = event.first;
 
       if (dbData.value != null) {
-        state = matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
+        state =
+            matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
         return;
       }
 
@@ -512,7 +520,11 @@ class _DbThemeState extends StateNotifier<ThemeTypes> {
   _DbThemeState() : super(ThemeTypes.defaultDark) {
     var db = DatabaseHandler();
 
-    db.dbConnect.applicationSettings.filter().keyEqualTo("Theme").watch(initialReturn: true).listen((event) async {
+    db.dbConnect.applicationSettings
+        .filter()
+        .keyEqualTo("Theme")
+        .watch(initialReturn: true)
+        .listen((event) async {
       var dbData = event.first;
 
       if (dbData.value != null) {
