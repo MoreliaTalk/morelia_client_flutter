@@ -5,6 +5,7 @@ import 'package:morelia_client_flutter/components/common/adaptive_menu.dart';
 import 'package:morelia_client_flutter/modules/application_mode.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
 import 'package:morelia_client_flutter/modules/database/models.dart';
+import 'package:morelia_client_flutter/modules/theme_manager.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -48,28 +49,33 @@ class PersonalizePage extends ConsumerWidget {
   }
 }
 
-class _ThemeSettingsWidget extends StatelessWidget {
+class _ThemeSettingsWidget extends ConsumerWidget {
   const _ThemeSettingsWidget({
     Key? key,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var currentValue = ref.watch(DatabaseHandler().themeState);
+
     return ListTile(
       leading: const Icon(Icons.palette_outlined),
       title: const Text("Color Theme"),
-      trailing: DropdownButton<String>(
+      trailing: DropdownButton<ThemeTypes>(
         items: const [
           DropdownMenuItem(
-            value: "",
+            value: ThemeTypes.defaultLight,
             child: Text("Light"),
           ),
           DropdownMenuItem(
-            value: "",
+            value: ThemeTypes.defaultDark,
             child: Text("Dark"),
           )
         ],
-        onChanged: (Object? value) {},
+        value: currentValue,
+        onChanged: (ThemeTypes? value) async {
+          await DatabaseHandler().setTheme(value!);
+        },
       ),
     );
   }

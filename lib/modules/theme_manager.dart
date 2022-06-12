@@ -13,11 +13,7 @@ final themesData = {
 final currentTheme = StateProvider<ThemeData>((ref) {
   var themeInDb = ref.watch(DatabaseHandler().themeState);
 
-  if (themeInDb == null) {
-    return ThemeData.dark(); // TODO: replace to adaptive theme
-  } else {
-    return themesData[themeInDb]!;
-  }
+  return themesData[themeInDb]!;
 });
 
 class ThemeWidget extends ConsumerWidget {

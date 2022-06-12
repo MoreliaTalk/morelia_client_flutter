@@ -460,7 +460,7 @@ class DatabaseHandler {
     return dbSetting;
   }
 
-  final themeState = StateNotifierProvider<_DbThemeState, ThemeTypes?>((ref) => _DbThemeState());
+  final themeState = StateNotifierProvider<_DbThemeState, ThemeTypes>((ref) => _DbThemeState());
 
   final appModeState = StateNotifierProvider<_DbAppModeState, TypeApplicationMode?>((ref) => _DbAppModeState());
 
@@ -508,19 +508,20 @@ class _DbAppModeState extends StateNotifier<TypeApplicationMode?> {
   }
 }
 
-class _DbThemeState extends StateNotifier<ThemeTypes?> {
-  _DbThemeState() : super(null) {
+class _DbThemeState extends StateNotifier<ThemeTypes> {
+  _DbThemeState() : super(ThemeTypes.defaultDark) {
     var db = DatabaseHandler();
 
-    db.dbConnect.applicationSettings.filter().keyEqualTo("Theme").watchLazy().listen((event) async {
+    db.dbConnect.applicationSettings.filter().keyEqualTo("Theme").watch(initialReturn: true).listen((event) async {
       var dbData = await DatabaseHandler()._getSettingByKey("Theme");
+      print(dbData.value);
 
       if (dbData.value != null) {
-        state = matchStringAndEnumNames(dbData.value!, ThemeTypes.values);
+        state = matchStringAndEnumNames(dbData.value!, ThemeTypes.values)!;
         return;
+      } else {
+        DatabaseHandler().setTheme(ThemeTypes.defaultDark);
       }
-
-      state = null;
     });
   }
 }
