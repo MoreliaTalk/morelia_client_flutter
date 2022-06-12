@@ -15,8 +15,8 @@ class MobileChatsPage extends ConsumerWidget {
         () => ref.watch(onClickItemsFunction.notifier).state = (String uuid) {
               GoRouter.of(context).push("/messages/" + uuid);
             });
-    return Scaffold(
-      body: const ChatList(),
+    return const Scaffold(
+      body: ChatList(),
       bottomNavigationBar: MobileNavBar(),
     );
   }

@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 enum _NavBarItems { Chats, Settings }
 
 class MobileNavBar extends HookWidget {
+  const MobileNavBar({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final currentSelected = useState(0);

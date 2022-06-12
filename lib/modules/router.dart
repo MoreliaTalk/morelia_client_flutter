@@ -8,6 +8,7 @@ import '../components/common/communication_page.dart';
 import '../components/common/settings_page.dart';
 import '../components/desktop/main_page.dart';
 import '../components/mobile/chats_page.dart';
+import '../components/mobile/mobile_nav_bar.dart';
 
 class MoreliaRouter extends ConsumerWidget {
   final mobileRoutes = [
@@ -18,7 +19,10 @@ class MoreliaRouter extends ConsumerWidget {
             CommunicationPage(uuid: state.params['uuid']!)),
     GoRoute(
         path: "/settings",
-        builder: (context, _) => const SettingsPage(),
+        builder: (context, _) => const Scaffold(
+          body: SettingsPage(),
+          bottomNavigationBar: MobileNavBar(),
+        ),
         routes: [])
   ];
 
