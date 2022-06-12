@@ -43,6 +43,17 @@ class DatabaseConnectedError implements Exception {
   String toString() => "DatabaseConnectedError: $message";
 }
 
+T? matchStringAndEnumNames<T extends Enum>(
+    String str, List<T> enumValues) {
+  for (var val in enumValues) {
+    if (val.name == str) {
+      return val;
+    }
+  }
+
+  return null;
+}
+
 class DatabaseHandler {
   late Isar dbConnect;
   static DatabaseHandler? __instance;
@@ -449,29 +460,21 @@ class DatabaseHandler {
     return dbSetting;
   }
 
-  T? matchStringAndEnumNames<T extends Enum>(
-      String str, List<T> enumValues) {
-    for (var val in enumValues) {
-      if (val.name == str) {
-        return val;
-      }
-    }
-
-    return null;
-  }
-
-  Future<ThemeTypes?> getTheme() async {
-    final dbData = await _getSettingByKey("theme");
-
-    if (dbData.value != null) {}
-
-    return null;
-  }
+  final themeState = StateNotifierProvider<_DbThemeState, ThemeTypes?>((ref) => _DbThemeState());
 
   final appModeState = StateNotifierProvider<_DbAppModeState, TypeApplicationMode?>((ref) => _DbAppModeState());
 
   Future<void> setApplicationMode(TypeApplicationMode mode) async {
     var dbData = await _getSettingByKey("appMode")
+      ..value = mode.name;
+
+    await dbConnect.writeTxn((conn) async {
+      await dbConnect.applicationSettings.put(dbData);
+    });
+  }
+
+  Future<void> setTheme(ThemeTypes mode) async {
+    var dbData = await _getSettingByKey("Theme")
       ..value = mode.name;
 
     await dbConnect.writeTxn((conn) async {
@@ -496,7 +499,24 @@ class _DbAppModeState extends StateNotifier<TypeApplicationMode?> {
       var dbData = await DatabaseHandler()._getSettingByKey("appMode");
 
       if (dbData.value != null) {
-        state = DatabaseHandler().matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
+        state = matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
+        return;
+      }
+
+      state = null;
+    });
+  }
+}
+
+class _DbThemeState extends StateNotifier<ThemeTypes?> {
+  _DbThemeState() : super(null) {
+    var db = DatabaseHandler();
+
+    db.dbConnect.applicationSettings.filter().keyEqualTo("Theme").watchLazy().listen((event) async {
+      var dbData = await DatabaseHandler()._getSettingByKey("Theme");
+
+      if (dbData.value != null) {
+        state = matchStringAndEnumNames(dbData.value!, ThemeTypes.values);
         return;
       }
 

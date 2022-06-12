@@ -39,26 +39,37 @@ class PersonalizePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: ListView(
-        children: [
-          ListTile(
-            leading: Icon(Icons.palette_outlined),
-            title: Text("Color Theme"),
-            trailing: DropdownButton<String>(
-              items: const [
-                DropdownMenuItem(
-                  value: "",
-                  child: Text("Light"),
-                ),
-                DropdownMenuItem(
-                  value: "",
-                  child: Text("Dark"),
-                )
-              ],
-              onChanged: (Object? value) {},
-            ),
-          ),
-          const _AppModeSettingsWidget()
+        children: const [
+          _ThemeSettingsWidget(),
+          _AppModeSettingsWidget()
         ],
+      ),
+    );
+  }
+}
+
+class _ThemeSettingsWidget extends StatelessWidget {
+  const _ThemeSettingsWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.palette_outlined),
+      title: const Text("Color Theme"),
+      trailing: DropdownButton<String>(
+        items: const [
+          DropdownMenuItem(
+            value: "",
+            child: Text("Light"),
+          ),
+          DropdownMenuItem(
+            value: "",
+            child: Text("Dark"),
+          )
+        ],
+        onChanged: (Object? value) {},
       ),
     );
   }
@@ -72,8 +83,8 @@ class _AppModeSettingsWidget extends ConsumerWidget {
     var currentValue = ref.watch(DatabaseHandler().appModeState);
 
     return ListTile(
-      leading: Icon(Icons.devices_rounded),
-      title: Text("Application platform mode"),
+      leading: const Icon(Icons.devices_rounded),
+      title: const Text("Application platform mode"),
       trailing: DropdownButton<TypeApplicationMode?>(
         items: [
           DropdownMenuItem(
