@@ -495,8 +495,8 @@ class _DbAppModeState extends StateNotifier<TypeApplicationMode?> {
   _DbAppModeState() : super(null) {
     var db = DatabaseHandler();
 
-    db.dbConnect.applicationSettings.filter().keyEqualTo("appMode").watchLazy().listen((event) async {
-      var dbData = await DatabaseHandler()._getSettingByKey("appMode");
+    db.dbConnect.applicationSettings.filter().keyEqualTo("appMode").watch(initialReturn: true).listen((event) async {
+      var dbData = event.first;
 
       if (dbData.value != null) {
         state = matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
@@ -513,8 +513,7 @@ class _DbThemeState extends StateNotifier<ThemeTypes> {
     var db = DatabaseHandler();
 
     db.dbConnect.applicationSettings.filter().keyEqualTo("Theme").watch(initialReturn: true).listen((event) async {
-      var dbData = await DatabaseHandler()._getSettingByKey("Theme");
-      print(dbData.value);
+      var dbData = event.first;
 
       if (dbData.value != null) {
         state = matchStringAndEnumNames(dbData.value!, ThemeTypes.values)!;
