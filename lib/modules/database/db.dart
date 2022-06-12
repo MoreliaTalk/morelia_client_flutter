@@ -462,10 +462,8 @@ class DatabaseHandler {
 
   final themeState = StateNotifierProvider<_DbThemeState, ThemeTypes>((ref) => _DbThemeState());
 
-  final appModeState = StateNotifierProvider<_DbAppModeState, TypeApplicationMode?>((ref) => _DbAppModeState());
-
-  Future<void> setApplicationMode(TypeApplicationMode mode) async {
-    var dbData = await _getSettingByKey("appMode")
+  Future<void> setTheme(ThemeTypes mode) async {
+    var dbData = await _getSettingByKey("Theme")
       ..value = mode.name;
 
     await dbConnect.writeTxn((conn) async {
@@ -473,8 +471,10 @@ class DatabaseHandler {
     });
   }
 
-  Future<void> setTheme(ThemeTypes mode) async {
-    var dbData = await _getSettingByKey("Theme")
+  final appModeState = StateNotifierProvider<_DbAppModeState, TypeApplicationMode?>((ref) => _DbAppModeState());
+
+  Future<void> setApplicationMode(TypeApplicationMode mode) async {
+    var dbData = await _getSettingByKey("appMode")
       ..value = mode.name;
 
     await dbConnect.writeTxn((conn) async {
