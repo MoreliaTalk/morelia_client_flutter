@@ -34,31 +34,11 @@ TypeApplicationMode get realPlatformMode {
   return platform;
 }
 
-class ApplicationMode extends StateNotifier<TypeApplicationMode> {
-  ApplicationMode() : super(realPlatformMode) {
-    Future.delayed(Duration.zero, () async {
-      _getFromDbAndUpdate();
-
-      var conn = DatabaseHandler().dbConnect;
-      conn.applicationSettings.watchLazy().listen((event) async {
-        await _getFromDbAndUpdate();
-      });
-    });
+final applicationMode = Provider<TypeApplicationMode>((ref) {
+  var modeInDb = ref.watch(DatabaseHandler().appModeState);
+  if (modeInDb == null) {
+    return realPlatformMode;
+  } else {
+    return modeInDb;
   }
-
-  _getFromDbAndUpdate() async {
-    var db = DatabaseHandler();
-
-    var modeInDb = await db.getApplicationMode();
-
-    if (modeInDb == null) {
-      state = realPlatformMode;
-    } else {
-      state = modeInDb;
-    }
-  }
-}
-
-final applicationMode =
-    StateNotifierProvider<ApplicationMode, TypeApplicationMode>(
-        (ref) => ApplicationMode());
+});

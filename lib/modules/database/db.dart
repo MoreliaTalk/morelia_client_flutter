@@ -17,6 +17,7 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:morelia_client_flutter/modules/application_mode.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart';
@@ -467,15 +468,7 @@ class DatabaseHandler {
     return null;
   }
 
-  Future<TypeApplicationMode?> getApplicationMode() async {
-    final dbData = await _getSettingByKey("appMode");
-
-    if (dbData.value != null) {
-      return matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
-    }
-
-    return null;
-  }
+  final appModeState = StateNotifierProvider<_DbAppModeState, TypeApplicationMode?>((ref) => _DbAppModeState());
 
   Future<void> setApplicationMode(TypeApplicationMode mode) async {
     var dbData = await _getSettingByKey("appMode")
@@ -491,6 +484,23 @@ class DatabaseHandler {
 
     await dbConnect.writeTxn((conn) async {
       await dbConnect.applicationSettings.put(dbData);
+    });
+  }
+}
+
+class _DbAppModeState extends StateNotifier<TypeApplicationMode?> {
+  _DbAppModeState() : super(null) {
+    var db = DatabaseHandler();
+
+    db.dbConnect.applicationSettings.filter().keyEqualTo("appMode").watchLazy().listen((event) async {
+      var dbData = await DatabaseHandler()._getSettingByKey("appMode");
+
+      if (dbData.value != null) {
+        state = DatabaseHandler().matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
+        return;
+      }
+
+      state = null;
     });
   }
 }

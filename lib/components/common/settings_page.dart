@@ -64,24 +64,12 @@ class PersonalizePage extends ConsumerWidget {
   }
 }
 
-class _AppModeSettingsState extends StateNotifier<TypeApplicationMode?> {
-  _AppModeSettingsState() : super(null) {
-    var db = DatabaseHandler();
-
-    db.dbConnect.applicationSettings.filter().keyEqualTo("appMode").watchLazy().listen((event) async {
-      state = await db.getApplicationMode();
-    });
-  }
-}
-
-final _appModeSettingsState = StateNotifierProvider<_AppModeSettingsState, TypeApplicationMode?>((ref) => _AppModeSettingsState());
-
 class _AppModeSettingsWidget extends ConsumerWidget {
   const _AppModeSettingsWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var currentValue = ref.watch(_appModeSettingsState);
+    var currentValue = ref.watch(DatabaseHandler().appModeState);
 
     return ListTile(
       leading: Icon(Icons.devices_rounded),
