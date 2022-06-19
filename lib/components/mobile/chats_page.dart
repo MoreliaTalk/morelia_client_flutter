@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../common/chat_list.dart';
@@ -15,8 +15,8 @@ class MobileChatsPage extends ConsumerWidget {
         () => ref.watch(onClickItemsFunction.notifier).state = (String uuid) {
               GoRouter.of(context).push("/messages/" + uuid);
             });
-    return Scaffold(
-      body: const ChatList(),
+    return const Scaffold(
+      body: ChatList(),
       bottomNavigationBar: MobileNavBar(),
     );
   }

@@ -1,53 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:morelia_client_flutter/modules/platform_const.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:morelia_client_flutter/modules/application_mode.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart';
 
 import '../components/common/communication_page.dart';
 import '../components/common/settings_page.dart';
 import '../components/desktop/main_page.dart';
 import '../components/mobile/chats_page.dart';
+import '../components/mobile/mobile_nav_bar.dart';
 
-final mobileRoutes = [
-  GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
-  GoRoute(
-      path: "/messages/:uuid",
-      builder: (context, state) =>
-          CommunicationPage(uuid: state.params['uuid']!)),
-  GoRoute(
-      path: "/settings",
-      builder: (context, _) => const SettingsPage(),
-      routes: [])
-];
+class MoreliaRouter extends ConsumerWidget {
+  final mobileRoutes = [
+    GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
+    GoRoute(
+        path: "/messages/:uuid",
+        builder: (context, state) =>
+            CommunicationPage(uuid: state.params['uuid']!)),
+    GoRoute(
+        path: "/settings",
+        builder: (context, _) => const Scaffold(
+          body: SettingsPage(),
+          bottomNavigationBar: MobileNavBar(),
+        ),
+        routes: [])
+  ];
 
-final desktopRoutes = [
-  GoRoute(path: "/", builder: (context, state) => const DesktopMainPage()),
-  GoRoute(
-      path: "/settings",
-      builder: (context, _) => const SettingsPage(),
-      routes: [])
-];
+  final desktopRoutes = [
+    GoRoute(path: "/", builder: (context, state) => const DesktopMainPage()),
+    GoRoute(
+        path: "/settings",
+        builder: (context, _) => const SettingsPage(),
+        routes: [])
+  ];
 
-class MoreliaRouter {
-  get _routes {
-    switch (currentPlatform) {
-      case TypePlatformDevices.mobile:
-        return mobileRoutes;
-      case TypePlatformDevices.desktop:
-        return desktopRoutes;
-      default:
-        return [
-          GoRoute(
-              path: "/",
-              builder: (context, _) =>
-                  const Text("Your platform is not supported"))
-        ];
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    late List<GoRoute> routes;
+
+    switch (ref.watch(applicationMode)) {
+      case TypeApplicationMode.mobile:
+        routes = mobileRoutes;
+        break;
+      case TypeApplicationMode.desktop:
+        routes = desktopRoutes;
+        break;
     }
-  }
 
-  get router {
-    return GoRouter(
-        routes: _routes,
+    var router = GoRouter(
+        routes: routes,
         navigatorBuilder: (_, __, child) => ThemeWidget(child: child));
+
+    return MaterialApp.router(
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+    );
   }
 }

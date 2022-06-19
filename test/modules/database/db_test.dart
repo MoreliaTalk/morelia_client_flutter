@@ -28,11 +28,12 @@ void main() async {
       }
     }
 
-    db = DatabaseHandler.connect();
+    db = DatabaseHandler();
+    db.connect();
   });
 
   tearDown(() async {
-    (await db.dbConnect).close(deleteFromDisk: true);
+    db.dbConnect.close(deleteFromDisk: true);
   });
 
   group("Test DatabaseHandler - UserConfig table:", () {
@@ -199,14 +200,6 @@ void main() async {
       await db.updateFlow("flow_uuid", title: "newTitle");
       var result = await db.getFlowByUuid("flow_uuid");
       expect(result?.title, "newTitle");
-    });
-  });
-
-  group("Test DatabaseHandler - ApplicationSetting table:", () {
-    test("Add and get settings", () async {
-      await db.addSettings("127.0.0.1", "443");
-      var result = await db.getSettings();
-      expect(result?.server, "127.0.0.1");
     });
   });
 }
