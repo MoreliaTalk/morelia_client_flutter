@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 
 enum _NavBarItems { Chats, Settings }
 
@@ -21,10 +20,7 @@ class MobileNavBar extends HookWidget {
       currentIndex: currentSelected.value,
       onTap: (index) {
         if (index == _NavBarItems.Chats.index) {
-          GoRouter.of(context).go("/");
-        } else if (index == _NavBarItems.Settings.index) {
-          GoRouter.of(context).go("/settings");
-        }
+        } else if (index == _NavBarItems.Settings.index) {}
         currentSelected.value = index;
       },
     );

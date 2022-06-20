@@ -1,7 +1,10 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:morelia_client_flutter/modules/application_mode.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
+import 'package:morelia_client_flutter/modules/router/mobile_router.dart';
 
 import '../../modules/database/models.dart' as models;
 
@@ -13,14 +16,22 @@ class ChatItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var appMode = ref.watch(applicationMode);
+
     String avatarSymbols = "";
     title.split(" ").forEach((value) {
       avatarSymbols += value[0];
     });
 
-    Function(String uuid) onClick = ref.watch(onClickItemsFunction);
     return ListTile(
-      onTap: () => onClick(uuid),
+      onTap: ()
+    {
+      if (appMode == TypeApplicationMode.desktop) {
+        context.router.navigateNamed("chat/$uuid");
+      } else if (appMode == TypeApplicationMode.mobile) {
+        context.router.push(CommunicationPageRoute());
+      }
+      },
       leading: CircleAvatar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -37,9 +48,6 @@ class ChatItem extends ConsumerWidget {
     );
   }
 }
-
-final onClickItemsFunction =
-    StateProvider<Function(String uuid)>((ref) => (String uuid) {});
 
 class ChatStateItem {
   ChatStateItem({required this.flow, required this.lastMessage});

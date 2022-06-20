@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:isar/isar.dart';
@@ -13,23 +14,26 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
-      body: AdaptiveMenu(
-          mode: (ref.watch(applicationMode) == TypeApplicationMode.desktop
-              ? AdaptiveMenuMode.split
-              : AdaptiveMenuMode.fullscreen),
-          menuFlexWidth: 1,
-          subPageFlexWidth: 5,
-          items: [
-            AdaptiveMenuItem(
-                widget: ListTile(
-                    leading: const Icon(Icons.palette),
-                    title: const Text("Personalization"),
-                    iconColor: Theme.of(context).colorScheme.primary),
-                subPage: const PersonalizePage(),
-                subPageText: const Text("Personalize"))
-          ]),
-    );
+        appBar: AppBar(title: const Text("Settings")),
+        body: Row(children: [
+          Expanded(
+            flex: 1,
+            child: ListView(children: [
+              ListTile(
+                leading: const Icon(Icons.palette),
+                title: const Text("Personalization"),
+                iconColor: Theme.of(context).colorScheme.primary,
+                onTap: () {
+                  context.router.navigateNamed("personalize");
+                },
+              )
+            ]),
+          ),
+          const Expanded(
+            flex: 5,
+            child: AutoRouter(),
+          )
+        ]));
   }
 }
 

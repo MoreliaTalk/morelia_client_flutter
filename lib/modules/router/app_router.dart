@@ -1,15 +1,33 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:morelia_client_flutter/modules/application_mode.dart';
-import 'package:morelia_client_flutter/modules/theme_manager.dart';
+import 'package:morelia_client_flutter/modules/database/db.dart';
+import 'package:morelia_client_flutter/modules/router/mobile_router.dart';
+import '../theme_manager.dart';
+import 'desktop_router.dart';
 
-import '../components/common/communication_page.dart';
-import '../components/common/settings_page.dart';
-import '../components/desktop/main_page.dart';
-import '../components/mobile/chats_page.dart';
-import '../components/mobile/mobile_nav_bar.dart';
+final appRouterState = Provider((ref) {
+  switch(ref.watch(applicationMode)) {
+    case TypeApplicationMode.desktop:
+      return DesktopAppRouter();
+    case TypeApplicationMode.mobile:
+      return MobileAppRouter();
+  }
+});
 
+
+class ThemeWrapper extends StatelessWidget implements AutoRouteWrapper {
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return const ThemeWidget(child: AutoRouter());
+  }
+
+  @override
+  Widget build(BuildContext context) => Container();
+}
+
+/*
 class MoreliaRouter extends ConsumerWidget {
   final mobileRoutes = [
     GoRoute(path: "/", builder: (context, _) => const MobileChatsPage()),
@@ -57,3 +75,4 @@ class MoreliaRouter extends ConsumerWidget {
     );
   }
 }
+*/
