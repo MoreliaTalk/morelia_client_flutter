@@ -47,8 +47,7 @@ class _$DesktopAppRouter extends RootStackRouter {
 
   @override
   List<RouteConfig> get routes => [
-        RouteConfig('/#redirect', path: '/', redirectTo: '', fullMatch: true),
-        RouteConfig(ThemeWrapperRoute.name, path: '', children: [
+        RouteConfig(ThemeWrapperRoute.name, path: '/', children: [
           RouteConfig(DesktopMainPageRoute.name,
               path: '',
               parent: ThemeWrapperRoute.name,
@@ -71,7 +70,7 @@ class _$DesktopAppRouter extends RootStackRouter {
 /// [ThemeWrapper]
 class ThemeWrapperRoute extends PageRouteInfo<void> {
   const ThemeWrapperRoute({List<PageRouteInfo>? children})
-      : super(ThemeWrapperRoute.name, path: '', initialChildren: children);
+      : super(ThemeWrapperRoute.name, path: '/', initialChildren: children);
 
   static const String name = 'ThemeWrapperRoute';
 }

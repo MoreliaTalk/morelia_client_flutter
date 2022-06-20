@@ -24,13 +24,12 @@ class ChatItem extends ConsumerWidget {
     });
 
     return ListTile(
-      onTap: ()
-    {
-      if (appMode == TypeApplicationMode.desktop) {
-        context.router.navigateNamed("chat/$uuid");
-      } else if (appMode == TypeApplicationMode.mobile) {
-        context.router.push(CommunicationPageRoute());
-      }
+      onTap: () {
+        if (appMode == TypeApplicationMode.desktop) {
+          context.router.navigateNamed("chat/$uuid");
+        } else if (appMode == TypeApplicationMode.mobile) {
+          context.router.push(CommunicationPageRoute());
+        }
       },
       leading: CircleAvatar(
         backgroundColor: Theme.of(context).colorScheme.primary,

@@ -22,9 +22,9 @@ class _$MobileAppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: WrappedRoute(child: ThemeWrapper()));
     },
-    MobileChatsPageRoute.name: (routeData) {
+    MobileMainPageRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
-          routeData: routeData, child: const MobileChatsPage());
+          routeData: routeData, child: const MobileMainPage());
     },
     CommunicationPageRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
@@ -34,6 +34,10 @@ class _$MobileAppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
           routeData: routeData,
           child: CommunicationPage(uuid: args.uuid, key: args.key));
+    },
+    MobileChatsPageRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const MobileChatsPage());
     },
     SettingsPageRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
@@ -47,19 +51,23 @@ class _$MobileAppRouter extends RootStackRouter {
 
   @override
   List<RouteConfig> get routes => [
-        RouteConfig('/#redirect', path: '/', redirectTo: '', fullMatch: true),
-        RouteConfig(ThemeWrapperRoute.name, path: '', children: [
-          RouteConfig(MobileChatsPageRoute.name,
-              path: '', parent: ThemeWrapperRoute.name),
-          RouteConfig(CommunicationPageRoute.name,
-              path: 'chat/:uuid', parent: ThemeWrapperRoute.name),
-          RouteConfig(SettingsPageRoute.name,
-              path: 'settings',
+        RouteConfig(ThemeWrapperRoute.name, path: '/', children: [
+          RouteConfig(MobileMainPageRoute.name,
+              path: '',
               parent: ThemeWrapperRoute.name,
               children: [
-                RouteConfig(PersonalizePageRoute.name,
-                    path: 'personalize', parent: SettingsPageRoute.name)
-              ])
+                RouteConfig(MobileChatsPageRoute.name,
+                    path: '', parent: MobileMainPageRoute.name),
+                RouteConfig(SettingsPageRoute.name,
+                    path: 'settings',
+                    parent: MobileMainPageRoute.name,
+                    children: [
+                      RouteConfig(PersonalizePageRoute.name,
+                          path: 'personalize', parent: SettingsPageRoute.name)
+                    ])
+              ]),
+          RouteConfig(CommunicationPageRoute.name,
+              path: 'chat/:uuid', parent: ThemeWrapperRoute.name)
         ])
       ];
 }
@@ -68,17 +76,18 @@ class _$MobileAppRouter extends RootStackRouter {
 /// [ThemeWrapper]
 class ThemeWrapperRoute extends PageRouteInfo<void> {
   const ThemeWrapperRoute({List<PageRouteInfo>? children})
-      : super(ThemeWrapperRoute.name, path: '', initialChildren: children);
+      : super(ThemeWrapperRoute.name, path: '/', initialChildren: children);
 
   static const String name = 'ThemeWrapperRoute';
 }
 
 /// generated route for
-/// [MobileChatsPage]
-class MobileChatsPageRoute extends PageRouteInfo<void> {
-  const MobileChatsPageRoute() : super(MobileChatsPageRoute.name, path: '');
+/// [MobileMainPage]
+class MobileMainPageRoute extends PageRouteInfo<void> {
+  const MobileMainPageRoute({List<PageRouteInfo>? children})
+      : super(MobileMainPageRoute.name, path: '', initialChildren: children);
 
-  static const String name = 'MobileChatsPageRoute';
+  static const String name = 'MobileMainPageRoute';
 }
 
 /// generated route for
@@ -104,6 +113,14 @@ class CommunicationPageRouteArgs {
   String toString() {
     return 'CommunicationPageRouteArgs{uuid: $uuid, key: $key}';
   }
+}
+
+/// generated route for
+/// [MobileChatsPage]
+class MobileChatsPageRoute extends PageRouteInfo<void> {
+  const MobileChatsPageRoute() : super(MobileChatsPageRoute.name, path: '');
+
+  static const String name = 'MobileChatsPageRoute';
 }
 
 /// generated route for

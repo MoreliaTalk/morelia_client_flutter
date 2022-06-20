@@ -8,14 +8,13 @@ import '../theme_manager.dart';
 import 'desktop_router.dart';
 
 final appRouterState = Provider((ref) {
-  switch(ref.watch(applicationMode)) {
+  switch (ref.watch(applicationMode)) {
     case TypeApplicationMode.desktop:
       return DesktopAppRouter();
     case TypeApplicationMode.mobile:
       return MobileAppRouter();
   }
 });
-
 
 class ThemeWrapper extends StatelessWidget implements AutoRouteWrapper {
   @override

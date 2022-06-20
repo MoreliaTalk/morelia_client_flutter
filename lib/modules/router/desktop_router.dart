@@ -10,7 +10,7 @@ import 'app_router.dart';
 part 'desktop_router.gr.dart';
 
 @MaterialAutoRouter(routes: <AutoRoute>[
-  AutoRoute(page: ThemeWrapper, path: "", initial: true, children: [
+  AutoRoute(page: ThemeWrapper, path: "/", initial: true, children: [
     AutoRoute(
         path: "",
         page: DesktopMainPage,

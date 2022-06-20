@@ -1,28 +1,35 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:morelia_client_flutter/modules/router/mobile_router.dart';
 
-enum _NavBarItems { Chats, Settings }
-
-class MobileNavBar extends HookWidget {
+class MobileNavBar extends StatelessWidget {
   const MobileNavBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final currentSelected = useState(0);
-    return BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.chat), label: _NavBarItems.Chats.name),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
-            label: _NavBarItems.Settings.name),
-      ],
-      currentIndex: currentSelected.value,
-      onTap: (index) {
-        if (index == _NavBarItems.Chats.index) {
-        } else if (index == _NavBarItems.Settings.index) {}
-        currentSelected.value = index;
-      },
-    );
+    return AutoTabsRouter(
+        routes: const [MobileChatsPageRoute(), SettingsPageRoute()],
+        builder: (context, child, animation) {
+          final tabsRouter = AutoTabsRouter.of(context);
+
+          return Scaffold(
+              body: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                items: const [
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.chat), label: "Chats"),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.settings), label: "Settings"),
+                ],
+                currentIndex: tabsRouter.activeIndex,
+                onTap: (index) {
+                  // here we switch between tabs
+                  tabsRouter.setActiveIndex(index);
+                },
+              ));
+        });
   }
 }

@@ -17,7 +17,7 @@ class MoreliaApp extends ConsumerWidget {
     final router = ref.watch(appRouterState);
 
     return MaterialApp.router(
-            routerDelegate: router.delegate(),
-            routeInformationParser: router.defaultRouteParser());
+        routerDelegate: router.delegate(),
+        routeInformationParser: router.defaultRouteParser());
   }
 }
