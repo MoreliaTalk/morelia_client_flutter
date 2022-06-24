@@ -113,9 +113,6 @@ class ChatList extends ConsumerWidget {
             await dbHandlerInstance.addUser(userUuid, "login", "hashPassword");
             await dbHandlerInstance.addFlow(flowUuid, userUuid, [userUuid],
                 title: faker.person.name());
-            await dbHandlerInstance.addMessage(
-                flowUuid, userUuid, faker.guid.guid(), 123,
-                text: "Hello!");
           },
         ));
   }

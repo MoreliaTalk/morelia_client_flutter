@@ -224,8 +224,6 @@ class DatabaseHandler {
 
   Future<List<Message?>> getMessagesByMoreTimeAndFlow(
       int time, String flowUuid) async {
-    final conn = dbConnect;
-
     return await dbConnect.messages
         .where(sort: Sort.asc)
         .filter()
@@ -503,15 +501,15 @@ class _DbAppModeState extends StateNotifier<TypeApplicationMode?> {
         .keyEqualTo("appMode")
         .watch(initialReturn: true)
         .listen((event) async {
-      var dbData = event.first;
+      if (event.isNotEmpty) {
+        var dbData = event.first;
 
-      if (dbData.value != null) {
-        state =
-            matchStringAndEnumNames(dbData.value!, TypeApplicationMode.values);
-        return;
+        if (dbData.value != null) {
+          state =
+              matchStringAndEnumNames(
+                  dbData.value!, TypeApplicationMode.values);
+        }
       }
-
-      state = null;
     });
   }
 }
@@ -525,13 +523,14 @@ class _DbThemeState extends StateNotifier<ThemeTypes> {
         .keyEqualTo("Theme")
         .watch(initialReturn: true)
         .listen((event) async {
-      var dbData = event.first;
-
-      if (dbData.value != null) {
-        state = matchStringAndEnumNames(dbData.value!, ThemeTypes.values)!;
-        return;
-      } else {
-        DatabaseHandler().setTheme(ThemeTypes.defaultDark);
+      if (event.isNotEmpty) {
+        var dbData = event.first;
+        if (dbData.value != null) {
+          state = matchStringAndEnumNames(dbData.value!, ThemeTypes.values)!;
+          return;
+        } else {
+          DatabaseHandler().setTheme(ThemeTypes.defaultDark);
+        }
       }
     });
   }
