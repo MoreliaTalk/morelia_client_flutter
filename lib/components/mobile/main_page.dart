@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../modules/router/mobile_router.dart';
 import '../common/chat_list.dart';
 import '../mobile/mobile_nav_bar.dart';
 
@@ -21,6 +22,19 @@ class MobileMainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MobileNavBar();
+    return AutoTabsRouter(
+        routes: const [MobileChatsPageRoute(), SettingsPageRoute()],
+        builder: (context, child, animation) {
+          final tabsRouter = AutoTabsRouter.of(context);
+
+          return Scaffold(
+              body: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+              bottomNavigationBar: MobileNavBar(tabsRouter: tabsRouter)
+          );
+        }
+    );
   }
 }

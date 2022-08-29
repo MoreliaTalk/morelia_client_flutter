@@ -1,11 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:isar/isar.dart';
-import 'package:morelia_client_flutter/components/common/adaptive_menu.dart';
 import 'package:morelia_client_flutter/modules/application_mode.dart';
 import 'package:morelia_client_flutter/modules/database/db.dart';
-import 'package:morelia_client_flutter/modules/database/models.dart';
 import 'package:morelia_client_flutter/modules/theme_manager.dart';
 
 class SettingsPage extends ConsumerWidget {
